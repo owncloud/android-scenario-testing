@@ -7,6 +7,7 @@
 package io.cucumber;
 
 import android.AndroidManager;
+import android.CommonPage;
 
 import org.xml.sax.SAXException;
 
@@ -38,6 +39,7 @@ public class Hooks {
         AndroidManager.getDriver().activateApp(
                 LocProperties.getProperties().getProperty("appPackage"));
         world.fileListPage.setConnectionUp();
+        CommonPage.startRecording();
     }
 
     @After
@@ -46,6 +48,7 @@ public class Hooks {
         AndroidManager.getDriver().terminateApp(
                 LocProperties.getProperties().getProperty("appPackage"));
         cleanUp();
+        CommonPage.stopRecording(scenario.getName());
         Log.log(Level.FINE, "END SCENARIO EXECUTION: " + scenario.getName() + "\n\n");
     }
 

@@ -1,0 +1,126 @@
+name: E2E tests
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '30 2 * * 1-5'  # Monday to Friday at 2:30AM
+  pull_request:
+    branches:
+      - master
+
+jobs:
+
+  # Builds the app with QA variant and publish the apk
+  build_apk:
+    name: Build APK
+    runs-on: ubuntu-latest
+    outputs:
+      apk-path: ./src/test/resources/owncloud.apk
+
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v4
+
+      - name: Clone external repo
+        run: git clone https://github.com/owncloud/android.git android-app
+
+      - name: Setup JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '17'
+
+      - name: Cache Gradle
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.gradle/caches
+            ~/.gradle/wrapper
+          key: ${{ runner.os }}-gradle-${{ hashFiles('**/*.gradle*', '**/gradle-wrapper.properties') }}
+          restore-keys: |
+            ${{ runner.os }}-gradle-
+
+      - name: Build APK
+        working-directory: android-app
+        run: ./gradlew clean assembleqaRelease
+
+      - name: Copy APK
+        id: set-output
+        run: |
+          cp ./android-app/owncloudApp/build/outputs/apk/qa/release/owncloud_*-qa-release*.apk ./src/test/resources/owncloud.apk
+          ls -al ./src/test/resources
+
+      - name: Upload APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: app-apk
+          path: ./src/test/resources/owncloud.apk
+
+  run_tests:
+    name: Run Emulator & Execute Tests & Artifacts
+    needs: build_apk
+    runs-on: ubuntu-latest
+    env:
+      OC_SERVER_URL: ${{ secrets.OC_SERVER_URL }}
+      BACKEND: oCIS
+
+    steps:
+      - name: Checkout current repo
+        uses: actions/checkout@v4
+
+      # Uploaded in the job above
+      - name: Download APK
+        uses: actions/download-artifact@v4
+        with:
+          name: app-apk
+          path: ./src/test/resources
+
+      # Improves emulator's performance by using hardware acceleration
+      - name: Enable KVM
+        run: |
+          echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+          sudo udevadm control --reload-rules
+          sudo udevadm trigger --name-match=kvm
+
+      - name: Start Appium
+        run: |
+          mkdir -p logs video
+          chmod +x ./runAppium.sh
+          ./runAppium.sh
+
+      - name: Run Emulator & Tests
+        uses: reactivecircus/android-emulator-runner@v2
+        with:
+          api-level: 31
+          target: google_apis
+          arch: x86_64
+          profile: pixel
+          avd-name: test-avd
+          force-avd-creation: true
+          disable-animations: true
+          emulator-options: -no-window -no-audio -no-boot-anim -accel auto -memory 2048
+          # Ignored tests, no oCIS tests and no CI tests will not run
+          script: ./executeTests -t "not @ignore and not @noocis and not @noci"
+
+      - name: Rename log file
+        if: always()
+        run: |
+          cp logs/*.log logs/log.log
+
+      - name: Upload Execution Log
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: logs-dir
+          path: ./logs/log.log
+
+      - name: Zip video files
+        if: always()
+        run: zip -r -9 test-recordings.zip video
+
+      - name: Upload Video
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: video-recordings
+          path: ./test-recordings.zip

@@ -1,4 +1,4 @@
-@conflicts
+@conflicts @noci
 Feature: Conflicts in content
 
   As a user

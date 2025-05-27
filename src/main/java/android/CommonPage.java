@@ -313,7 +313,7 @@ public class CommonPage {
         try {
             Files.write(path, data);
         } catch (IOException e) {
-            e.printStackTrace();
+            Log.log(Level.FINE, e.getMessage());
         }
     }
 }

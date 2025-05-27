@@ -221,16 +221,15 @@ public class FileListSteps {
 
     @When("Alice clicks on the thumbnail")
     public void user_clicks_on_the_thumbnail() {
-        String stepName = new Object() {
-        }.getClass().getEnclosingMethod().getName().toUpperCase();
-        Log.log(Level.FINE, "----STEP----: " + stepName);
+        StepLogger.logCurrentStep(Level.FINE);
         world.detailsPage.downloadFromThumbnail();
     }
 
     @When("file {word} is modified {modificationType} adding {word}")
-    public void file_is_modified_externally_adding_text(String itemName, String modificationType, String text)
+    public void file_is_modified_adding_text(String itemName, String modificationType, String text)
             throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
+        Log.log(Level.FINE, "Modified file: " + itemName + " " + modificationType);
         if (modificationType.equals("remotely")) {
             world.filesAPI.pushFile(itemName, text, "Alice");
         } else if (modificationType.equals("locally")) {
