@@ -59,7 +59,7 @@ jobs:
           disable-animations: true
           emulator-options: -no-snapshot -no-window -no-audio -no-boot-anim -accel on -memory 3072
           # Ignored tests, no oCIS tests and no CI tests will not run
-          script: ./executeTests -t "not @ignore and not @noocis and not @noci"
+          script: ./executeTests -t "@createfolder and not @ignore and not @noocis and not @noci"
 
       - name: Upload html report
         uses: actions/upload-artifact@v4

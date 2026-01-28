@@ -12,21 +12,21 @@ jobs:
       build_variant: qaRelease
       version: master
 
-  create_ocis:
-    uses: ./.github/workflows/ocisbackend.yml
-    with:
-      ocis_version: 7.3.0
-    secrets:
-      ocis_url: ${{ secrets.OC_SERVER_URL }}
-      ssh_host_call: ${{ secrets.SSH_HOST }}
-      ssh_user_call: ${{ secrets.SSH_USER }}
-      ssh_private_key_call: ${{ secrets.SSH_PRIVATE_KEY }}
-      ocis_pwd_call: ${{ secrets.OCIS_PWD }}
+  #create_ocis:
+  #  uses: ./.github/workflows/ocisbackend.yml
+  #  with:
+  #    ocis_version: 7.3.0
+  #  secrets:
+  #    ocis_url: ${{ secrets.OC_SERVER_URL }}
+  #    ssh_host_call: ${{ secrets.SSH_HOST }}
+  #    ssh_user_call: ${{ secrets.SSH_USER }}
+  #    ssh_private_key_call: ${{ secrets.SSH_PRIVATE_KEY }}
+  #    ocis_pwd_call: ${{ secrets.OCIS_PWD }}
 
   tests:
     needs:
       - build_apk
-      - create_ocis
+  #    - create_ocis
     uses: ./.github/workflows/e2etests.yml
     with:
       apk: ${{ needs.build_apk.outputs.artifact_name }}
@@ -38,3 +38,8 @@ jobs:
     needs:
       - tests
     uses: ./.github/workflows/cleanup.yml
+    secrets:
+      ssh_host_call: ${{ secrets.SSH_HOST }}
+      ssh_user_call: ${{ secrets.SSH_USER }}
+      ssh_private_key_call: ${{ secrets.SSH_PRIVATE_KEY }}
+      ocis_pwd_call: ${{ secrets.OCIS_PWD }}

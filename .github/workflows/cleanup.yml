@@ -2,6 +2,15 @@ name: Clean up backend
 
 on:
   workflow_call:
+    secrets:
+      ssh_host_call:
+        required: false
+      ssh_user_call:
+        required: false
+      ssh_private_key_call:
+        required: false
+      ocis_pwd_call:
+        required: false
   workflow_dispatch:
 
 permissions:
