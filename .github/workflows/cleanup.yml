@@ -20,35 +20,36 @@ jobs:
     name: Remove server
     runs-on: ubuntu-latest
 
+    env:
+      SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
+      SSH_HOST: ${{ secrets.SSH_HOST }}
+      SSH_USER: ${{ secrets.SSH_USER }}
+
     steps:
       - uses: actions/checkout@v5
 
+      # Install Ansible on the runner
       - name: Install Ansible
         run: |
           sudo apt-get update -qq
           sudo apt-get install -y ansible
 
+      # Save the private key in SSH directory
       - name: Setup SSH key
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          SSH_PRIVATE_KEY: ${{ secrets.SSH_PRIVATE_KEY }}
         run: |
-          # Create SSH directory and save the private key
           mkdir -p $HOME/.ssh
           echo "$SSH_PRIVATE_KEY" > $HOME/.ssh/id_ed25519
           chmod 600 $HOME/.ssh/id_ed25519
           # Add host to known_hosts to prevent SSH prompt
           ssh-keyscan -H $SSH_HOST >> $HOME/.ssh/known_hosts
 
+      # Generate inventory file for the OCIS server
       - name: Create ansible inventory
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
         run: |
           echo "[ocis_server]" > ./server/ansible/hosts.ini
           echo "${SSH_HOST} ansible_user=${SSH_USER} ansible_ssh_private_key_file=$HOME/.ssh/id_ed25519" >> ./server/ansible/hosts.ini
 
+      # Clean up containers and images in the remote server
       - name: Run clean up
         run: |
           cd ./server/ansible
