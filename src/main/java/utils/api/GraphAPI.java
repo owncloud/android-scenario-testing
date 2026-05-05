@@ -257,6 +257,47 @@ public class GraphAPI extends CommonAPI {
         response.close();
     }
 
+    public void addLinkToSpace(String spaceName, String linkName, String permission, String expirationDate)
+            throws IOException {
+        Log.log(Level.FINE, "Add link: " + linkName + " to space: " + spaceName
+                + " with permission "  + permission + " and expiration: " + expirationDate);
+        String spaceId = getSpaceIdFromName(spaceName);
+        String permissionName = getPermissionName(permission);
+        boolean hasExpiration = expirationDate != null && !expirationDate.trim().isEmpty();
+        String url = urlServer + members + spaceId + "/root/createLink";
+        Log.log(Level.FINE, "URL: " + url);
+        StringBuilder jsonBuilder = new StringBuilder();
+        jsonBuilder.append("{");
+        if (hasExpiration) {
+            String expirationFormatted = DateUtils.daysToUTCForExpiration(expirationDate);
+            Log.log(Level.FINE, "Formatted date: " + expirationFormatted);
+            jsonBuilder.append("\"expirationDateTime\": \"")
+                    .append(expirationFormatted)
+                    .append("\",");
+        }
+        jsonBuilder.append("\"displayName\":\"").append(linkName).append("\",")
+                .append("\"type\":\"").append(permissionName).append("\",")
+                .append("\"password\":\"").append("aa55AA..").append("\"")
+                .append("}");
+        String json = jsonBuilder.toString();
+        Log.log(Level.FINE, "Body: " + json);
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = postRequest(url, body, "Alice");
+        Response response = httpClient.newCall(request).execute();
+        Log.log(Level.FINE, "Response Code: " + response.code());
+        Log.log(Level.FINE, "Response Body: " + response.body().string());
+        response.close();
+    }
+
+    private String getPermissionName(String permission) {
+        return switch (permission) {
+            case "Can view" -> "view";
+            case "Can edit" -> "edit";
+            case "Secret file drop" -> "createOnly";
+            default -> "view";
+        };
+    }
+
     //Move to parser space
     private List<OCSpace> getSpacesFromResponse(Response httpResponse) throws IOException {
         String json = httpResponse.body().string();

@@ -10,10 +10,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-import org.openqa.selenium.WebElement;
-
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
@@ -72,6 +69,18 @@ public class SpacesSteps {
             String expDate = row.get("expirationDate");
             String expirationDate = (expDate == null) ? "" : expDate.trim();
             world.graphAPI.addMemberToSpace(spaceName, userName, permission, expirationDate);
+        }
+    }
+
+    @Given("the link {word} was created on the space {word} with")
+    public void links_created_on_space(String linkName, String spaceName, DataTable table) throws IOException {
+        StepLogger.logCurrentStep(Level.FINE);
+        List<Map<String, String>> rows = table.asMaps(String.class, String.class);
+        for (Map<String, String> row : rows) {
+            String permission = row.get("permission");
+            String expDate = row.get("expirationDate");
+            String expirationDate = (expDate == null) ? "" : expDate.trim();
+            world.graphAPI.addLinkToSpace(spaceName, linkName, permission, expirationDate);
         }
     }
 
@@ -178,18 +187,37 @@ public class SpacesSteps {
         world.spacesMembersPage.createLink();
     }
 
+    @When("Alice edits {word} over the space {word} with")
+    public void edit_link(String linkName, String spaceName, DataTable table) {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.spacesPage.openMembers(spaceName);
+        world.spacesMembersPage.editLink(linkName);
+        Map<String, String> fields = table.asMap(String.class, String.class);
+        for (Map.Entry<String, String> entry : fields.entrySet()) {
+            String key = entry.getKey();
+            String value = entry.getValue();
+            switch (key) {
+                case "name" -> world.spacesMembersPage.setName(value);
+                case "permission" -> world.spacesMembersPage.setPermission(value);
+                case "password" -> world.spacesMembersPage.editPassword();
+                case "expirationDate" -> world.spacesMembersPage.setExpirationDate(value);
+            }
+        }
+        world.spacesMembersPage.createLink();
+    }
+
     @When("Alice removes {word} from the space {word}")
     public void user_removes_member(String userName, String spaceName) {
         StepLogger.logCurrentStep(Level.FINE);
         world.spacesPage.openMembers(spaceName);
-        world.spacesPage.removeMember(userName);
+        world.spacesMembersPage.removeMember(userName);
     }
 
-    @And("Alice edits {word} from the space {word} with the following fields")
+    @When("Alice edits {word} from the space {word} with the following fields")
     public void edit_member_space(String userName, String spaceName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
         world.spacesPage.openMembers(spaceName);
-        world.spacesPage.openEditMember(userName);
+        world.spacesMembersPage.openEditMember(userName);
         Map<String, String> fields = table.asMap(String.class, String.class);
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             String key = entry.getKey();
@@ -328,7 +356,7 @@ public class SpacesSteps {
     @Then("{word} should not be member of the space {word}")
     public void is_user_member(String userName, String spaceName) {
         StepLogger.logCurrentStep(Level.FINE);
-        assertFalse(world.spacesPage.isMemberOfSpace(userName, spaceName));
+        assertFalse(world.spacesMembersPage.isMemberOfSpace(userName, spaceName));
     }
 
     private void handleSpace(DataTable table, String operation){

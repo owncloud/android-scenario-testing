@@ -360,3 +360,26 @@ Feature: Spaces
       Examples:
         | name    | subtitle           | permissions       | linkName   | expirationDate |
         | Space25 | Twentyfifth space  | Can view          | Link25     | 28             |
+
+    Scenario Outline: Edit a exiting link
+      Given the following spaces have been created in Alice account
+        | name   | subtitle   |
+        | <name> | <subtitle> |
+      And the link <linkName> was created on the space <name> with
+        | name           | permission     | expirationDate   | password |
+        | <linkName>     | <permissions>  | <expirationDate> |          |
+      When Alice selects the spaces view
+      And Alice edits <linkName> over the space <name> with
+        | name           | <newName>           |
+        | permission     | <newPermissions>    |
+        | password       |                     |
+        | expirationDate | <newExpirationDate> |
+      Then Alice should see the link <newName> on <name> with
+        | permission     | <newPermissions>    |
+        | expirationDate | <newExpirationDate> |
+
+      Examples:
+        | name    | subtitle            | permissions       | linkName   | expirationDate | newName   | newPermissions         | newExpirationDate |
+        | Space26 | Twentysixth space   | Can view          | Link26     | 2              | Link26new | Can view               | 4                 |
+        | Space27 | Twentyseventh space | Can edit          | Link27     |                | Link27new | Secret file drop       | 4                 |
+        | Space28 | Twentyeighth space  | Secret file drop  | Link28     | 2              | Link26new | Can edit               |                   |

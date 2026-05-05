@@ -29,6 +29,9 @@ public class SpaceMembersPage extends CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/set_password_button")
     private WebElement setPassword;
 
+    @AndroidFindBy(id = "com.owncloud.android:id/remove_password_button")
+    private WebElement removePassword;
+
     @AndroidFindBy(id = "com.owncloud.android:id/generate_password_button")
     private WebElement generateRandomPassword;
 
@@ -66,6 +69,9 @@ public class SpaceMembersPage extends CommonPage {
     private WebElement okButton;
 
     public static SpaceMembersPage instance;
+    private final String editMemberId = "com.owncloud.android:id/edit_member_button";
+    private final String memberNameId = "com.owncloud.android:id/member_name";
+    private final String removeMemberId = "com.owncloud.android:id/remove_member_button";
 
     private SpaceMembersPage() {
         super();
@@ -107,6 +113,13 @@ public class SpaceMembersPage extends CommonPage {
         submitPassword.click();
     }
 
+    public void editPassword(){
+        removePassword.click();
+        setPassword.click();
+        generateRandomPassword.click();
+        submitPassword.click();
+    }
+
     public void setExpirationDate(String days) {
         Log.log(Level.FINE, "Starts: Add expiration date in days " + days);
         // To normalize null values
@@ -130,11 +143,65 @@ public class SpaceMembersPage extends CommonPage {
         inviteMember.click();
     }
 
+    public void openEditMember(String userName){
+        Log.log(Level.FINE, "Starts: edit member " + userName);
+        for (WebElement member : memberList) {
+            WebElement nameElement = member.findElement(AppiumBy.id(memberNameId));
+            String memberName = nameElement.getText();
+            if (memberName.contains(userName)) {
+                member.findElement(AppiumBy.id(editMemberId)).click();
+                break;
+            }
+        }
+    }
+
+    public void removeMember(String userName) {
+        Log.log(Level.FINE, "Starts: remove member " + userName);
+        for (WebElement member : memberList) {
+            WebElement nameElement = member.findElement(AppiumBy.id(memberNameId));
+            String memberName = nameElement.getText();
+            if (memberName.contains(userName)) {
+                member.findElement(AppiumBy.id(removeMemberId)).click();
+                findListUIAutomatorText("YES").get(0).click();
+                break;
+            }
+        }
+    }
+
+    public boolean isMemberOfSpace(String userName, String spaceName) {
+        Log.log(Level.FINE, "Starts: check if member of space: " + userName + " " + spaceName);
+        waitById(WAIT_TIME, memberList.get(0));
+        for (WebElement member : memberList) {
+            WebElement nameElement = member.findElement(AppiumBy.id(memberNameId));
+            String memberName = nameElement.getText();
+            if (memberName.contains(userName)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public void createLink(){
-        Log.log(Level.FINE, "Starts: Create Link with button");
+        Log.log(Level.FINE, "Starts: Save Link with button");
         createLink.click();
         //Wait till link is created and appears in the list
         waitById(WAIT_TIME, addLink);
+    }
+
+    public void editLink(String linkName){
+        Log.log(Level.FINE, "Starts: Edit Link " + linkName);
+        List<WebElement> linkList = findListId("com.owncloud.android:id/public_link_item_layout");
+        for (WebElement link : linkList) {
+            String linkInList = link.findElement(AppiumBy.id
+                    ("com.owncloud.android:id/public_link_display_name")).getText();
+            Log.log(Level.FINE, "Checking link in list: " + linkInList);
+            if (linkInList.equals(linkName)) {
+                Log.log(Level.FINE, "Link found, opening edit screen: " + linkName);
+                link.findElement(AppiumBy.accessibilityId("Edit public link for " + linkName)).click();
+                return;
+            }
+        }
+        Log.log(Level.FINE, "Link not found in the list: " + linkName);
     }
 
     public boolean isUserMember(String userName, String permission) {
@@ -164,7 +231,7 @@ public class SpaceMembersPage extends CommonPage {
             Log.log(Level.FINE, "Link found in UI: " + linkName);
             permissionCorrect = link.findElement(AppiumBy.androidUIAutomator(
                     "new UiSelector().text(\"" + permission + "\")")).isDisplayed();
-            if (expirationDate != "") {
+            if (expirationDate != null && !expirationDate.equals("")) {
                 String expDate = DateUtils.formatDate(expirationDate, DateUtils.DateFormatType.NUMERIC);
                 Log.log(Level.FINE, "Expiration date to check: " + expDate);
                 expirationDateCorrect = link.findElement(AppiumBy.androidUIAutomator(
