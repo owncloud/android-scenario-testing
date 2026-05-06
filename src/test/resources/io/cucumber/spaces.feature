@@ -339,9 +339,9 @@ Feature: Spaces
 
       Examples:
         | name    | subtitle           | permissions       | linkName   |
-        | Space22 | Twentysecond space | Can view          | Link22     |
-        | Space23 | Twentythird space  | Can edit          | Link23     |
-        | Space24 | Twentyfourth space | Secret file drop  | Link24     |
+        | Space30 | Thirtyeth space    | Can view          | Link30     |
+        | Space31 | Thirtyfirst space  | Can edit          | Link31     |
+        | Space32 | Thirtysecond space | Secret file drop  | Link32     |
 
     Scenario Outline: Add a link with expiration date to a space
       Given the following spaces have been created in Alice account
@@ -359,7 +359,7 @@ Feature: Spaces
 
       Examples:
         | name    | subtitle           | permissions       | linkName   | expirationDate |
-        | Space25 | Twentyfifth space  | Can view          | Link25     | 28             |
+        | Space33 | Thirtythird space  | Can view          | Link33     | 28             |
 
     Scenario Outline: Edit a exiting link
       Given the following spaces have been created in Alice account
@@ -380,6 +380,18 @@ Feature: Spaces
 
       Examples:
         | name    | subtitle            | permissions       | linkName   | expirationDate | newName   | newPermissions         | newExpirationDate |
-        | Space26 | Twentysixth space   | Can view          | Link26     | 2              | Link26new | Can view               | 4                 |
-        | Space27 | Twentyseventh space | Can edit          | Link27     |                | Link27new | Secret file drop       | 4                 |
-        | Space28 | Twentyeighth space  | Secret file drop  | Link28     | 2              | Link26new | Can edit               |                   |
+        | Space34 | Thirtyfourth space  | Can view          | Link34     | 2              | Link34new | Can view               | 4                 |
+        | Space35 | Twentyfifth space   | Can edit          | Link35     |                | Link35new | Secret file drop       | 4                 |
+        | Space36 | Twentysixth space   | Secret file drop  | Link36     | 2              | Link36new | Can edit               |                   |
+
+    @removelink
+    Scenario: Remove a link from a space
+      Given the following spaces have been created in Alice account
+        | name    | subtitle            |
+        | Space37 | Thirtyseventh space |
+      And the link Link37 was created on the space Space37 with
+        | name           | permission  | expirationDate | password |
+        | Link37         | Can edit    | 6              |          |
+      When Alice selects the spaces view
+      And Alice removes Link37 over the space Space37
+      Then Alice should not see the link Link37 on Space37

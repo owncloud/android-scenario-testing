@@ -8,6 +8,7 @@ package io.cucumber;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.IOException;
@@ -17,8 +18,6 @@ import java.util.logging.Level;
 
 import io.cucumber.datatable.DataTable;
 import io.cucumber.java.ParameterType;
-import io.cucumber.java.PendingException;
-import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
@@ -230,6 +229,13 @@ public class SpacesSteps {
         world.spacesMembersPage.inviteMember();
     }
 
+    @When("Alice removes {word} over the space {word}")
+    public void remove_link_space(String linkName, String spaceName) {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.spacesPage.openMembers(spaceName);
+        world.spacesMembersPage.removeLink(linkName);
+    }
+
     @Then("Alice should{typePosNeg} see the following{spaceStatus} spaces")
     public void user_should_see_following_spaces(String sense, String status, DataTable table)
             throws IOException {
@@ -408,6 +414,16 @@ public class SpacesSteps {
                 : linkBackend.getExpirationDate().startsWith(
                 DateUtils.dateInDaysWithServerFormat(expirationDate).substring(0, 10)
         )));
+    }
+
+    @Then("Alice should not see the link {word} on {word}")
+    public void link_not_visible(String linkName, String spaceName) throws IOException {
+        StepLogger.logCurrentStep(Level.FINE);
+        // Local assertion
+        assertFalse(world.spacesMembersPage.isLinkCreated(linkName, "", ""));
+        // Remote assertion
+        OCSpaceLink linkBackend = world.graphAPI.getLinkOfSpace(spaceName, linkName);
+        assertNull(linkBackend);
     }
 
     private String getLinkPermissionDisplayName(String permission) {

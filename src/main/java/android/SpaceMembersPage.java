@@ -60,7 +60,7 @@ public class SpaceMembersPage extends CommonPage {
     private List<WebElement> memberList;
 
     @AndroidFindBy(id = "com.owncloud.android:id/public_link_item_layout")
-    private List<WebElement> linkList;
+    private List<WebElement> linkItem;
 
     @AndroidFindBy(id = "android:id/next")
     private WebElement nextButton;
@@ -72,6 +72,9 @@ public class SpaceMembersPage extends CommonPage {
     private final String editMemberId = "com.owncloud.android:id/edit_member_button";
     private final String memberNameId = "com.owncloud.android:id/member_name";
     private final String removeMemberId = "com.owncloud.android:id/remove_member_button";
+    private final String linkDisplayName = "com.owncloud.android:id/public_link_display_name";
+    private final String editLink = "com.owncloud.android:id/edit_public_link_button";
+    private final String removeLink = "com.owncloud.android:id/remove_public_link_button";
 
     private SpaceMembersPage() {
         super();
@@ -190,14 +193,28 @@ public class SpaceMembersPage extends CommonPage {
 
     public void editLink(String linkName){
         Log.log(Level.FINE, "Starts: Edit Link " + linkName);
-        List<WebElement> linkList = findListId("com.owncloud.android:id/public_link_item_layout");
-        for (WebElement link : linkList) {
-            String linkInList = link.findElement(AppiumBy.id
-                    ("com.owncloud.android:id/public_link_display_name")).getText();
+        for (WebElement link : linkItem) {
+            String linkInList = link.findElement(AppiumBy.id(linkDisplayName)).getText();
             Log.log(Level.FINE, "Checking link in list: " + linkInList);
             if (linkInList.equals(linkName)) {
                 Log.log(Level.FINE, "Link found, opening edit screen: " + linkName);
-                link.findElement(AppiumBy.accessibilityId("Edit public link for " + linkName)).click();
+                link.findElement(AppiumBy.id(editLink)).click();
+                return;
+            }
+        }
+        Log.log(Level.FINE, "Link not found in the list: " + linkName);
+    }
+
+    public void removeLink(String linkName){
+        Log.log(Level.FINE, "Starts: Remove Link " + linkName);
+        for (WebElement link : linkItem) {
+            String linkInList = link.findElement(AppiumBy.id
+                    (linkDisplayName)).getText();
+            Log.log(Level.FINE, "Checking link in list: " + linkInList);
+            if (linkInList.equals(linkName)) {
+                Log.log(Level.FINE, "Link found, removing: " + linkName);
+                link.findElement(AppiumBy.id(removeLink)).click();
+                okButton.click();
                 return;
             }
         }
@@ -244,7 +261,7 @@ public class SpaceMembersPage extends CommonPage {
 
     private WebElement getLinkByName(String linkName){
         Log.log(Level.FINE, "Starts: Check Link: " + linkName);
-        for (WebElement link : linkList) {
+        for (WebElement link : linkItem) {
             if (link.findElement(AppiumBy.androidUIAutomator(
                     "new UiSelector().text(\"" + linkName + "\")")).isDisplayed()){
                 return link;
