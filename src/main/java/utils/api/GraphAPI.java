@@ -72,12 +72,13 @@ public class GraphAPI extends CommonAPI {
                         personal.getId() + " " + personal.getName());
             }
         }
+        response.close();
         return personal;
     }
 
     private RequestBody createBodySpace(String name, String description) {
         Log.log(Level.FINE, "BODY SPACE: Name: " + name + " . Description: " + description);
-        String json = "{\"name\":\" " + name + " \",\"driveType\":\"project\", \"description\":\" " + description + " \"}";
+        String json = "{\"name\":\"" + name + " \",\"driveType\":\"project\", \"description\":\"" + description + " \"}";
         RequestBody body = RequestBody.create(JSON, json);
         return body;
     }
@@ -167,9 +168,11 @@ public class GraphAPI extends CommonAPI {
         for (OCSpaceMember member : spaceMembers){
             Log.log(Level.FINE, "Checking " + member.getDisplayName());
             if (member.getDisplayName().equals(userName)) {
+                response.close();
                 return member;
             }
         }
+        response.close();
         return null;
     }
 
@@ -186,10 +189,12 @@ public class GraphAPI extends CommonAPI {
             Log.log(Level.FINE, "Checking " + link.getLinkName());
             if (link.getLinkName().equals(linkName)) {
                 Log.log(Level.FINE, "Link found!!: " + link.getLinkName() + " " + link.getPermission());
+                response.close();
                 return link;
             }
         }
         Log.log(Level.FINE, "Link not found!!");
+        response.close();
         return null;
     }
 
@@ -199,7 +204,9 @@ public class GraphAPI extends CommonAPI {
         Log.log(Level.FINE, "URL: " + url);
         Request request = getRequest(url);
         Response response = httpClient.newCall(request).execute();
-        return OCUserJSONHandler.parse(response.body().string());
+        OCSpaceMember member = OCUserJSONHandler.parse(response.body().string());
+        response.close();
+        return member;
     }
 
     private String getPermissionId(String spaceId, String permissionName) throws IOException {
@@ -212,9 +219,11 @@ public class GraphAPI extends CommonAPI {
         for (OCSpacePermission permission : spacePermissions){
             if (permission.getPermissionName().contains(permissionName)) {
                 Log.log(Level.FINE, "Found Permission: " + permission.getPermissionName() + " :" + permission.getPermissionId());
+                response.close();
                 return permission.getPermissionId();
             }
         }
+        response.close();
         return "";
     }
 

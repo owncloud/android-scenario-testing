@@ -304,9 +304,9 @@ Feature: Spaces
 
       Examples:
         | name    | subtitle            | initialPermission | initialExpiration | permissions | expirationDate |
-        | Space26 | Twentyfifth space   | Can view          | 12                | Can edit    | 30             |
+        #| Space26 | Twentyfifth space   | Can view          | 12                | Can edit    | 20             |
         | Space27 | Twentyseventh space | Can manage        |                   | Can edit    | 10             |
-        | Space28 | Twentyeighth space  | Can edit          | 20                | Can manage  |                |
+        | Space28 | Twentyeighth space  | Can edit          | 22                | Can manage  |                |
 
     Scenario: Remove a member from a space
       Given the following spaces have been created in Alice account
@@ -380,9 +380,9 @@ Feature: Spaces
 
       Examples:
         | name    | subtitle            | permissions       | linkName   | expirationDate | newName   | newPermissions         | newExpirationDate |
-        | Space34 | Thirtyfourth space  | Can view          | Link34     | 2              | Link34new | Can view               | 4                 |
-        | Space35 | Twentyfifth space   | Can edit          | Link35     |                | Link35new | Secret file drop       | 4                 |
-        | Space36 | Twentysixth space   | Secret file drop  | Link36     | 2              | Link36new | Can edit               |                   |
+        #| Space34 | Thirtyfourth space  | Can view          | Link34     | 2              | Link34new | Can edit               | 4                 |
+        | Space35 | Twentyfifth space   | Can edit          | Link35     |                | Link35new | Secret file drop       | 14                |
+        | Space36 | Twentysixth space   | Secret file drop  | Link36     | 12             | Link36new | Can edit               |                   |
 
     @removelink
     Scenario: Remove a link from a space

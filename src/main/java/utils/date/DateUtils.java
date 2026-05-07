@@ -3,8 +3,8 @@ package utils.date;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
-import java.time.temporal.ChronoUnit;
 import java.util.Locale;
 import java.util.logging.Level;
 
@@ -19,12 +19,12 @@ public class DateUtils {
     }
 
     // Returns date after adding the number of days
-    // Input: 12. Output: 27 February 2026
+    // Input: 12. Output: Day 12 of following month
     // Used to set expiration dates in links and space members
     public static String dateInDaysAndroidFormat(String days) {
         Log.log(Level.FINE, "Starts: Turns days in date");
         int d = Integer.parseInt(days.trim());
-        LocalDate date = LocalDate.now().plusDays(d);
+        LocalDate date = LocalDate.now().plusMonths(1).withDayOfMonth(d);
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("dd MMMM yyyy", Locale.getDefault());
         String dateAfterDays = date.format(fmt);
         Log.log(Level.FINE, "Date formatted: " + dateAfterDays);
@@ -32,12 +32,12 @@ public class DateUtils {
     }
 
     // Returns date after adding the number of days
-    // Input: 12. Output: 2026-02-11 23:59:59
+    // Input: 12. Output: 2026-02-12 23:59:59
     // Used to assert expiration dates in the server
     public static String dateInDaysWithServerFormat(String days) {
         Log.log(Level.FINE, "Starts: Turns days in date with server response format");
         int d = Integer.parseInt(days.trim());
-        LocalDate date = LocalDate.now().plusDays(d);
+        LocalDate date = LocalDate.now().plusMonths(1).withDayOfMonth(d);
         Log.log(Level.FINE, "Date to format: " + date);
         LocalDateTime endOfDay = date.atTime(23, 59, 59);
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
@@ -46,13 +46,13 @@ public class DateUtils {
         return dateAfterDays;
     }
 
-    // Returns date after adding the number of days in the given format
+    // Returns date corresponding day in the following month
     // using the available enum types
     // Used to assert expiration dates in the app
     public static String formatDate(String days, DateFormatType format) {
         Log.log(Level.FINE, "Starts: Build shortDate string");
         int d = Integer.parseInt(days.trim());
-        LocalDate date = LocalDate.now().plusDays(d);
+        LocalDate date = LocalDate.now().plusMonths(1).withDayOfMonth(d);
         Log.log(Level.FINE, "Date: " + date);
         String result = "";
         if (format == DateFormatType.TEXT) {
@@ -68,8 +68,10 @@ public class DateUtils {
         return result;
     }
 
-    public static String daysToUTCForExpiration (String days){
-        Instant expirationInstant = Instant.now().plus(Integer.parseInt(days.trim()), ChronoUnit.DAYS);
+    public static String daysToUTCForExpiration (String days) {
+        int d = Integer.parseInt(days.trim());
+        LocalDate targetDate = LocalDate.now().plusMonths(1).withDayOfMonth(d);
+        Instant expirationInstant = targetDate.atStartOfDay(ZoneId.systemDefault()).toInstant();
         return DateTimeFormatter.ISO_INSTANT.format(expirationInstant);
     }
 }

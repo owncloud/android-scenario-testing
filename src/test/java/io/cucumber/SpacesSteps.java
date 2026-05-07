@@ -289,8 +289,7 @@ public class SpacesSteps {
             if (!(space.getName().equals(name)
                     && space.getDescription().equals(subtitle)
                     && space.getQuota(unit).equals(quota))) {
-                matches = false;
-                break;
+                matches = false;;
             }
         }
         // Check if all spaces in scenario definition match with spaces in server
@@ -352,7 +351,7 @@ public class SpacesSteps {
                         Log.log(Level.FINE, "Date in local: " + formattedDate);
                         assertEquals(formattedDate, dateRemote);
                     } else {
-                        assertEquals(null, member.getExpirationDate());
+                        assertNull(member.getExpirationDate());
                     }
                 }
             }

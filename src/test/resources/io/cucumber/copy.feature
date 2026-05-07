@@ -117,7 +117,7 @@ Feature: Copy item
           | copy13.txt |
         And Alice selects to Copy
         And Alice selects Personal as space
-        And Alice selects test as target folder
+        And Alice selects test11 as target folder
         Then Alice should see the conflict dialog with the following message
           | Apply to all 3 conflicts |
 

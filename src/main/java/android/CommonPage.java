@@ -77,9 +77,8 @@ public class CommonPage {
 
     public WebElement findUIAutomatorText(String text) {
         return driver.findElement(AppiumBy.androidUIAutomator(
-                "new UiSelector().textContains(\"" + text + "\");"));
+                "new UiSelector().text(\"" + text + "\")"));
     }
-
     public WebElement findUIAutomatorSubText(String text) {
         return driver.findElement(AppiumBy.androidUIAutomator(
                 "new UiSelector().textContains(\"" + text + "\");"));

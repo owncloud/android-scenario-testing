@@ -10,7 +10,7 @@ public class OCSpace {
     private String type;
     private String id;
     private String name;
-    private String subtitle;
+    private String description;
     private String owner;
     private long quota;
 
@@ -50,11 +50,11 @@ public class OCSpace {
     }
 
     public String getDescription() {
-        return subtitle;
+        return description;
     }
 
-    public void setDescription(String subtitle) {
-        this.subtitle = subtitle;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public String getQuota(String unit) {

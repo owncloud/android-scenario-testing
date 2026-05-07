@@ -107,7 +107,7 @@ public class SpaceMembersPage extends CommonPage {
 
     public void setPermission(String permission) {
         waitById(WAIT_TIME, permissionsTitle);
-        findUIAutomatorText(permission).click();
+        findUIAutomatorSubText(permission).click();
     }
 
     public void setPassword(){

@@ -14,7 +14,7 @@ import java.util.logging.SimpleFormatter;
 
 public class Log {
 
-    static Logger Log = Logger.getLogger(SharePage.class.getName());
+    static Logger Log = Logger.getLogger(Log.class.getName());
     static Handler fileHandler = null;
 
     public static void init() {
