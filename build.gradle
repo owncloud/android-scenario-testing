@@ -10,7 +10,7 @@ project.ext {
     byteBuddyVersion = '1.18.8'
     guavaVersion = '30.1-jre'
     javaClientVersion = '9.4.0'
-    okhttpVersion= '5.3.2'
+    okhttpVersion = '5.3.2'
     okioVersion = '3.17.0'
     jsonVersion = '20200518'
     slf4japiVersion = '2.0.17'
@@ -22,10 +22,17 @@ project.ext {
 buildscript {
     repositories {
         mavenLocal()
+        gradlePluginPortal()
+        mavenCentral()
     }
 }
 
 apply plugin: 'java'
+
+repositories {
+    mavenCentral()
+    mavenLocal()
+}
 
 dependencies {
     testImplementation 'io.cucumber:cucumber-java:' + cucumberVersion
@@ -52,18 +59,198 @@ dependencies {
             "org.assertj:assertj-core:" + assertjcoreVersion
 }
 
-repositories {
-    mavenCentral()
+/**
+ * Cucumber report paths.
+ *
+ * JSON reports:
+ * target/cucumber-reports/json/
+ *
+ * Cucumber rerun files:
+ * target/cucumber-reports/rerun/
+ */
+def cucumberReportsDir = file("target/cucumber-reports")
+def cucumberJsonDir = file("${cucumberReportsDir}/json")
+def cucumberRerunDir = file("${cucumberReportsDir}/rerun")
+
+/**
+ * Gradle HTML report paths.
+ *
+ * Main execution:
+ * target/gradle-test-reports/main/
+ *
+ * First rerun:
+ * target/gradle-test-reports/rerun-1/
+ *
+ * Second rerun:
+ * target/gradle-test-reports/rerun-2/
+ */
+def gradleTestReportsDir = file("target/gradle-test-reports")
+
+/**
+ * Common system properties for all Cucumber/Appium executions.
+ */
+def configureCommonCucumberSystemProperties = { Test task ->
+    task.systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
+    task.systemProperty "appium", System.getProperty("appium")
+    task.systemProperty "device", System.getProperty("device")
+    task.systemProperty "server", System.getProperty("server")
+    task.systemProperty "host", System.getProperty("host")
+    task.systemProperty "backend", System.getProperty("backend")
 }
 
+/**
+ * Configures a Cucumber Test task.
+ *
+ * Parameters:
+ * - task: Gradle Test task to configure
+ * - features: feature directory or rerun file
+ * - jsonFileName: output Cucumber JSON file name
+ * - rerunOutputFileName: optional Cucumber rerun output file name
+ * - ignoreFailuresValue: whether this task should allow the build to continue after failures
+ */
+def configureCucumberTask = { Test task,
+                              String features,
+                              String jsonFileName,
+                              String rerunOutputFileName = null,
+                              boolean ignoreFailuresValue = false ->
+
+    task.useJUnit()
+    task.testLogging.showStandardStreams = true
+    task.ignoreFailures = ignoreFailuresValue
+
+    task.systemProperty "cucumber.features", features
+
+    def plugins = [
+            "pretty",
+            "json:${cucumberJsonDir}/${jsonFileName}"
+    ]
+
+    if (rerunOutputFileName != null) {
+        plugins << "rerun:${cucumberRerunDir}/${rerunOutputFileName}"
+    }
+
+    task.systemProperty "cucumber.plugin", plugins.join(",")
+
+    configureCommonCucumberSystemProperties(task)
+}
+
+/**
+ * Main execution.
+ *
+ * Runs all feature files.
+ *
+ * This task is allowed to fail because failed scenarios will be retried
+ * by cucumberRerun1.
+ *
+ * Generates:
+ * - target/cucumber-reports/json/cucumber-main.json
+ * - target/cucumber-reports/rerun/rerun.txt
+ * - target/gradle-test-reports/main/index.html
+ */
 test {
-    testLogging.showStandardStreams = true
-    systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
-    systemProperty "appium", System.getProperty("appium")
-    systemProperty "device", System.getProperty("device")
-    systemProperty "server", System.getProperty("server")
-    systemProperty "host", System.getProperty("host")
-    systemProperty "backend", System.getProperty("backend")
+    doFirst {
+        delete cucumberReportsDir
+        delete gradleTestReportsDir
+
+        cucumberJsonDir.mkdirs()
+        cucumberRerunDir.mkdirs()
+    }
+
+    configureCucumberTask(
+            delegate,
+            "src/test/resources/io/cucumber",
+            "cucumber-main.json",
+            "rerun.txt",
+            true
+    )
+
+    reports {
+        html.destination = file("${gradleTestReportsDir}/main")
+        junitXml.enabled = false
+    }
 }
 
-gradle.startParameter.continueOnFailure = true
+/**
+ * First rerun.
+ *
+ * Runs only if the main execution generated a non-empty rerun.txt file.
+ *
+ * This task is allowed to fail because remaining failed scenarios will be
+ * retried by cucumberRerun2.
+ *
+ * Generates:
+ * - target/cucumber-reports/json/cucumber-rerun-1.json
+ * - target/cucumber-reports/rerun/rerun-1.txt
+ * - target/gradle-test-reports/rerun-1/index.html
+ */
+task cucumberRerun1(type: Test) {
+    onlyIf {
+        def rerunFile = file("${cucumberRerunDir}/rerun.txt")
+        rerunFile.exists() && rerunFile.text.trim()
+    }
+
+    configureCucumberTask(
+            delegate,
+            "@${cucumberRerunDir}/rerun.txt",
+            "cucumber-rerun-1.json",
+            "rerun-1.txt",
+            true
+    )
+
+    reports {
+        html.destination = file("${gradleTestReportsDir}/rerun-1")
+        junitXml.enabled = false
+    }
+}
+
+/**
+ * Second rerun.
+ *
+ * Runs only if the first rerun generated a non-empty rerun-1.txt file.
+ *
+ * This task is NOT allowed to ignore failures. If any scenario still fails here,
+ * the whole build fails.
+ *
+ * Generates:
+ * - target/cucumber-reports/json/cucumber-rerun-2.json
+ * - target/gradle-test-reports/rerun-2/index.html
+ */
+task cucumberRerun2(type: Test) {
+    onlyIf {
+        def rerunFile = file("${cucumberRerunDir}/rerun-1.txt")
+        rerunFile.exists() && rerunFile.text.trim()
+    }
+
+    configureCucumberTask(
+            delegate,
+            "@${cucumberRerunDir}/rerun-1.txt",
+            "cucumber-rerun-2.json",
+            null,
+            false
+    )
+
+    reports {
+        html.destination = file("${gradleTestReportsDir}/rerun-2")
+        junitXml.enabled = false
+    }
+}
+
+/**
+ * Execution chain.
+ *
+ * A single './gradlew clean test' may execute:
+ *
+ * 1. test
+ *    Runs the full suite.
+ *
+ * 2. cucumberRerun1
+ *    Runs only scenarios that failed in the main execution.
+ *
+ * 3. cucumberRerun2
+ *    Runs only scenarios that failed again in cucumberRerun1.
+ *
+ * The build fails only if a scenario is still failing in cucumberRerun2.
+ */
+test.finalizedBy cucumberRerun1, cucumberRerun2
+
+cucumberRerun2.mustRunAfter cucumberRerun1

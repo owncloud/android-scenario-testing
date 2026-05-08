@@ -211,7 +211,7 @@ public class CommonPage {
      */
     public void browseInto(String folderName) {
         Log.log(Level.FINE, "Starts: browse to " + folderName);
-        findUIAutomatorText(folderName).click();
+        findUIAutomatorSubText(folderName).click();
     }
 
     /*
