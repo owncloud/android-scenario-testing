@@ -134,7 +134,10 @@ public class SpaceMembersPage extends CommonPage {
             expirationDateSwitch.click();
             selectExpirationDate(days);
         } else if (isSwitchOn && hasDays) { // Just set days
-            expirationDateLayout.click();
+            // For any unexpected reason in emulator, the switch needs to be off and on again
+            // to be able to set the expiration date
+            expirationDateSwitch.click();
+            expirationDateSwitch.click();
             selectExpirationDate(days);
         } else if (isSwitchOn && !hasDays) { // Switch it off
             expirationDateSwitch.click();
