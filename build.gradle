@@ -88,6 +88,9 @@ def gradleTestReportsDir = file("target/gradle-test-reports")
 
 /**
  * Common system properties for all Cucumber/Appium executions.
+ *
+ * These values are read from the Gradle JVM system properties and forwarded
+ * to each Test task JVM.
  */
 def configureCommonCucumberSystemProperties = { Test task ->
     task.systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
@@ -102,11 +105,11 @@ def configureCommonCucumberSystemProperties = { Test task ->
  * Configures a Cucumber Test task.
  *
  * Parameters:
- * - task: Gradle Test task to configure
- * - features: feature directory or rerun file
- * - jsonFileName: output Cucumber JSON file name
- * - rerunOutputFileName: optional Cucumber rerun output file name
- * - ignoreFailuresValue: whether this task should allow the build to continue after failures
+ * - task: Gradle Test task to configure.
+ * - features: feature directory or Cucumber rerun file.
+ * - jsonFileName: output Cucumber JSON report file name.
+ * - rerunOutputFileName: optional Cucumber rerun output file name.
+ * - ignoreFailuresValue: whether this task should allow the build to continue after failures.
  */
 def configureCucumberTask = { Test task,
                               String features,
@@ -137,10 +140,10 @@ def configureCucumberTask = { Test task,
 /**
  * Main execution.
  *
- * Runs all feature files.
+ * Runs the full Cucumber suite.
  *
- * This task is allowed to fail because failed scenarios will be retried
- * by cucumberRerun1.
+ * This task is allowed to fail without failing the build because failed
+ * scenarios are written to rerun.txt and retried by cucumberRerun1.
  *
  * Generates:
  * - target/cucumber-reports/json/cucumber-main.json
@@ -174,9 +177,11 @@ test {
  * First rerun.
  *
  * Runs only if the main execution generated a non-empty rerun.txt file.
+ * That file is produced by Cucumber and contains the scenarios that failed
+ * in the main execution.
  *
- * This task is allowed to fail because remaining failed scenarios will be
- * retried by cucumberRerun2.
+ * This task is allowed to fail without failing the build because remaining
+ * failed scenarios are written to rerun-1.txt and retried by cucumberRerun2.
  *
  * Generates:
  * - target/cucumber-reports/json/cucumber-rerun-1.json
@@ -206,7 +211,8 @@ task cucumberRerun1(type: Test) {
 /**
  * Second rerun.
  *
- * Runs only if the first rerun generated a non-empty rerun-1.txt file.
+ * Runs only if cucumberRerun1 generated a non-empty rerun-1.txt file.
+ * That file contains the scenarios that failed again in the first rerun.
  *
  * This task is NOT allowed to ignore failures. If any scenario still fails here,
  * the whole build fails.
@@ -244,12 +250,18 @@ task cucumberRerun2(type: Test) {
  *    Runs the full suite.
  *
  * 2. cucumberRerun1
- *    Runs only scenarios that failed in the main execution.
+ *    Runs only scenarios that failed in the main execution, if any.
  *
  * 3. cucumberRerun2
- *    Runs only scenarios that failed again in cucumberRerun1.
+ *    Runs only scenarios that failed again in cucumberRerun1, if any.
  *
- * The build fails only if a scenario is still failing in cucumberRerun2.
+ * Failure policy:
+ * - test may fail without failing the build, because cucumberRerun1 retries failed scenarios.
+ * - cucumberRerun1 may fail without failing the build, because cucumberRerun2 retries remaining failures.
+ * - cucumberRerun2 does not ignore failures. If any scenario still fails there, the build fails.
+ *
+ * Therefore, the build only fails if a scenario fails in the main execution
+ * and keeps failing after all configured reruns.
  */
 test.finalizedBy cucumberRerun1, cucumberRerun2
 
