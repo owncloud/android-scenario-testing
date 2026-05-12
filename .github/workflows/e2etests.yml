@@ -68,10 +68,18 @@ jobs:
           name: report
           path: target
 
-      - name: Rename log file
-        if: always()
+      - name: Sanitize log filenames
         run: |
-          cp logs/*.log logs/log.log
+          # Replace ':' with '-' because upload-artifact rejects those paths.
+          find ./logs -depth -name '*:*' | while IFS= read -r file; do
+            dir="$(dirname "$file")"
+            base="$(basename "$file")"
+            safe_base="${base//:/-}"
+            final_path="$dir/$safe_base"
+
+            mv "$file" "$final_path"
+            echo "Sanitized log filename: $final_path"
+          done
 
       - name: Upload Execution Log
         if: always()
