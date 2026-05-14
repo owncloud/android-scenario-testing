@@ -1,4 +1,4 @@
-@shares
+@shares @nooc10
 Feature: Private Share
 
   As a user
