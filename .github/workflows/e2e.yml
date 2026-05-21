@@ -9,14 +9,67 @@ on:
   schedule:
     - cron: '30 2 * * 1-5'  # Monday to Friday at 2:30AM
 
+permissions:
+  contents: read
+
 jobs:
+  # Firstly, check if there were changes the day before. If not, aborting
+  check_repo_changes:
+    name: Check changes in Android app
+    runs-on: ubuntu-latest
+
+    outputs:
+      has_changes: ${{ steps.check.outputs.has_changes }}
+
+    steps:
+      - name: Checkout external repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
+        with:
+          repository: owncloud/android
+          ref: master
+          fetch-depth: 0
+          path: android-repo
+
+      - name: Check commits from previous day
+        id: check
+        shell: bash
+        run: |
+
+          cd android-repo
+
+          export TZ="Europe/Madrid"
+          SINCE=$(date -d "yesterday" +"%Y-%m-%d 00:00:00")
+          UNTIL=$(date -d "today" +"%Y-%m-%d 00:00:00")
+
+          echo "Checking commits in external repo between:"
+          echo "SINCE=$SINCE"
+          echo "UNTIL=$UNTIL"
+
+          COMMITS=$(git rev-list --count --since="$SINCE" --until="$UNTIL" origin/master)
+
+          echo "Commits found: $COMMITS"
+
+          if [ "$COMMITS" -gt 0 ]; then
+            echo "has_changes=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "has_changes=false" >> "$GITHUB_OUTPUT"
+          fi
+
+  # Builds apk
   build_apk:
+    needs:
+      - check_repo_changes
+    if: github.event_name == 'workflow_dispatch' || needs.check_repo_changes.outputs.has_changes == 'true'
     uses: owncloud/android/.github/workflows/build-apk.yml@master
     with:
       build_variant: qaRelease
       version: master
 
+  # Creates an oCIS server
   create_ocis:
+    needs:
+      - check_repo_changes
+    if: github.event_name == 'workflow_dispatch' || needs.check_repo_changes.outputs.has_changes == 'true'
     uses: ./.github/workflows/ocisbackend.yml
     with:
       ocis_version: ${{ (inputs.ocis_version != '' && inputs.ocis_version) || vars.OCIS_VERSION }}
@@ -27,8 +80,11 @@ jobs:
       ssh_private_key: ${{ secrets.SSH_PRIVATE_KEY }}
       ocis_pwd: ${{ secrets.OCIS_PWD }}
 
+  # Launches the tests
   tests:
+    if: github.event_name == 'workflow_dispatch' || needs.check_repo_changes.outputs.has_changes == 'true'
     needs:
+      - check_repo_changes
       - build_apk
       - create_ocis
     uses: ./.github/workflows/e2etests.yml
@@ -38,10 +94,12 @@ jobs:
     secrets:
        oc_server_url: ${{ secrets.OC_SERVER_URL }}
 
+  # Server clean up
   cleanup:
     needs:
+      - check_repo_changes
       - tests
-    if: always()
+    if: always() && (github.event_name == 'workflow_dispatch' || needs.check_repo_changes.outputs.has_changes == 'true')
     uses: ./.github/workflows/cleanup.yml
     secrets:
       ssh_host: ${{ secrets.SSH_HOST }}
