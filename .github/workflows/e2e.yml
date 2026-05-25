@@ -7,7 +7,7 @@ on:
         type: string
         required: false
   schedule:
-    - cron: '30 2 * * 1-5'  # Monday to Friday at 2:30AM
+    - cron: '30 2 * * 2-5'  # Tuesday to Friday at 2:30AM
 
 permissions:
   contents: read
