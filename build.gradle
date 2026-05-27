@@ -168,8 +168,9 @@ test {
     )
 
     reports {
-        html.destination = file("${gradleTestReportsDir}/main")
-        junitXml.enabled = false
+        html.required.set(true)
+        html.outputLocation.set(file("${gradleTestReportsDir}/main"))
+        junitXml.required.set(false)
     }
 }
 
@@ -203,8 +204,9 @@ task cucumberRerun1(type: Test) {
     )
 
     reports {
-        html.destination = file("${gradleTestReportsDir}/rerun-1")
-        junitXml.enabled = false
+        html.required.set(true)
+        html.outputLocation.set(file("${gradleTestReportsDir}/main"))
+        junitXml.required.set(false)
     }
 }
 
@@ -236,8 +238,9 @@ task cucumberRerun2(type: Test) {
     )
 
     reports {
-        html.destination = file("${gradleTestReportsDir}/rerun-2")
-        junitXml.enabled = false
+        html.required.set(true)
+        html.outputLocation.set(file("${gradleTestReportsDir}/main"))
+        junitXml.required.set(false)
     }
 }
 
