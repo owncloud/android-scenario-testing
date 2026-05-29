@@ -96,6 +96,7 @@ def configureCommonCucumberSystemProperties = { Test task ->
     task.systemProperty "cucumber.filter.tags", System.getProperty("cucumber.filter.tags")
     task.systemProperty "appium", System.getProperty("appium")
     task.systemProperty "device", System.getProperty("device")
+    task.systemProperty "udid", System.getProperty("udid")
     task.systemProperty "server", System.getProperty("server")
     task.systemProperty "host", System.getProperty("host")
     task.systemProperty "backend", System.getProperty("backend")
@@ -110,6 +111,11 @@ def configureCommonCucumberSystemProperties = { Test task ->
  * - jsonFileName: output Cucumber JSON report file name.
  * - rerunOutputFileName: optional Cucumber rerun output file name.
  * - ignoreFailuresValue: whether this task should allow the build to continue after failures.
+ *
+ * Important for Gradle 9:
+ * Custom Test tasks such as cucumberRerun1 and cucumberRerun2 must explicitly
+ * declare the compiled test classes and runtime classpath. Otherwise Gradle may
+ * consider them NO-SOURCE and skip them, even when the Cucumber rerun file exists.
  */
 def configureCucumberTask = { Test task,
                               String features,
@@ -118,6 +124,25 @@ def configureCucumberTask = { Test task,
                               boolean ignoreFailuresValue = false ->
 
     task.useJUnit()
+
+    /*
+     * Gradle 9 compatibility.
+     *
+     * The default 'test' task already knows its test classes and classpath, but
+     * custom Test tasks do not safely inherit those values anymore. Setting them
+     * explicitly prevents cucumberRerun1/cucumberRerun2 from being skipped as
+     * NO-SOURCE after the main execution generates a rerun file.
+     */
+    task.testClassesDirs = sourceSets.test.output.classesDirs
+    task.classpath = sourceSets.test.runtimeClasspath
+
+    /*
+     * Cucumber is launched through the JUnit runner and receives the feature
+     * location through cucumber.features. Disabling class scanning avoids Gradle
+     * trying to discover test classes on its own.
+     */
+    task.scanForTestClasses = false
+
     task.testLogging.showStandardStreams = true
     task.ignoreFailures = ignoreFailuresValue
 
@@ -205,7 +230,7 @@ task cucumberRerun1(type: Test) {
 
     reports {
         html.required.set(true)
-        html.outputLocation.set(file("${gradleTestReportsDir}/main"))
+        html.outputLocation.set(file("${gradleTestReportsDir}/rerun-1"))
         junitXml.required.set(false)
     }
 }
@@ -239,7 +264,7 @@ task cucumberRerun2(type: Test) {
 
     reports {
         html.required.set(true)
-        html.outputLocation.set(file("${gradleTestReportsDir}/main"))
+        html.outputLocation.set(file("${gradleTestReportsDir}/rerun-2"))
         junitXml.required.set(false)
     }
 }
@@ -261,11 +286,15 @@ task cucumberRerun2(type: Test) {
  * Failure policy:
  * - test may fail without failing the build, because cucumberRerun1 retries failed scenarios.
  * - cucumberRerun1 may fail without failing the build, because cucumberRerun2 retries remaining failures.
- * - cucumberRerun2 does not ignore failures. If any scenario still fails there, the build fails.
+ * - cucumberRerun2 does not ignore failures. If any scenario still fails here, the build fails.
  *
  * Therefore, the build only fails if a scenario fails in the main execution
  * and keeps failing after all configured reruns.
+ *
+ * The chain is expressed with finalizedBy so that reruns are attempted after
+ * the previous execution, even when that previous execution contains failing tests.
  */
-test.finalizedBy cucumberRerun1, cucumberRerun2
+test.finalizedBy cucumberRerun1
+cucumberRerun1.finalizedBy cucumberRerun2
 
 cucumberRerun2.mustRunAfter cucumberRerun1
