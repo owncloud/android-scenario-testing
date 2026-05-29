@@ -1,131 +1,146 @@
+# Android Scenario Testing
 
-[![Tests last execution](https://github.com/owncloud/android-scenario-testing/actions/workflows/e2e.yml/badge.svg)](https://github.com/owncloud/android-scenario-testing/actions/workflows/e2e.yml)
+<!-- OSPO-managed README | Generated: 2026-04-16 | v2 -->
 
-Scenarios contained in feature files written in Gherkin language.
-Available scenarios can be found
-[here](src/test/resources/io/cucumber).
+[![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![ownCloud OSPO](https://img.shields.io/badge/OSPO-ownCloud-blue)](https://kiteworks.com/opensource)
 
-Defined for the [ownCloud Android app](https://github.com/owncloud/android)
+This repository contains end-to-end scenario tests for the [ownCloud Android app](https://github.com/owncloud/android). Tests are written as Gherkin feature files using Cucumber for step interpretation and Appium for device interaction. The test suite covers core functionality including login, file operations, sharing, and Spaces, and runs against both oCIS and ownCloud 10 backends.
 
+## Part of Mobile (Android)
 
-## Global overview
+This repository provides the automated end-to-end test suite for the [ownCloud Android app](https://github.com/owncloud/android). It is used in CI pipelines to validate app behavior against real server backends.
 
-- Scenarios are defined with [Gherkin
-Syntax](https://cucumber.io/docs/gherkin/).
+## Getting Started
 
-- Steps are interpreted by [Cucumber](https://cucumber.io/).
+Follow the steps below to set up and run the end-to-end test suite.
 
-- Step implementation language:
-[Java](https://docs.oracle.com/javase/7/docs/)
+### Prerequisites
 
-- Device interaction with [Appium](http://appium.io/)
+- An [Appium](https://appium.io/) instance running and reachable
+- At least one Android device or emulator attached (verify with `adb devices`)
+- `$ANDROID_HOME` environment variable set to the Android SDK folder
 
+### Running Tests
 
-![](architecture.png)
+1. Build the [ownCloud Android app](https://github.com/owncloud/android) from the target branch using the `buildAPK` script in `buildapk/`
+2. Set environment variables:
+   - `$OC_SERVER_URL` (mandatory) - ownCloud server URL
+   - `$APPIUM_URL` (optional, defaults to `localhost:4723`)
+   - `$UDID_DEVICE` (optional) - device/emulator ID
+   - `$BACKEND` (optional, defaults to `oCIS`) - `oCIS` or `oC10`
+3. Run the `executeTests` script
 
-## Get the code
+## Documentation
 
-- With git:
+- Feature files are in `src/test/resources/io/cucumber/`
+- [Appium documentation](https://appium.io/docs/en/about-appium/getting-started/)
+- [Cucumber documentation](https://cucumber.io/docs/gherkin/)
 
-`git clone https://github.com/owncloud/android-scenario-testing.git`
+## Reference
 
-- Download a [zip
-file](https://github.com/owncloud/android-scenario-testing/archive/master.zip)
+Key details from the project's test architecture and configuration:
 
-## Requirements
+### Architecture
 
-Different requirements:
+Tests use [Gherkin Syntax](https://cucumber.io/docs/gherkin/) scenarios interpreted by [Cucumber](https://cucumber.io/), with step implementations in Java and device interaction via [Appium](http://appium.io/).
 
-* `Appium` instance running and reachable. Check this [link](https://appium.io/docs/en/about-appium/getting-started/?lang=en) to get futher info about Appium. 
+### Environment Variables
 
-* At least, one device/emulator attached and reachable via adb. Check command
-`adb devices` to ensure `Appium` will get the device reference to
-interact with it.
+| Variable | Required | Default | Description |
+|---|---|---|---|
+| `$OC_SERVER_URL` | Yes | -- | ownCloud server URL to test against |
+| `$APPIUM_URL` | No | `localhost:4723` | Appium server URL |
+| `$UDID_DEVICE` | No | -- | Device/emulator ID (from `adb devices`) |
+| `$BACKEND` | No | `oCIS` | Backend type: `oCIS` or `oC10` |
 
-* The environment variable `$ANDROID_HOME` needs to be correctly set up,
-pointing to the Android SDK folder
+### Backend-Specific Tags
 
-## How to test
+Since not all tests are suitable for both backends, tests are tagged:
 
+- `@nooc10` -- tests for oCIS only, not suitable for oC10
+- `@noocis` -- tests for oC10 only, not suitable for oCIS
 
-### 1. Build app
+Example: `./executeTests -t "not @ignore and not @noocis"` runs tests suitable for oCIS.
 
-First, build the [app](https://github.com/owncloud/android) from the expected branch/commit to get the test object.
+### Test Results
 
-The [buildAPK](https://github.com/owncloud/android-scenario-testing/blob/master/buildapk/buildAPK.sh) script will build the app by using the qa variant available in the app. Such variant:
+Reports in HTML and JSON formats are generated in the `target/` directory.
 
-- will disable welcome wizard
-- will disable the release notes
-- will set basic auth as forced authentication method, required to execute the test suites
+### Version Matrix
 
-Besides of that, the script also:
+| Component | Version |
+|---|---|
+| Cucumber | 7.31.0 |
+| Appium | 3.1.0 |
+| Appium UIAutomator2 Driver | 4.2.3 |
+| Java Client | 9.4.0 |
 
-- builds a release-signed apk with the given keystore path and pass (check script variables)
-- moves the final artifact to the correct place (`/src/test/resources` folder in the current structure)
+## Community & Support
 
-As commented, check the script's variables for the proper setup in your own environment or CI system.
+**[Star](https://github.com/owncloud/android-scenario-testing)** this repo and **Watch** for release notifications!
 
-In the current repository there will be always an `owncloud.apk` file located in `/src/test/resources`, as example or fallback.
+- [ownCloud Website](https://owncloud.com)
+- [Community Discussions](https://github.com/orgs/owncloud/discussions)
+- [Matrix Chat](https://app.element.io/#/room/#owncloud:matrix.org)
+- [Documentation](https://doc.owncloud.com)
+- [Enterprise Support](https://owncloud.com/contact-us/)
+- [OSPO Home](https://kiteworks.com/opensource)
 
-### 2. Execute tests
+## Contributing
 
-The script `executeTests` will launch the tests. The following environment variables must be set in advance
+We welcome contributions! Please read the [Contributing Guidelines](CONTRIBUTING.md)
+and our [Code of Conduct](CODE_OF_CONDUCT.md) before getting started.
 
-		$OC_SERVER_URL (mandatory): URL of ownCloud server to test against
-		$APPIUM_URL (optional): Appium server URL.
-			If Appium Server is not specified, will be used "localhost:4723"
-		$UDID_DEVICE (optional): ID of the device/simulator to execute the tests onto.
-			This ID could be get by executing  `adb devices`
-		$BACKEND (optional): oCIS or oC10. If not specified, will be used oCIS.
+### Workflow
 
-The script needs some parameters. Check help `executeTests -h`
+- **Rebase Early, Rebase Often!** We use a rebase workflow. Always rebase on the target branch before submitting a PR.
+- **Dependabot**: Automated dependency updates are managed via Dependabot. Review and merge dependency PRs promptly.
+- **Signed Commits**: All commits **must** be PGP/GPG signed. See [GitHub's signing guide](https://docs.github.com/en/authentication/managing-commit-signature-verification).
+- **DCO Sign-off**: Every commit must carry a `Signed-off-by` line:
+  ```
+  git commit -s -S -m "your commit message"
+  ```
+- **GitHub Actions Policy**: Workflows may only use actions that are (a) owned by `owncloud`, (b) created by GitHub (`actions/*`), or (c) verified in the GitHub Marketplace.
 
+## Security
 
-To execute all tests but the ignored ones (or any other tagged ones):
+**Do not open a public GitHub issue for security vulnerabilities.**
 
-		export UDID_DEVICE=emulator-5554
-		export OC_SERVER_URL=https://my.owncloud.server
-		export APPIUM_URL=localhost:4723
-		export BACKEND=oCIS
-		./executeTests -t "not @ignore"
+Report vulnerabilities at **<https://security.owncloud.com>** -- see [SECURITY.md](SECURITY.md).
 
-The execution will display step by step how the scenario is being executed.
+Bug bounty: [YesWeHack ownCloud Program](https://yeswehack.com/programs/owncloud-bug-bounty-program)
 
-** the `not @ignore` option is set by default
+## License
 
-More info in [Cucumber reference](https://cucumber.io/docs/cucumber/api/)
+This project is licensed under the [MIT](LICENSE).
 
-**NOTE**: Since there are two kinds of backends available (oC10, oCIS), not all tests are suitable to be executed over both. Those tests have been tagged with:
+## About the ownCloud OSPO
 
-- `@nooc10`: tests to be executed only over oCIS, not suitable for oC10.
-- `@noocis`: tests to be executed only over oC10, not suitable for oCIS.
+The [Kiteworks Open Source Program Office](https://kiteworks.com/opensource), operating under
+the [ownCloud](https://owncloud.com) brand, launched on May 5, 2026, to steward the open source
+ecosystem around ownCloud's products. The OSPO ensures transparent governance, license compliance,
+community health, and sustainable collaboration between the open source community and
+[Kiteworks](https://www.kiteworks.com), which acquired ownCloud in 2023.
 
-It's important to execute the tests with the mentioned tags to avoid wrong positives. Example commands:
+- **OSPO Home**: <https://kiteworks.com/opensource>
+- **GitHub**: <https://github.com/owncloud>
+- **ownCloud**: <https://owncloud.com>
 
-`./executeTests -t "not @ignore and not @noocis"`<br>
-This command will execute tests that are not ignored and suitable for oCIS. If this command is run over an oC10 instance, some tests will fail.
+For questions about the OSPO or licensing, contact ospo@kiteworks.com.
 
-`./executeTests -t "not @ignore and not @nooc10"`<br>
-This command will execute tests that are not ignored and suitable for oC10. If this command is run over an oCIS instance, some tests will fail.
+### License Migration to Apache 2.0
 
-Every [feature file](https://github.com/owncloud/android-scenario-testing/tree/master/src/test/resources/io/cucumber), and every rule inside every feature file is also tagged, for isolated execution just in case. 
+The OSPO is driving a strategic relicensing of ownCloud repositories toward the
+[Apache License 2.0](https://www.apache.org/licenses/LICENSE-2.0), following
+the [Apache Software Foundation's third-party license policy](https://www.apache.org/legal/resolved.html).
 
-## Results
+Individual repositories will migrate as their audit is completed. The LICENSE file
+in each repo reflects its **current** license status (not the target).
 
-In the folder `target`, you will find a report with the execution results in html and json formats.
+**Current license: MIT** (Category A per Apache policy -- permissive, compatible with Apache-2.0).
 
+Migration prerequisites for this repository:
 
-## Versioning
-
-Up to date: 18/Nov/2025
-
-||        |
-|:-- |:------:|
-| [Cucumber version](https://cucumber.io/docs/installation/java/) | 7.31.0 |
-| [Appium version](https://github.com/appium/appium/releases)| 3.1.0 |
-| [Appium uiautomator2 driver version](https://github.com/appium/appium-uiautomator2-driver/releases)|  4.2.3  |
-| [Java client version](https://github.com/appium/java-client/releases) | 9.4.0  |
-
-**Note**: This repository was forked from [Cucumber-java
-skeleton](https://github.com/cucumber/cucumber-java-skeleton)
-repository, which contains the base skeleton to start working.
+- **CLA/DCO coverage**: All past contributors must have signed agreements permitting relicensing
+- **Header updates**: All source file headers must be updated from MIT to Apache-2.0 notice
+- **Dependency audit**: Verify no incompatible transitive dependencies
