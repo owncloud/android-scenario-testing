@@ -73,6 +73,7 @@ jobs:
           path: target
 
       - name: Sanitize log filenames
+        if: always()
         run: |
           # Replace ':' with '-' because upload-artifact rejects those paths.
           find ./logs -depth -name '*:*' | while IFS= read -r file; do
