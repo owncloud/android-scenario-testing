@@ -96,7 +96,7 @@ jobs:
     with:
       apk: ${{ needs.build_apk.outputs.artifact_name }}
       backend: oCIS
-      tag: ${{ inputs.tag || 'not @ignore and not @nooc and not @noci' }}
+      tag: ${{ inputs.tag || 'not @ignore and not @noocis and not @noci' }}
     secrets:
        oc_server_url: ${{ secrets.OC_SERVER_URL }}
 
