@@ -20,6 +20,8 @@ Follow the steps below to set up and run the end-to-end test suite.
 
 Tests use [Gherkin Syntax](https://cucumber.io/docs/gherkin/) scenarios interpreted by [Cucumber](https://cucumber.io/), with step implementations in Java and device interaction via [Appium](http://appium.io/).
 
+![](architecture.png)
+
 ### Prerequisites
 
 - An [Appium](https://appium.io/) instance running and reachable
