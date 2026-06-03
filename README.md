@@ -4,7 +4,9 @@
 
 [![License](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE) [![ownCloud OSPO](https://img.shields.io/badge/OSPO-ownCloud-blue)](https://kiteworks.com/opensource)
 
-This repository contains end-to-end scenario tests for the [ownCloud Android app](https://github.com/owncloud/android). Tests are written as Gherkin feature files using Cucumber for step interpretation and Appium for device interaction. The test suite covers core functionality including login, file operations, sharing, and Spaces, and runs against both oCIS and ownCloud 10 backends.
+[![Tests last execution](https://github.com/owncloud/android-scenario-testing/actions/workflows/e2e.yml/badge.svg)](https://github.com/owncloud/android-scenario-testing/actions/workflows/e2e.yml)
+
+This repository contains end-to-end scenario tests for the [ownCloud Android app](https://github.com/owncloud/android). Tests are written as Gherkin feature files using Cucumber for step interpretation and Appium for device interaction. The test suite covers core functionality including file operations, sharing, and Spaces, and runs against both oCIS and ownCloud 10 backends.
 
 ## Part of Mobile (Android)
 
@@ -14,6 +16,10 @@ This repository provides the automated end-to-end test suite for the [ownCloud A
 
 Follow the steps below to set up and run the end-to-end test suite.
 
+### Architecture
+
+Tests use [Gherkin Syntax](https://cucumber.io/docs/gherkin/) scenarios interpreted by [Cucumber](https://cucumber.io/), with step implementations in Java and device interaction via [Appium](http://appium.io/).
+
 ### Prerequisites
 
 - An [Appium](https://appium.io/) instance running and reachable
@@ -22,29 +28,28 @@ Follow the steps below to set up and run the end-to-end test suite.
 
 ### Running Tests
 
-1. Build the [ownCloud Android app](https://github.com/owncloud/android) from the target branch using the `buildAPK` script in `buildapk/`
-2. Set environment variables:
-   - `$OC_SERVER_URL` (mandatory) - ownCloud server URL
-   - `$APPIUM_URL` (optional, defaults to `localhost:4723`)
-   - `$UDID_DEVICE` (optional) - device/emulator ID
-   - `$BACKEND` (optional, defaults to `oCIS`) - `oCIS` or `oC10`
-3. Run the `executeTests` script
+#### 1. Build app
 
-## Documentation
+First, build the [app](https://github.com/owncloud/android) from the expected branch/commit to get the test object.
 
-- Feature files are in `src/test/resources/io/cucumber/`
-- [Appium documentation](https://appium.io/docs/en/about-appium/getting-started/)
-- [Cucumber documentation](https://cucumber.io/docs/gherkin/)
+The [buildAPK](https://github.com/owncloud/android-scenario-testing/blob/master/buildapk/buildAPK.sh) script will build the app by using the qa variant available in the app. Such variant:
 
-## Reference
+- will disable welcome wizard
+- will disable the release notes
+- will set basic auth as forced authentication method, required to execute the test suites
 
-Key details from the project's test architecture and configuration:
+Besides of that, the script also:
 
-### Architecture
+- builds a release-signed apk with the given keystore path and pass (check script variables)
+- moves the final artifact to the correct place (`/src/test/resources` folder in the current structure)
 
-Tests use [Gherkin Syntax](https://cucumber.io/docs/gherkin/) scenarios interpreted by [Cucumber](https://cucumber.io/), with step implementations in Java and device interaction via [Appium](http://appium.io/).
+As commented, check the script's variables for the proper setup in your own environment or CI system.
 
-### Environment Variables
+In the current repository there will be always an `owncloud.apk` file located in `/src/test/resources`, as example or fallback.
+
+#### 2. Execute tests
+
+The script `executeTests` will launch the tests. The following environment variables must be set in advance
 
 | Variable | Required | Default | Description |
 |---|---|---|---|
@@ -53,20 +58,35 @@ Tests use [Gherkin Syntax](https://cucumber.io/docs/gherkin/) scenarios interpre
 | `$UDID_DEVICE` | No | -- | Device/emulator ID (from `adb devices`) |
 | `$BACKEND` | No | `oCIS` | Backend type: `oCIS` or `oC10` |
 
-### Backend-Specific Tags
+The script needs some parameters. Check help `executeTests -h`
+
+
+To execute all tests but the ignored ones (or any other tagged ones):
+
+		export UDID_DEVICE=emulator-5554
+		export OC_SERVER_URL=https://my.owncloud.server
+		export APPIUM_URL=localhost:4723
+		export BACKEND=oCIS
+		./executeTests -t "not @ignore"
+
+Example: `./executeTests -t "not @ignore and not @noocis"` runs tests suitable for oCIS.
 
 Since not all tests are suitable for both backends, tests are tagged:
 
 - `@nooc10` -- tests for oCIS only, not suitable for oC10
 - `@noocis` -- tests for oC10 only, not suitable for oCIS
 
-Example: `./executeTests -t "not @ignore and not @noocis"` runs tests suitable for oCIS.
+The execution will display step by step how the scenario is being executed.
 
-### Test Results
+More info in [Cucumber reference](https://cucumber.io/docs/cucumber/api/)
 
-Reports in HTML and JSON formats are generated in the `target/` directory.
+## Documentation
 
-### Version Matrix
+- Feature files are in `src/test/resources/io/cucumber/`
+- [Appium documentation](https://appium.io/docs/en/about-appium/getting-started/)
+- [Cucumber documentation](https://cucumber.io/docs/gherkin/)
+
+## Version Matrix
 
 | Component | Version |
 |---|---|
