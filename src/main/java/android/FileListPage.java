@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.LocProperties;
@@ -94,18 +95,9 @@ public class FileListPage extends CommonPage {
     @AndroidFindBy(id = "android:id/chooser_header")
     List<WebElement> chooserHeader;
 
-    public static FileListPage instance;
-
-    private FileListPage() {
-        super();
+    public FileListPage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static FileListPage getInstance() {
-        if (instance == null) {
-            instance = new FileListPage();
-        }
-        return instance;
     }
 
     public void refreshList() {

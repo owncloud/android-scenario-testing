@@ -54,7 +54,7 @@ public class SpacesSteps {
             String name = row.get("name");
             // Subtitle can be null
             String subtitle = row.get("subtitle") != null ? row.get("subtitle") : "";
-            world.graphAPI.createSpace(name, subtitle, userName);
+            world.graphAPI().createSpace(name, subtitle, userName);
         }
     }
 
@@ -67,7 +67,7 @@ public class SpacesSteps {
             String permission = row.get("permission");
             String expDate = row.get("expirationDate");
             String expirationDate = (expDate == null) ? "" : expDate.trim();
-            world.graphAPI.addMemberToSpace(spaceName, userName, permission, expirationDate);
+            world.graphAPI().addMemberToSpace(spaceName, userName, permission, expirationDate);
         }
     }
 
@@ -79,14 +79,14 @@ public class SpacesSteps {
             String permission = row.get("permission");
             String expDate = row.get("expirationDate");
             String expirationDate = (expDate == null) ? "" : expDate.trim();
-            world.graphAPI.addLinkToSpace(spaceName, linkName, permission, expirationDate);
+            world.graphAPI().addLinkToSpace(spaceName, linkName, permission, expirationDate);
         }
     }
 
     @When("Alice selects the spaces view")
     public void user_selects_spaces_view() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage.openSpaces();
+        world.fileListPage().openSpaces();
     }
 
     @When("the following spaces are disabled in server")
@@ -97,14 +97,14 @@ public class SpacesSteps {
             String name = row.get("name");
             // Subtitle can be null
             String subtitle = row.get("subtitle") != null ? row.get("subtitle") : "";
-            world.graphAPI.disableSpace(name, subtitle);
+            world.graphAPI().disableSpace(name, subtitle);
         }
     }
 
     @When("Alice filters the list using {word}")
     public void user_filters_list(String pattern) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage.typeSearch(pattern);
+        world.spacesPage().typeSearch(pattern);
     }
 
     @When("Alice creates a new space with the following fields")
@@ -116,25 +116,25 @@ public class SpacesSteps {
     @When("Alice edits the space {word}")
     public void user_edit_space(String spaceName){
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage.openEditSpace(spaceName);
+        world.spacesPage().openEditSpace(spaceName);
     }
 
     @When("Alice disables the space {word}")
     public void user_disables_space(String spaceName){
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage.openDisableSpace(spaceName);
+        world.spacesPage().openDisableSpace(spaceName);
     }
 
     @When("Alice enables the space {word}")
     public void user_enables_space(String spaceName){
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage.openEnableSpace(spaceName);
+        world.spacesPage().openEnableSpace(spaceName);
     }
 
     @When("Alice deletes the space {word}")
     public void user_deletes_space(String spaceName){
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage.openDeleteSpace(spaceName);
+        world.spacesPage().openDeleteSpace(spaceName);
     }
 
     @When("Alice updates the space with the following fields")
@@ -146,94 +146,94 @@ public class SpacesSteps {
     @When("Alice edits the image of the space {word} with the file {word}")
     public void edits_image(String spaceName, String fileName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage.openEditSpaceImage(spaceName);
-        world.documentProviderPage.selectImageToUpload(fileName);
+        world.spacesPage().openEditSpaceImage(spaceName);
+        world.documentProviderPage().selectImageToUpload(fileName);
     }
 
     @When("Alice adds {word} to the space {word} with")
     public void add_member_with_permissions(String userName, String spaceName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage.openMembers(spaceName);
-        world.spacesMembersPage.addMember(userName);
+        world.spacesPage().openMembers(spaceName);
+        world.spacesMembersPage().addMember(userName);
         Map<String, String> fields = table.asMap(String.class, String.class);
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
             switch (key) {
-                case "permission" -> world.spacesMembersPage.setPermission(value);
-                case "expirationDate" -> world.spacesMembersPage.setExpirationDate(value);
+                case "permission" -> world.spacesMembersPage().setPermission(value);
+                case "expirationDate" -> world.spacesMembersPage().setExpirationDate(value);
             }
         }
-        world.spacesMembersPage.inviteMember();
+        world.spacesMembersPage().inviteMember();
     }
 
     @When("Alice creates a new link to the space {word} with")
     public void create_new_link(String spaceName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage.openMembers(spaceName);
-        world.spacesMembersPage.addLink();
+        world.spacesPage().openMembers(spaceName);
+        world.spacesMembersPage().addLink();
         Map<String, String> fields = table.asMap(String.class, String.class);
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
             switch (key) {
-                case "name" -> world.spacesMembersPage.setName(value);
-                case "permission" -> world.spacesMembersPage.setPermission(value);
-                case "password" -> world.spacesMembersPage.setPassword();
-                case "expirationDate" -> world.spacesMembersPage.setExpirationDate(value);
+                case "name" -> world.spacesMembersPage().setName(value);
+                case "permission" -> world.spacesMembersPage().setPermission(value);
+                case "password" -> world.spacesMembersPage().setPassword();
+                case "expirationDate" -> world.spacesMembersPage().setExpirationDate(value);
             }
         }
-        world.spacesMembersPage.createLink();
+        world.spacesMembersPage().createLink();
     }
 
     @When("Alice edits {word} over the space {word} with")
     public void edit_link(String linkName, String spaceName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage.openMembers(spaceName);
-        world.spacesMembersPage.editLink(linkName);
+        world.spacesPage().openMembers(spaceName);
+        world.spacesMembersPage().editLink(linkName);
         Map<String, String> fields = table.asMap(String.class, String.class);
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
             switch (key) {
-                case "name" -> world.spacesMembersPage.setName(value);
-                case "permission" -> world.spacesMembersPage.setPermission(value);
-                case "password" -> world.spacesMembersPage.editPassword();
-                case "expirationDate" -> world.spacesMembersPage.setExpirationDate(value);
+                case "name" -> world.spacesMembersPage().setName(value);
+                case "permission" -> world.spacesMembersPage().setPermission(value);
+                case "password" -> world.spacesMembersPage().editPassword();
+                case "expirationDate" -> world.spacesMembersPage().setExpirationDate(value);
             }
         }
-        world.spacesMembersPage.createLink();
+        world.spacesMembersPage().createLink();
     }
 
     @When("Alice removes {word} from the space {word}")
     public void user_removes_member(String userName, String spaceName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage.openMembers(spaceName);
-        world.spacesMembersPage.removeMember(userName);
+        world.spacesPage().openMembers(spaceName);
+        world.spacesMembersPage().removeMember(userName);
     }
 
     @When("Alice edits {word} from the space {word} with the following fields")
     public void edit_member_space(String userName, String spaceName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage.openMembers(spaceName);
-        world.spacesMembersPage.openEditMember(userName);
+        world.spacesPage().openMembers(spaceName);
+        world.spacesMembersPage().openEditMember(userName);
         Map<String, String> fields = table.asMap(String.class, String.class);
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
             switch (key) {
-                case "permission" -> world.spacesMembersPage.setPermission(value);
-                case "expirationDate" -> world.spacesMembersPage.setExpirationDate(value);
+                case "permission" -> world.spacesMembersPage().setPermission(value);
+                case "expirationDate" -> world.spacesMembersPage().setExpirationDate(value);
             }
         }
-        world.spacesMembersPage.inviteMember();
+        world.spacesMembersPage().inviteMember();
     }
 
     @When("Alice removes {word} over the space {word}")
     public void remove_link_space(String linkName, String spaceName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage.openMembers(spaceName);
-        world.spacesMembersPage.removeLink(linkName);
+        world.spacesPage().openMembers(spaceName);
+        world.spacesMembersPage().removeLink(linkName);
     }
 
     @Then("Alice should{typePosNeg} see the following{spaceStatus} spaces")
@@ -241,14 +241,14 @@ public class SpacesSteps {
             throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
         List<Map<String, String>> rows = table.asMaps(String.class, String.class);
-        List<OCSpace> spaces = world.graphAPI.getMySpaces();
+        List<OCSpace> spaces = world.graphAPI().getMySpaces();
         for (Map<String, String> row : rows) {
             String name = row.get("name").trim();
             String subtitle = row.get("subtitle") != null ? row.get("subtitle").trim() : "";
             Log.log(Level.FINE, "Checking sense: " + sense + " for space: " + name + " " + subtitle);
             if (sense.isEmpty()) { // positive case
                 // Local validation
-                assertTrue(world.spacesPage.isSpaceDisplayed(name, subtitle, status));
+                assertTrue(world.spacesPage().isSpaceDisplayed(name, subtitle, status));
                 // Remote validation
                 boolean found = false;
                 Log.log(Level.FINE, "Checking the remote contains the local");
@@ -263,7 +263,7 @@ public class SpacesSteps {
                 }
                 assertTrue(found);
             } else if (sense.equals(" not")) { // negative case, status does not matter
-                assertFalse(world.spacesPage.isSpaceDisplayed(name, subtitle, ""));
+                assertFalse(world.spacesPage().isSpaceDisplayed(name, subtitle, ""));
             }
         }
     }
@@ -281,7 +281,7 @@ public class SpacesSteps {
         String unit = fields.get("unit");
         Log.log(Level.FINE, "Space from scenario: " + name + " " + subtitle + " " + quota);
         // Spaces in server
-        List<OCSpace> spaces = world.graphAPI.getMySpaces();
+        List<OCSpace> spaces = world.graphAPI().getMySpaces();
         for (OCSpace space : spaces) {
             // Check if space in server matches with space in scenario definition
             Log.log(Level.FINE, "Space in server: " + space.getName() + " "
@@ -303,8 +303,8 @@ public class SpacesSteps {
         for (Map<String, String> row : rows) {
             String name = row.get("name");
             String subtitle = row.get("subtitle");
-            String id = world.graphAPI.getSpaceIdFromNameAndDescription(name, subtitle);
-            assertTrue(world.filesAPI.itemExist(id, "/.space/" + fileName));
+            String id = world.graphAPI().getSpaceIdFromNameAndDescription(name, subtitle);
+            assertTrue(world.filesAPI().itemExist(id, "/.space/" + fileName));
         }
     }
 
@@ -316,14 +316,14 @@ public class SpacesSteps {
         String quota = values.get("quota");
         String unit = values.get("unit");
         user_edit_space(spaceName);
-        assertTrue(world.spacesPage.isQuotaDisplayed(quota, unit));
+        assertTrue(world.spacesPage().isQuotaDisplayed(quota, unit));
     }
 
     @Then("{word} should be member of the space {word} with")
     public void is_user_member(String userName, String spaceName, DataTable table) throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
         // Get member from backend
-        OCSpaceMember member = world.graphAPI.getMemberOfSpace(spaceName, userName);
+        OCSpaceMember member = world.graphAPI().getMemberOfSpace(spaceName, userName);
         Log.log(Level.FINE, "Member from backend: " + member.getDisplayName() +
                 " " + member.getPermission() +
                 " " + member.getExpirationDate());
@@ -334,13 +334,13 @@ public class SpacesSteps {
             switch (key) {
                 case "permission" -> {
                     // Local validation
-                    assertTrue(world.spacesMembersPage.isUserMember(userName, value));
+                    assertTrue(world.spacesMembersPage().isUserMember(userName, value));
                     // Remote validation
                     assertTrue(member.getPermission().contains(value));
                     }
                 case "expirationDate" -> {
                     // Local validation
-                    assertTrue(world.spacesMembersPage.isExpirationDateCorrect(value));
+                    assertTrue(world.spacesMembersPage().isExpirationDateCorrect(value));
                     // Remote validation
                     Log.log(Level.FINE, "Remote date: " + member.getExpirationDate());
                     if (value != null) {
@@ -361,7 +361,7 @@ public class SpacesSteps {
     @Then("{word} should not be member of the space {word}")
     public void is_user_member(String userName, String spaceName) {
         StepLogger.logCurrentStep(Level.FINE);
-        assertFalse(world.spacesMembersPage.isMemberOfSpace(userName, spaceName));
+        assertFalse(world.spacesMembersPage().isMemberOfSpace(userName, spaceName));
     }
 
     private void handleSpace(DataTable table, String operation){
@@ -370,9 +370,9 @@ public class SpacesSteps {
         String subtitle = data.get("subtitle")!=null ? data.get("subtitle") : "";
         String quota = data.get("quota");
         if (operation.equals("update")) {
-            world.spacesPage.editSpace(name, subtitle, quota);
+            world.spacesPage().editSpace(name, subtitle, quota);
         } else if (operation.equals("create")) {
-            world.spacesPage.createSpace(name, subtitle, quota);
+            world.spacesPage().createSpace(name, subtitle, quota);
         }
     }
 
@@ -380,7 +380,7 @@ public class SpacesSteps {
     public void is_link_created(String linkName, String spaceName, DataTable table) throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
         // Get member from backend
-        OCSpaceLink linkBackend = world.graphAPI.getLinkOfSpace(spaceName, linkName);
+        OCSpaceLink linkBackend = world.graphAPI().getLinkOfSpace(spaceName, linkName);
         Log.log(Level.FINE, "Link in backend: name: " + linkBackend.getLinkName() +
                 " permission: " + linkBackend.getPermission() +
                 " expirationDate: " + linkBackend.getExpirationDate());
@@ -404,7 +404,7 @@ public class SpacesSteps {
                 " permission: " + permission +
                 " expirationDate: " + expirationDate);
         // Local assertion
-        assertTrue(world.spacesMembersPage.isLinkCreated(name, permission, expirationDate));
+        assertTrue(world.spacesMembersPage().isLinkCreated(name, permission, expirationDate));
         // Remote assertion
         assertTrue(linkBackend.getLinkName().equals(name)
                 && linkBackend.getPermission().equals(getLinkPermissionDisplayName(permission))
@@ -419,9 +419,9 @@ public class SpacesSteps {
     public void link_not_visible(String linkName, String spaceName) throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
         // Local assertion
-        assertFalse(world.spacesMembersPage.isLinkCreated(linkName, "", ""));
+        assertFalse(world.spacesMembersPage().isLinkCreated(linkName, "", ""));
         // Remote assertion
-        OCSpaceLink linkBackend = world.graphAPI.getLinkOfSpace(spaceName, linkName);
+        OCSpaceLink linkBackend = world.graphAPI().getLinkOfSpace(spaceName, linkName);
         assertNull(linkBackend);
     }
 

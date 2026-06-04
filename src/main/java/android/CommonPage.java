@@ -49,12 +49,13 @@ public class CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/nav_all_files")
     private WebElement toRoot;
 
-    protected static AndroidDriver driver = AndroidManager.getDriver();
+    protected static AndroidDriver driver;
     protected static final int WAIT_TIME = 7;
     private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
     private static boolean recordingStarted = false;
 
-    public CommonPage() {
+    public CommonPage(AndroidDriver driver) {
+        this.driver = driver;
     }
 
     /* Finders */

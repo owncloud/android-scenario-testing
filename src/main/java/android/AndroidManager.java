@@ -68,12 +68,24 @@ public class AndroidManager {
         Log.log(Level.FINE, "Device UDID: " + device);
     }
 
-    //Singletonize
-    public static AndroidDriver getDriver() {
+    // Singletonize
+    public static synchronized AndroidDriver getDriver() {
         if (driver == null) {
             init();
         }
         return driver;
+    }
+
+    // Quit the driver and clean up resources
+    public static void quitDriver() {
+        if (driver != null) {
+            driver.quit();
+            driver = null;
+        }
+    }
+
+    public static boolean hasDriver() {
+        return driver != null;
     }
 
     //Check https://appium.io/docs/en/2.5/guides/caps/

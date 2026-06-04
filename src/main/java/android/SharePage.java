@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.date.DateUtils;
@@ -60,18 +61,9 @@ public class SharePage extends CommonPage {
     @AndroidFindBy(xpath = "//android.widget.ImageButton[@content-desc=\"Back\"]")
     private WebElement close;
 
-    public static SharePage instance;
-
-    private SharePage() {
-        super();
+    public SharePage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static SharePage getInstance() {
-        if (instance == null) {
-            instance = new SharePage();
-        }
-        return instance;
     }
 
     public void addPrivateShare() {

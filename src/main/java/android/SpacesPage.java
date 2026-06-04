@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.logging.Level;
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.log.Log;
@@ -55,18 +56,9 @@ public class SpacesPage extends CommonPage {
     private final String cardId = "com.owncloud.android:id/spaces_list_item_card";
     private final String spaceSubtitleId = "com.owncloud.android:id/spaces_list_item_subtitle";
 
-    public static SpacesPage instance;
-
-    private SpacesPage() {
-        super();
+    public SpacesPage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static SpacesPage getInstance() {
-        if (instance == null) {
-            instance = new SpacesPage();
-        }
-        return instance;
     }
 
     public enum MenuItems {

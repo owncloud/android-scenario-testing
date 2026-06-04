@@ -11,6 +11,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import java.util.logging.Level;
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.log.Log;
@@ -41,18 +42,9 @@ public class PrivateSharePage extends CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/closeButton")
     private WebElement close;
 
-    public static PrivateSharePage instance;
-
-    private PrivateSharePage() {
-        super();
+    public PrivateSharePage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static PrivateSharePage getInstance() {
-        if (instance == null) {
-            instance = new PrivateSharePage();
-        }
-        return instance;
     }
 
     public boolean isSharee(String user) {

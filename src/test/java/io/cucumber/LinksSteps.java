@@ -38,84 +38,84 @@ public class LinksSteps {
     public void user_has_shared_the_item_by_link(String sharingUser, String type, String itemName)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        world.shareAPI.createShare(sharingUser, itemName, "", "3", "1", itemName, "aa55AA.." + " link", 0);
+        world.shareAPI().createShare(sharingUser, itemName, "", "3", "1", itemName, "aa55AA.." + " link", 0);
     }
 
     @When("Alice creates link on {word} {word} with the following fields")
     public void user_creates_link_with_fields(String type, String itemName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.sharePage.addPublicLink();
+        world.sharePage().addPublicLink();
         Map<String, String> fields = table.asMap(String.class, String.class);
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
             switch (key) {
                 case "name": {
-                    world.publicLinksPage.addLinkName(value);
+                    world.publicLinksPage().addLinkName(value);
                     break;
                 }
                 case "password": {
-                    world.publicLinksPage.typePassword(itemName, value);
+                    world.publicLinksPage().typePassword(itemName, value);
                     break;
                 }
                 case "password-auto": {
-                    world.publicLinksPage.generatePassword();
+                    world.publicLinksPage().generatePassword();
                     break;
                 }
                 case "permission": {
-                    world.publicLinksPage.setPermission(value);
+                    world.publicLinksPage().setPermission(value);
                     break;
                 }
                 case "expiration days": {
-                    world.publicLinksPage.setExpiration(value);
+                    world.publicLinksPage().setExpiration(value);
                     break;
                 }
                 default:
                     break;
             }
         }
-        world.publicLinksPage.submitLink();
+        world.publicLinksPage().submitLink();
     }
 
     @When("Alice edits the link on {word} with the following fields")
     public void user_edits_public_link_with_fields(String itemName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
         Map<String, String> fields = table.asMap(String.class, String.class);
-        world.sharePage.openPublicLink(itemName);
+        world.sharePage().openPublicLink(itemName);
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             String key = entry.getKey();
             String value = entry.getValue();
             switch (key) {
-                case "name" -> world.publicLinksPage.addLinkName(value);
+                case "name" -> world.publicLinksPage().addLinkName(value);
                 case "permissions" -> {
                     switch (value) {
                         case "1" -> {
                             Log.log(Level.FINE, "Select Download / View");
-                            world.publicLinksPage.selectDownloadView();
+                            world.publicLinksPage().selectDownloadView();
                         }
                         case "15" -> {
                             Log.log(Level.FINE, "Select Download / View / Upload");
-                            world.publicLinksPage.selectDownloadViewUpload();
+                            world.publicLinksPage().selectDownloadViewUpload();
                         }
                         case "4" -> {
                             Log.log(Level.FINE, "Select Upload Only (File Drop)");
-                            world.publicLinksPage.selectUploadOnly();
+                            world.publicLinksPage().selectUploadOnly();
                         }
                     }
                 }
-                case "password" -> world.publicLinksPage.typePassword(itemName, value);
-                case "expiration days" -> world.publicLinksPage.setExpiration(value);
+                case "password" -> world.publicLinksPage().typePassword(itemName, value);
+                case "expiration days" -> world.publicLinksPage().setExpiration(value);
             }
 
         }
-        world.publicLinksPage.submitLink();
+        world.publicLinksPage().submitLink();
     }
 
     @When("Alice deletes the link on {word}")
     public void user_deletes_link(String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.sharePage.deletePublicShare();
-        world.sharePage.acceptDeletion();
+        world.sharePage().deletePublicShare();
+        world.sharePage().acceptDeletion();
     }
 
     @Then("link should be created/edited on {word} with the following fields")
@@ -131,35 +131,35 @@ public class LinksSteps {
             switch (key) {
                 case "name" -> {
                     Log.log(Level.FINE, "Checking name: " + value);
-                    assertTrue(world.sharePage.isItemInListPublicShares(value));
+                    assertTrue(world.sharePage().isItemInListPublicShares(value));
                 }
                 case "password-auto", "password" -> {
-                    world.sharePage.openPublicLink(itemName);
-                    assertTrue(world.publicLinksPage.isPasswordEnabled());
-                    world.publicLinksPage.close();
+                    world.sharePage().openPublicLink(itemName);
+                    assertTrue(world.publicLinksPage().isPasswordEnabled());
+                    world.publicLinksPage().close();
                 }
                 case "user" -> {
                     Log.log(Level.FINE, "checking user: " + itemName);
-                    assertTrue(world.sharePage.isItemInListPublicShares(itemName));
+                    assertTrue(world.sharePage().isItemInListPublicShares(itemName));
                 }
                 case "permission" -> {
                     Log.log(Level.FINE, "checking permissions: " + value);
-                    world.sharePage.openPublicLink(itemName);
-                    assertTrue(world.publicLinksPage.arePermissionsCorrect(value));
-                    world.publicLinksPage.close();
+                    world.sharePage().openPublicLink(itemName);
+                    assertTrue(world.publicLinksPage().arePermissionsCorrect(value));
+                    world.publicLinksPage().close();
                 }
                 case "expiration days" -> {
                     Log.log(Level.FINE, "checking expiration day: " + value);
-                    world.sharePage.openPublicLink(itemName);
-                    assertTrue(world.publicLinksPage.isExpirationCorrect(value));
-                    world.publicLinksPage.close();
+                    world.sharePage().openPublicLink(itemName);
+                    assertTrue(world.publicLinksPage().isExpirationCorrect(value));
+                    world.publicLinksPage().close();
                 }
             }
         }
         //Asserts in server via API
         Log.log(Level.FINE, "Checking API/server asserts");
-        OCShare share = world.shareAPI.getShare(itemName);
-        assertTrue(world.sharePage.isShareCorrect(share, fields));
+        OCShare share = world.shareAPI().getShare(itemName);
+        assertTrue(world.sharePage().isShareCorrect(share, fields));
     }
 
     @Then("link on {word} should not exist anymore")
@@ -167,8 +167,8 @@ public class LinksSteps {
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
         Log.log(Level.FINE, "Checking if item exists: " + itemName);
-        assertTrue(world.sharePage.isListPublicLinksEmpty());
-        assertTrue(world.shareAPI.getLinksByDefault().isEmpty());
-        assertFalse(world.sharePage.isItemInListPublicShares(itemName + " link"));
+        assertTrue(world.sharePage().isListPublicLinksEmpty());
+        assertTrue(world.shareAPI().getLinksByDefault().isEmpty());
+        assertFalse(world.sharePage().isItemInListPublicShares(itemName + " link"));
     }
 }

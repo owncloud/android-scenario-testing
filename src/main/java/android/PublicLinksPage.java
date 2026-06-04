@@ -12,6 +12,7 @@ import org.openqa.selenium.support.PageFactory;
 import java.util.List;
 import java.util.logging.Level;
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.date.DateUtils;
@@ -58,18 +59,9 @@ public class PublicLinksPage extends CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/saveButton")
     private WebElement saveButton;
 
-    public static PublicLinksPage instance;
-
-    private PublicLinksPage() {
-        super();
+    public PublicLinksPage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static PublicLinksPage getInstance() {
-        if (instance == null) {
-            instance = new PublicLinksPage();
-        }
-        return instance;
     }
 
     public void addLinkName(String linkName) {

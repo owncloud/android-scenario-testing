@@ -27,17 +27,8 @@ public class ShareAPI extends CommonAPI {
     private String pendingEndpoint = "/pending";
     private final String shareeU = LocProperties.getProperties().getProperty("userToShare");
 
-    public static ShareAPI instance;
-
-    private ShareAPI() throws IOException {
+    public ShareAPI() throws IOException {
         super();
-    }
-
-    public static ShareAPI getInstance() throws IOException {
-        if (instance == null) {
-            instance = new ShareAPI();
-        }
-        return instance;
     }
 
     public void createShare(String sharingUser, String itemPath, String sharee, String type,

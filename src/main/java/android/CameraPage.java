@@ -7,6 +7,7 @@ import org.openqa.selenium.support.PageFactory;
 import java.util.List;
 import java.util.logging.Level;
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.log.Log;
@@ -19,20 +20,10 @@ public class CameraPage extends CommonPage {
     @AndroidFindBy(id = "com.android.camera2:id/done_button")
     private WebElement doneButton;
 
-    public static CameraPage instance;
-
-    private CameraPage() {
-        super();
+    public CameraPage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
     }
-
-    public static CameraPage getInstance() {
-        if (instance == null) {
-            instance = new CameraPage();
-        }
-        return instance;
-    }
-
     public void takePicture() {
         Log.log(Level.FINE, "Starts: taking picture from camera");
         String cameraViewId = "com.android.camera2:id/activity_root_view";

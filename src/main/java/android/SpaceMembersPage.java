@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import io.appium.java_client.AppiumBy;
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.date.DateUtils;
@@ -68,7 +69,6 @@ public class SpaceMembersPage extends CommonPage {
     @AndroidFindBy(id = "android:id/button1")
     private WebElement okButton;
 
-    public static SpaceMembersPage instance;
     private final String editMemberId = "com.owncloud.android:id/edit_member_button";
     private final String memberNameId = "com.owncloud.android:id/member_name";
     private final String removeMemberId = "com.owncloud.android:id/remove_member_button";
@@ -76,16 +76,9 @@ public class SpaceMembersPage extends CommonPage {
     private final String editLink = "com.owncloud.android:id/edit_public_link_button";
     private final String removeLink = "com.owncloud.android:id/remove_public_link_button";
 
-    private SpaceMembersPage() {
-        super();
+    public SpaceMembersPage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static SpaceMembersPage getInstance() {
-        if (instance == null) {
-            instance = new SpaceMembersPage();
-        }
-        return instance;
     }
 
     public void addMember(String userName) {

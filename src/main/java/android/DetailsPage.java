@@ -15,6 +15,7 @@ import java.time.Duration;
 import java.util.List;
 import java.util.logging.Level;
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.log.Log;
@@ -72,18 +73,9 @@ public class DetailsPage extends CommonPage {
     @AndroidFindBy(xpath = "//android.widget.ImageButton[@content-desc=\"Back\"]")
     private WebElement back;
 
-    public static DetailsPage instance;
-
-    private DetailsPage() {
-        super();
+    public DetailsPage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static DetailsPage getInstance() {
-        if (instance == null) {
-            instance = new DetailsPage();
-        }
-        return instance;
     }
 
     public String getName() {

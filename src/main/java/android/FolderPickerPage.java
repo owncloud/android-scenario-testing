@@ -11,6 +11,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import java.util.logging.Level;
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.log.Log;
@@ -26,18 +27,9 @@ public class FolderPickerPage extends CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/view_type_selector")
     private WebElement createFolderButton;
 
-    public static FolderPickerPage instance;
-
-    private FolderPickerPage() {
-        super();
+    public FolderPickerPage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static FolderPickerPage getInstance() {
-        if (instance == null) {
-            instance = new FolderPickerPage();
-        }
-        return instance;
     }
 
     public void selectSpace(String spaceName) {

@@ -5,6 +5,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import java.util.logging.Level;
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.log.Log;
@@ -20,18 +21,9 @@ public class ConflictPage extends CommonPage {
     @AndroidFindBy(id = "android:id/button3")
     private WebElement bothVersionButton;
 
-    public static ConflictPage instance;
-
-    private ConflictPage() {
-        super();
+    public ConflictPage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static ConflictPage getInstance() {
-        if (instance == null) {
-            instance = new ConflictPage();
-        }
-        return instance;
     }
 
     public boolean isConflictPageDisplayed() {

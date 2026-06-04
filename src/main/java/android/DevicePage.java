@@ -10,26 +10,19 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.LocProperties;
 import utils.log.Log;
 
 public class DevicePage extends CommonPage {
 
-    public static DevicePage instance;
     private String downloadFolder = "/sdcard/Download";
     String owncloudFolder = downloadFolder + "/owncloud/";
 
-    private DevicePage() {
-        super();
+    public DevicePage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static DevicePage getInstance() {
-        if (instance == null) {
-            instance = new DevicePage();
-        }
-        return instance;
     }
 
     public void cleanUpDevice() {
@@ -95,5 +88,4 @@ public class DevicePage extends CommonPage {
         Log.log(Level.FINE, "List of files in given folder: " + output);
         return output;
     }
-
 }

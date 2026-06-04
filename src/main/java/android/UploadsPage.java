@@ -3,6 +3,7 @@ package android;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 
@@ -11,18 +12,9 @@ public class UploadsPage extends CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/uploadListGroupButtonClear")
     private WebElement clear;
 
-    public static UploadsPage instance;
-
-    private UploadsPage() {
-        super();
+    public UploadsPage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static UploadsPage getInstance() {
-        if (instance == null) {
-            instance = new UploadsPage();
-        }
-        return instance;
     }
 
     public void clearList() {
@@ -37,5 +29,4 @@ public class UploadsPage extends CommonPage {
         return fileInList && uploadedListVisible && failedListNotVisible
                 && enqueuedListNotVisible;
     }
-
 }

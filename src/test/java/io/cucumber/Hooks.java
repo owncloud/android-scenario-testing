@@ -42,7 +42,7 @@ public class Hooks {
         Log.log(Level.FINE, "START SCENARIO EXECUTION: " + scenario.getName());
         AndroidManager.getDriver().activateApp(
                 LocProperties.getProperties().getProperty("appPackage"));
-        world.fileListPage.setConnectionUp();
+        world.fileListPage().setConnectionUp();
         CommonPage.startRecording();
     }
 
@@ -73,20 +73,20 @@ public class Hooks {
         //First, remove leftovers in root folder for every user
         ArrayList<String> userNames = new ArrayList<>(Arrays.asList("Alice", "Bob"));
         for (String userToClean: userNames) {
-            ArrayList<OCFile> filesRoot = world.filesAPI.listItems("", userToClean);
+            ArrayList<OCFile> filesRoot = world.filesAPI().listItems("", userToClean);
             for (OCFile iterator : filesRoot) {
-                world.filesAPI.removeItem(iterator.getName(), userToClean);
+                world.filesAPI().removeItem(iterator.getName(), userToClean);
             }
             //Empty trashbins
-            world.trashbinAPI.emptyTrashbin(userToClean);
+            world.trashbinAPI().emptyTrashbin(userToClean);
         }
         //Remove spaces
         if (System.getProperty("backend").equals("oCIS")) {
-            world.graphAPI.removeSpacesOfUser();
+            world.graphAPI().removeSpacesOfUser();
         }
         //Remove owncloud folder from device
-        world.devicePage.cleanUpDevice();
+        world.devicePage().cleanUpDevice();
         //Remove tmp folder from device
-        world.devicePage.cleanUpTemp();
+        world.devicePage().cleanUpTemp();
     }
 }

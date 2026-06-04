@@ -18,12 +18,12 @@ public class DocumentProviderSteps {
     @Given("a file {word} exists in the device")
     public void a_file_exists_in_device(String fileName) throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
-        world.devicePage.pushFile(fileName, "/");
+        world.devicePage().pushFile(fileName, "/");
     }
 
     @When("Alice selects {word} to upload")
     public void user_selects_file_to_upload(String fileName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.documentProviderPage.selectFileToUpload(fileName);
+        world.documentProviderPage().selectFileToUpload(fileName);
     }
 }

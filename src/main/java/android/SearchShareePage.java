@@ -11,6 +11,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import java.util.logging.Level;
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.log.Log;
@@ -23,18 +24,9 @@ public class SearchShareePage extends CommonPage {
     @AndroidFindBy(xpath = "//android.widget.ImageButton[@content-desc=\"Back\"]")
     private WebElement back;
 
-    public static SearchShareePage instance;
-
-    private SearchShareePage() {
-        super();
+    public SearchShareePage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static SearchShareePage getInstance() {
-        if (instance == null) {
-            instance = new SearchShareePage();
-        }
-        return instance;
     }
 
     public void shareWithUser(String sharee) {

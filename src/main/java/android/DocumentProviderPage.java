@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.logging.Level;
 
 import io.appium.java_client.AppiumBy;
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.log.Log;
@@ -21,18 +22,9 @@ public class DocumentProviderPage extends CommonPage {
             "new UiSelector().resourceId(\"com.google.android.documentsui:id/roots_list\")";
     private final String downloadOptionId = "new UiSelector().textContains(\"Downloads\");";
 
-    public static DocumentProviderPage instance;
-
-    private DocumentProviderPage() {
-        super();
+    public DocumentProviderPage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static DocumentProviderPage getInstance() {
-        if (instance == null) {
-            instance = new DocumentProviderPage();
-        }
-        return instance;
     }
 
     public void openDownloadsInHamburger() {

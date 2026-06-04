@@ -12,17 +12,8 @@ public class TrashbinAPI extends CommonAPI {
     private final String trashEndpointOCIS = "/remote.php/dav/spaces/trash-bin/";
     private final String trashEndpointOC10 = "/remote.php/dav/trash-bin/";
 
-    public static TrashbinAPI instance;
-
-    private TrashbinAPI() throws IOException {
+    public TrashbinAPI() throws IOException {
         super();
-    }
-
-    public static TrashbinAPI getInstance() throws IOException {
-        if (instance == null) {
-            instance = new TrashbinAPI();
-        }
-        return instance;
     }
 
     public void emptyTrashbin(String userName) throws IOException {

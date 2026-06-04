@@ -29,16 +29,8 @@ public class GraphAPI extends CommonAPI {
     private final String members = "/graph/v1beta1/drives/";
     private final MediaType JSON = MediaType.parse("application/json; charset=utf-8");
 
-    public static GraphAPI instance;
-
-    private GraphAPI() throws IOException {
-    }
-
-    public static GraphAPI getInstance() throws IOException {
-        if (instance == null) {
-            instance = new GraphAPI();
-        }
-        return instance;
+    public GraphAPI() throws IOException {
+        super();
     }
 
     public void createSpace(String name, String description, String userName) throws IOException {

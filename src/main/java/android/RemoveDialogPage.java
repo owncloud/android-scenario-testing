@@ -11,6 +11,7 @@ import org.openqa.selenium.support.PageFactory;
 
 import java.util.logging.Level;
 
+import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 import utils.log.Log;
@@ -29,18 +30,9 @@ public class RemoveDialogPage extends CommonPage {
     @AndroidFindBy(id = "android:id/button2")
     private WebElement buttonLocalFolders;
 
-    public static RemoveDialogPage instance;
-
-    private RemoveDialogPage() {
-        super();
+    public RemoveDialogPage(AndroidDriver driver) {
+        super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
-    }
-
-    public static RemoveDialogPage getInstance() {
-        if (instance == null) {
-            instance = new RemoveDialogPage();
-        }
-        return instance;
     }
 
     public void removeAll() {
