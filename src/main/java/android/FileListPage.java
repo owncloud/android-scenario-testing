@@ -196,7 +196,7 @@ public class FileListPage extends CommonPage {
         linksShortcut.click();
     }
 
-    public void openAvOffhortcut() {
+    public void openAvOffShortcut() {
         Log.log(Level.FINE, "Starts: open av offline shortcut");
         waitByTextInvisible(WAIT_TIME, "Download enqueued");
         avOffShortcut.click();

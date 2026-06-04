@@ -24,7 +24,7 @@ import utils.log.Log;
 
 public class AndroidManager {
 
-    private static final String driverDefect = LocProperties.getProperties().getProperty("appiumURL");
+    private static final String driverDefault = LocProperties.getProperties().getProperty("appiumURL");
     private static final String driverURL = System.getProperty("appium");
     private static final String device = System.getProperty("device");
     private static AndroidDriver driver = null;
@@ -47,8 +47,8 @@ public class AndroidManager {
                 Log.log(Level.FINE, "Appium driver located in: " + driverURL);
                 driver = new AndroidDriver(new URL(driverURL), capabilities);
             } else {
-                Log.log(Level.FINE, "Appium driver located in: " + driverDefect);
-                driver = new AndroidDriver(new URL(driverDefect), capabilities);
+                Log.log(Level.FINE, "Appium driver located in: " + driverDefault);
+                driver = new AndroidDriver(new URL(driverDefault), capabilities);
             }
         } catch (MalformedURLException e) {
             Log.log(Level.SEVERE, "Driver could not be created: " + e.getMessage());

@@ -227,7 +227,7 @@ public class FileListSteps {
     @When("Alice opens the available offline shortcut")
     public void user_opens_av_offline_shortcut() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().openAvOffhortcut();
+        world.fileListPage().openAvOffShortcut();
         world.fileListPage().refreshList();
     }
 
