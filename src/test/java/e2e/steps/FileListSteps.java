@@ -354,223 +354,136 @@ public class FileListSteps {
     @Then("Alice should see {string} in the (file)list")
     public void user_should_see_item_in_filelist(String itemName) throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().refreshList();
-        //Get the last token of the item path
-        assertTrue(world.fileListPage().isItemInList(itemName.substring(itemName.lastIndexOf('/') + 1)));
-        assertTrue(world.filesAPI().itemExist(itemName));
+        world.fileListAssertions().assertItemIsVisibleInFileList(itemName);
     }
 
     @Then("Alice should not see {string} in the filelist anymore")
     public void user_should_not_see_item_in_list_anymore(String itemName) throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        assertFalse(world.fileListPage().isItemInList(itemName));
-        assertFalse(world.filesAPI().itemExist(itemName));
+        world.fileListAssertions().assertItemIsNotVisibleInFileListAnymore(itemName);
     }
 
     @Then("Alice should{typePosNeg} see {word} in the links/offline/shares list")
     public void user_should_not_see_item_in_links_list(String sense, String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        if (sense.isEmpty()) {
-            assertTrue(world.fileListPage().isItemInList(itemName));
-        } else if (sense.equals(" not")) {
-            assertFalse(world.fileListPage().isItemInList(itemName));
-        }
+        world.fileListAssertions().assertItemVisibilityInLinksOfflineOrSharesList(sense, itemName);
     }
 
     @Then("Alice should see {string} inside the folder {word}")
     public void user_should_see_item_inside_folder_string(String itemName, String targetFolder)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().browseInto(targetFolder);
-        world.fileListPage().isItemInList(itemName);
-        assertTrue(world.filesAPI().itemExist(targetFolder + "/" + itemName));
+        world.fileListAssertions().assertItemIsVisibleInsideFolder(itemName, targetFolder);
     }
 
     @Then("Alice should see {word} inside the space {word}")
-    public void user_should_see_item_inside_space(String itemName, String spaceName)
-            throws Throwable {
+    public void user_should_see_item_inside_space(String itemName, String spaceName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().openSpaces();
-        world.spacesPage().openSpace(spaceName);
-        assertTrue(world.fileListPage().isItemInList(itemName));
+        world.fileListAssertions().assertItemIsVisibleInsideSpace(itemName, spaceName);
     }
 
     @Then("Alice should see {string} in the filelist as original")
     public void user_should_see_item_in_filelist_as_original_string(String itemName)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().refreshList();
-        assertTrue(world.fileListPage().isItemInList(itemName.substring(itemName.lastIndexOf('/') + 1)));
-        assertTrue(world.filesAPI().itemExist(itemName));
+        world.fileListAssertions().assertItemIsVisibleInFileListAsOriginal(itemName);
     }
 
     @Then("Alice should see the detailed information: {word}, {word}, and {word}")
     public void user_should_see_defailed_information(String itemName, String type, String size) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.detailsPage().removeShareSheet();
-        assertEquals(world.detailsPage().getName(), itemName);
-        assertEquals(world.detailsPage().getSize(), size);
-        assertEquals(world.detailsPage().getType(), type);
-        world.detailsPage().backListFiles();
+        world.fileListAssertions().assertDetailedInformation(itemName, type, size);
     }
 
     @Then("the {fileType} {word} should be marked as downloaded")
     public void item_should_be_marked_as_downloaded(String type, String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        //We always reach this step from a preview... first browsing back
-        world.detailsPage().backListFiles();
-        assertTrue(world.fileListPage().isFileMarkedAsDownloaded(itemName));
+        world.fileListAssertions().assertItemIsMarkedAsDownloaded(itemName);
     }
 
     @Then("Alice should{typePosNeg} see the {itemtype} {word} as av.offline")
     public void user_should_see_item_marked_as_avOffline(String sense, String type, String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        if (sense.isEmpty()) {
-            assertTrue(world.fileListPage().isItemMarkedAsAvOffline(itemName));
-        } else if (sense.equals(" not")) {
-            assertTrue(world.fileListPage().isItemMarkedAsUnAvOffline(itemName));
-        }
+        world.fileListAssertions().assertItemAvailabilityOfflineStatus(sense, itemName);
     }
 
     @Then("the item {word} should be opened and previewed")
     public void item_should_be_opened_and_previewed(String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        assertTrue(world.detailsPage().isItemPreviewed());
-        world.detailsPage().backListFiles();
+        world.fileListAssertions().assertItemIsOpenedAndPreviewed();
     }
 
     @Then("the {fileType} {word} should be opened and previewed")
     public void image_should_be_opened_and_previewed(String type, String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        switch (type) {
-            case "file" -> assertTrue(world.detailsPage().isItemPreviewed());
-            case "audio" -> assertTrue(world.detailsPage().isAudioPreviewed());
-            case "image" -> {
-                assertTrue(world.detailsPage().isImagePreviewed());
-                world.detailsPage().displayControls();
-            }
-            case "video" -> assertTrue(world.detailsPage().isVideoPreviewed());
-            case "damaged" -> assertTrue(world.detailsPage().isDamagedPreviewed());
-        }
+        world.fileListAssertions().assertFileTypeIsOpenedAndPreviewed(type);
     }
 
     @Then("the list of files in {word} folder should match with the server")
     public void list_of_files_in_folder_should_match_server(String path)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().refreshList();
-        world.fileListPage().browseToFolder(path);
-        ArrayList<OCFile> listServer = world.filesAPI().listItems(path, "Alice");
-        assertTrue(world.fileListPage().isDisplayedListCorrect(path, listServer));
+        world.fileListAssertions().assertFolderFileListMatchesServer(path);
     }
 
     @Then("Alice should see the following error/message/item(s)")
     public void user_should_see_following_error(DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        List<List<String>> listItems = table.asLists();
-        String error = listItems.get(0).get(0);
-        Log.log(Level.FINE, "Error/Message to check: " + error);
-        assertTrue(world.fileListPage().errorDisplayed(error));
+        world.fileListAssertions().assertErrorMessageOrItemIsDisplayed(table.asLists());
     }
 
     @Then("Alice should see the file {word} with {word}")
     public void user_should_see_the_file_with_text(String itemName, String text) {
         StepLogger.logCurrentStep(Level.FINE);
-        assertTrue(world.detailsPage().isTextInFile(text));
+        world.fileListAssertions().assertFileContainsText(text);
     }
 
     @Then("share sheet for the item {word} is displayed")
     public void share_sheet_for_item_displayed(String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        assertTrue(world.detailsPage().isShareSheetDisplayed(itemName));
+        world.fileListAssertions().assertShareSheetIsDisplayed(itemName);
     }
 
     @Then("Alice cannot unset as av.offline the item {word}")
     public void user_cannot_unset_avoffline_the_item(String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().selectItemList(itemName);
-        assertFalse(world.fileListPage().isOperationAvailable("Unset as available offline"));
+        world.fileListAssertions().assertCannotUnsetAsAvailableOffline(itemName);
     }
 
     @Then("Alice should see the conflict dialog with the following message")
     public void user_see_dialog_conflict(DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        List<List<String>> listItems = table.asLists();
-        String msg = listItems.get(0).get(0);
-        Log.log(Level.FINE, "Message to check: " + msg);
-        assertTrue(world.fileListPage().isConflictDisplayed());
-        assertTrue(world.fileListPage().errorDisplayed(msg));
+        world.fileListAssertions().assertConflictDialogWithMessageIsDisplayed(table.asLists());
     }
 
     @Then("{itemtype} {word} is opened in the app")
     public void original_is_opened(String itemType, String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        assertTrue(world.fileListPage().isItemOpened(itemType, itemName));
+        world.fileListAssertions().assertItemIsOpenedInApp(itemType, itemName);
     }
 
     @Then("Alice should see the browser")
     public void bowser_displayed() {
         StepLogger.logCurrentStep(Level.FINE);
-        assertTrue(world.shortcutDialogPage().isBrowserOpen());
+        world.fileListAssertions().assertBrowserIsDisplayed();
     }
 
     @Then("Alice should see the error previewing {word}")
     public void error_previewing(String fileName) {
         StepLogger.logCurrentStep(Level.FINE);
-        assertTrue(world.detailsPage().isDamagedPreviewed());
+        world.fileListAssertions().assertErrorPreviewingIsDisplayed();
     }
 
     @Then("{fileType} {word} should{typePosNeg} be stored in device")
     public void file_downloaded_in_device(String itemType, String itemName, String sense)
             throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
-
-        String folderId = System.getProperty("backend").equals("oCIS")
-                ? world.graphAPI().getPersonal().getId().replace("$", "\\$")
-                : "";
-
-        if (!folderId.isEmpty()) {
-            Log.log(Level.FINE, "ID from personal space: " + folderId);
-        }
-
-        String currentPath = folderId;
-        if (itemName.contains("/")) {
-            String[] parts = itemName.split("/");
-            //Building parcial path
-            for (int i = 0; i < parts.length - 1; i++) {
-                currentPath = currentPath + "/" + parts[i];
-                world.devicePage().pullList(currentPath);
-            }
-            itemName = itemType.equals("file")
-                    ? parts[parts.length - 1]
-                    : parts[parts.length - 2];
-        }
-
-        String listFiles = world.devicePage().pullList(currentPath);
-        Log.log(Level.FINE, "List of files before assertion: " + listFiles +
-                ". ItemName: " + itemName);
-        if (sense.isEmpty()) {
-            assertTrue(listFiles.contains(itemName));
-        } else if (sense.equals(" not")) {
-            assertFalse(listFiles.contains(itemName));
-        }
-    }
-
-    @Then("Alice should see the conflict dialog")
-    public void conflict_dialog_displayed() {
-        StepLogger.logCurrentStep(Level.FINE);
-        assertTrue(world.conflictPage().isConflictPageDisplayed());
+        world.fileListAssertions().assertItemStorageInDevice(itemType, itemName, sense);
     }
 
     @Then("the file {word} should be stored in the account")
     public void file_stored_in_ccount(String fileName) throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
-        Log.log(Level.FINE, "Checking if file is stored in the account: " + fileName);
-        assertTrue(world.filesAPI().itemExist(fileName));
-        byte[] localFile = Files.readAllBytes(Paths.get("src/test/resources/io/cucumber/example-files/" + fileName));
-        byte[] serverFile = world.filesAPI().getFile(fileName, "Alice");
-        Log.log(Level.FINE, "Comparing local and server files: " + localFile.length +
-                " vs " + serverFile.length);
-        assertTrue(Arrays.equals(localFile, serverFile));
+        world.fileListAssertions().assertFileIsStoredInAccount(fileName);
     }
 }

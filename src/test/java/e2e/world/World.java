@@ -12,6 +12,7 @@ import e2e.api.FilesAPI;
 import e2e.api.GraphAPI;
 import e2e.api.ShareAPI;
 import e2e.api.TrashbinAPI;
+import e2e.assertions.FileListAssertions;
 import e2e.assertions.LinksAssertions;
 import e2e.assertions.SharesAssertions;
 import e2e.pages.AndroidManager;
@@ -74,6 +75,7 @@ public class World {
 
     private LinksAssertions linksAssertions;
     private SharesAssertions sharesAssertions;
+    private FileListAssertions fileListAssertions;
 
     public World() {
         this.driver = AndroidManager.getDriver();
@@ -273,5 +275,12 @@ public class World {
             sharesAssertions = new SharesAssertions(this);
         }
         return sharesAssertions;
+    }
+
+    public FileListAssertions fileListAssertions() {
+        if (fileListAssertions == null) {
+            fileListAssertions = new FileListAssertions(this);
+        }
+        return fileListAssertions;
     }
 }
