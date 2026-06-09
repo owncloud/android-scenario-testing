@@ -10,11 +10,8 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 
 import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
-import e2e.model.OCShare;
-import e2e.support.date.DateUtils;
 import e2e.support.log.Log;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
@@ -87,13 +84,11 @@ public class SharePage extends CommonPage {
     }
 
     public boolean isItemInListPrivateShares(String sharee) {
-        return !shareeInfo.isEmpty() &&
-                !findListUIAutomatorText(sharee).isEmpty();
+        return !shareeInfo.isEmpty() && !findListUIAutomatorText(sharee).isEmpty();
     }
 
     public boolean isItemInListPublicShares(String itemName) {
-        return !linkInfo.isEmpty() &&
-                !findListUIAutomatorText(itemName).isEmpty();
+        return !linkInfo.isEmpty() && !findListUIAutomatorText(itemName).isEmpty();
     }
 
     public boolean isListPublicLinksEmpty() {
@@ -106,83 +101,6 @@ public class SharePage extends CommonPage {
 
     public void deletePublicShare() {
         removePublicLink.click();
-    }
-
-    public boolean isShareCorrect(OCShare remoteShare, Map<String, String> dataList) {
-        Log.log(Level.FINE, "Starts: Check correct share");
-        if (remoteShare == null) {
-            Log.log(Level.FINE, "Remote share is null, returning false");
-            return false;
-        }
-        for (Map.Entry<String, String> entry : dataList.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            Log.log(Level.FINE, "Entry KEY: " + key + " - VALUE: " + value);
-            switch (key) {
-                case "id" -> {
-                    if (!remoteShare.getId().equals(value)) {
-                        Log.log(Level.FINE, "ID does not match - Remote: " + remoteShare.getId()
-                                + " - Expected: " + value);
-                        return false;
-                    }
-                }
-                case "user" -> {
-                    if (remoteShare.getType().equals("0")) { // private share
-                        if (!remoteShare.getShareeName().equalsIgnoreCase(value)) {
-                            Log.log(Level.FINE, "Sharee does not match - Remote: " + remoteShare.getShareeName()
-                                    + " - Expected: " + value);
-                            return false;
-                        }
-                    }
-                }
-                case "password" -> {
-                    if (!(remoteShare.getType().equals("3") && remoteShare.hasPassword())) {
-                        Log.log(Level.FINE, "Password not present");
-                        return false;
-                    }
-                }
-                case "name" -> {
-                    if (!remoteShare.getLinkName().equals(value)) {
-                        Log.log(Level.FINE, "Item name does not match - Remote: " + remoteShare.getLinkName()
-                                + " - Expected: " + value);
-                        return false;
-                    }
-                }
-                case "path" -> {
-                    if (!remoteShare.getItemName().equals(value)) {
-                        Log.log(Level.FINE, "Item path does not match - Remote: " + remoteShare.getItemName()
-                                + " - Expected: " + value);
-                        return false;
-                    }
-                }
-                case "uid_owner" -> {
-                    if (!remoteShare.getOwner().equalsIgnoreCase(value)) {
-                        Log.log(Level.FINE, "Owner name does not match - Remote: " + remoteShare.getOwner()
-                                + " - Expected: " + value);
-                        return false;
-                    }
-                }
-                case "permissions" -> {
-                    if (!remoteShare.getPermissions().equals(value)) {
-                        Log.log(Level.FINE, "Permissions do not match - Remote: " + remoteShare.getPermissions()
-                                + " - Expected: " + value);
-                        return false;
-                    }
-                }
-                case "expiration days" -> {
-                    String dateRemote = remoteShare.getExpiration();
-                    String expDate = DateUtils.dateInDaysWithServerFormat(value);
-                    Log.log(Level.FINE, "Expiration dates: Remote: " + dateRemote
-                            + " - Expected: " + expDate);
-                    if (!dateRemote.equals(expDate)) {
-                        Log.log(Level.FINE, "Expiration dates do not match");
-                        return false;
-                    }
-                }
-            }
-        }
-        Log.log(Level.FINE, "All fields match. Returning true");
-        return true;
     }
 
     public void acceptDeletion() {

@@ -6,14 +6,8 @@
 
 package e2e.steps;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
-import java.util.Map;
 import java.util.logging.Level;
 
-import e2e.model.OCShare;
-import e2e.support.log.Log;
 import e2e.support.log.StepLogger;
 import e2e.world.World;
 import io.cucumber.datatable.DataTable;
@@ -84,75 +78,26 @@ public class SharesSteps {
     public void share_should_be_created_with_fields(String itemName, DataTable table)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        //Asserts in UI
-        Map<String, String> fields = table.asMap(String.class, String.class);
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            switch (key) {
-                case "sharee" -> assertTrue(world.sharePage().isItemInListPrivateShares(value));
-                case "group" -> assertTrue(world.sharePage().isItemInListPrivateShares(value + " (group)"));
-                case "permissions" -> {
-                    world.sharePage().openPrivateShare(itemName);
-                    switch (value) {
-                        case "1" -> {
-                            Log.log(Level.FINE, "Only read");
-                            assertTrue(!world.privateSharePage().isEditEnabled());
-                        }
-                        case "3" -> {
-                            Log.log(Level.FINE, "Edit");
-                            Log.log(Level.FINE, Boolean.toString(world.privateSharePage().isEditEnabled()));
-                            assertTrue(world.privateSharePage().isEditEnabled());
-                        }
-                        case "9" -> {
-                            Log.log(Level.FINE, "Delete");
-                            assertTrue(!world.privateSharePage().isCreateSelected() &&
-                                    !world.privateSharePage().isChangeSelected() &&
-                                    world.privateSharePage().isDeleteSelected());
-                        }
-                        case "13" -> {
-                            Log.log(Level.FINE, "Delete and Create");
-                            assertTrue(world.privateSharePage().isCreateSelected() &&
-                                    !world.privateSharePage().isChangeSelected() &&
-                                    world.privateSharePage().isDeleteSelected());
-                        }
-                    }
-                }
-            }
-        }
-        //Asserts in server via API
-        OCShare share = world.shareAPI().getShare(itemName);
-        assertTrue(world.sharePage().isShareCorrect(share, fields));
+        world.sharesAssertions().assertPrivateShareCreatedOrEdited(itemName, table.asMap(String.class, String.class));
     }
 
     @Then("{word} should not have access to {word}")
     public void sharee_should_not_have_access_to_item(String userName, String itemName)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        assertFalse(world.shareAPI().isSharedWithMe(itemName, userName, false));
+        world.sharesAssertions().assertUserDoesNotHaveAccessToItem(userName, itemName);
     }
 
     @Then("{usertype} {word} should have access to {word}")
     public void sharee_should_not_have_access_the_item(String type, String shareeName, String itemName)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        if (type.equalsIgnoreCase("user")) {
-            assertTrue(world.shareAPI().isSharedWithMe(itemName, shareeName, false));
-        } else if (type.equalsIgnoreCase("group")) {
-            assertTrue(world.shareAPI().isSharedWithMe(itemName, shareeName, true));
-        }
+        world.sharesAssertions().assertShareeHasAccessToItem(type, shareeName, itemName);
     }
 
     @Then("{word} should not be shared anymore with {word}")
-    public void item_should_not_be_shared_with(String itemName, String sharee)
-            throws Throwable {
+    public void item_should_not_be_shared_with(String itemName, String sharee) {
         StepLogger.logCurrentStep(Level.FINE);
-        assertFalse(world.sharePage().isItemInListPrivateShares(sharee));
-    }
-
-    @Then("Alice should see {word} as recipient")
-    public void user_should_see_recipient(String sharee) {
-        StepLogger.logCurrentStep(Level.FINE);
-        assertTrue(world.privateSharePage().isSharee(sharee));
+        world.sharesAssertions().assertItemIsNotSharedAnymoreWith(itemName, sharee);
     }
 }

@@ -6,13 +6,9 @@
 
 package e2e.steps;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.util.Map;
 import java.util.logging.Level;
 
-import e2e.model.OCShare;
 import e2e.support.log.Log;
 import e2e.support.log.StepLogger;
 import e2e.world.World;
@@ -66,44 +62,8 @@ public class LinksSteps {
     public void link_should_be_created_with_fields(String itemName, DataTable table)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        //Asserts in UI
-        Log.log(Level.FINE, "Checking UI asserts");
         Map<String, String> fields = table.asMap(String.class, String.class);
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            switch (key) {
-                case "name" -> {
-                    Log.log(Level.FINE, "Checking name: " + value);
-                    assertTrue(world.sharePage().isItemInListPublicShares(value));
-                }
-                case "password-auto", "password" -> {
-                    world.sharePage().openPublicLink(itemName);
-                    assertTrue(world.publicLinksPage().isPasswordEnabled());
-                    world.publicLinksPage().close();
-                }
-                case "user" -> {
-                    Log.log(Level.FINE, "checking user: " + itemName);
-                    assertTrue(world.sharePage().isItemInListPublicShares(itemName));
-                }
-                case "permission" -> {
-                    Log.log(Level.FINE, "checking permissions: " + value);
-                    world.sharePage().openPublicLink(itemName);
-                    assertTrue(world.publicLinksPage().arePermissionsCorrect(value));
-                    world.publicLinksPage().close();
-                }
-                case "expiration days" -> {
-                    Log.log(Level.FINE, "checking expiration day: " + value);
-                    world.sharePage().openPublicLink(itemName);
-                    assertTrue(world.publicLinksPage().isExpirationCorrect(value));
-                    world.publicLinksPage().close();
-                }
-            }
-        }
-        //Asserts in server via API
-        Log.log(Level.FINE, "Checking API/server asserts");
-        OCShare share = world.shareAPI().getShare(itemName);
-        assertTrue(world.sharePage().isShareCorrect(share, fields));
+        world.linksAssertions().assertPublicLinkCreatedOrEdited(itemName, fields);
     }
 
     @Then("link on {word} should not exist anymore")
@@ -111,8 +71,6 @@ public class LinksSteps {
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
         Log.log(Level.FINE, "Checking if item exists: " + itemName);
-        assertTrue(world.sharePage().isListPublicLinksEmpty());
-        assertTrue(world.shareAPI().getLinksByDefault().isEmpty());
-        assertFalse(world.sharePage().isItemInListPublicShares(itemName + " link"));
+        world.linksAssertions().assertPublicLinkDoesNotExistAnymore(itemName);
     }
 }
