@@ -64,57 +64,7 @@ public class SharesSteps {
     @When("Alice edits the share on {itemtype} {word} with permissions {word}")
     public void user_edits_share_with_permissions(String type, String itemName, String permissions) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.sharePage().openPrivateShare(itemName);
-        int permissionsToInt = Integer.parseInt(permissions);
-        String permissionsToString = String.format("%5s", Integer.toBinaryString(permissionsToInt))
-                .replace(" ", "0");
-        Log.log(Level.FINE, "Permissions converted: " + permissionsToString);
-        for (int i = 0; i <= permissionsToString.length() - 1; i++) {
-            switch (i) {
-                case (0)-> { //Share. Permission not used since resharing not enabled anymore
-                }
-                case 1 -> {
-                    if (type.equalsIgnoreCase("folder")) {
-                        Log.log(Level.FINE, "Check Delete");
-                        char status = permissionsToString.charAt(i);
-                        boolean enabled = world.privateSharePage().isDeleteSelected();
-                        Log.log(Level.FINE, "Status: " + status + ". Enabled: " + enabled);
-                        if (enabled != (status == '1')) {
-                            world.privateSharePage().switchDelete();
-                        }
-                    }
-                }
-                case 2 -> {
-                    if (type.equalsIgnoreCase("folder")) {
-                        Log.log(Level.FINE, "Check Create");
-                        char status = permissionsToString.charAt(i);
-                        boolean enabled = world.privateSharePage().isCreateSelected();
-                        Log.log(Level.FINE, "Status: " + status + ". Enabled: " + enabled);
-                        if (enabled != (status == '1')) {
-                            world.privateSharePage().switchCreate();
-                        }
-                    }
-                }
-                case 3 -> {
-                    Log.log(Level.FINE, "Check Change");
-                    char status = permissionsToString.charAt(i);
-                    if (type.equalsIgnoreCase("folder")) {
-                        boolean enabled = world.privateSharePage().isChangeSelected();
-                        Log.log(Level.FINE, "Status Folder: " + status + ". Enabled: " + enabled);
-                        if (enabled != (status == '1')) {
-                            world.privateSharePage().switchChange();
-                        }
-                    } else if (type.equalsIgnoreCase("file")) {
-                        boolean enabled = world.privateSharePage().isEditFileEnabled();
-                        Log.log(Level.FINE, "Status File: " + status + ". Enabled: " + enabled);
-                        if (enabled != (status == '1')) {
-                            world.privateSharePage().switchEditFile();
-                        }
-                    }
-                }
-            }
-        }
-        world.privateSharePage().close();
+        world.sharesTasks().editPrivateSharePermissions(type, itemName, permissions);
     }
 
     @When("Alice deletes the share")

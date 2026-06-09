@@ -45,78 +45,21 @@ public class LinksSteps {
     @When("Alice creates link on {word} {word} with the following fields")
     public void user_creates_link_with_fields(String type, String itemName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.sharePage().addPublicLink();
         Map<String, String> fields = table.asMap(String.class, String.class);
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            switch (key) {
-                case "name": {
-                    world.publicLinksPage().addLinkName(value);
-                    break;
-                }
-                case "password": {
-                    world.publicLinksPage().typePassword(itemName, value);
-                    break;
-                }
-                case "password-auto": {
-                    world.publicLinksPage().generatePassword();
-                    break;
-                }
-                case "permission": {
-                    world.publicLinksPage().setPermission(value);
-                    break;
-                }
-                case "expiration days": {
-                    world.publicLinksPage().setExpiration(value);
-                    break;
-                }
-                default:
-                    break;
-            }
-        }
-        world.publicLinksPage().submitLink();
+        world.linkTasks().createPublicLink(itemName, fields);
     }
 
     @When("Alice edits the link on {word} with the following fields")
     public void user_edits_public_link_with_fields(String itemName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
         Map<String, String> fields = table.asMap(String.class, String.class);
-        world.sharePage().openPublicLink(itemName);
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            switch (key) {
-                case "name" -> world.publicLinksPage().addLinkName(value);
-                case "permissions" -> {
-                    switch (value) {
-                        case "1" -> {
-                            Log.log(Level.FINE, "Select Download / View");
-                            world.publicLinksPage().selectDownloadView();
-                        }
-                        case "15" -> {
-                            Log.log(Level.FINE, "Select Download / View / Upload");
-                            world.publicLinksPage().selectDownloadViewUpload();
-                        }
-                        case "4" -> {
-                            Log.log(Level.FINE, "Select Upload Only (File Drop)");
-                            world.publicLinksPage().selectUploadOnly();
-                        }
-                    }
-                }
-                case "password" -> world.publicLinksPage().typePassword(itemName, value);
-                case "expiration days" -> world.publicLinksPage().setExpiration(value);
-            }
-
-        }
-        world.publicLinksPage().submitLink();
+        world.linkTasks().editPublicLink(itemName, fields);
     }
 
     @When("Alice deletes the link on {word}")
     public void user_deletes_link(String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.sharePage().deletePublicShare();
-        world.sharePage().acceptDeletion();
+        world.linkTasks().deletePublicLink();
     }
 
     @Then("link should be created/edited on {word} with the following fields")

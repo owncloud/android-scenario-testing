@@ -154,87 +154,37 @@ public class SpacesSteps {
     @When("Alice adds {word} to the space {word} with")
     public void add_member_with_permissions(String userName, String spaceName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage().openMembers(spaceName);
-        world.spacesMembersPage().addMember(userName);
-        Map<String, String> fields = table.asMap(String.class, String.class);
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            switch (key) {
-                case "permission" -> world.spacesMembersPage().setPermission(value);
-                case "expirationDate" -> world.spacesMembersPage().setExpirationDate(value);
-            }
-        }
-        world.spacesMembersPage().inviteMember();
+        world.spacesTasks().addMemberToSpace(userName, spaceName, table.asMap(String.class, String.class));
     }
 
     @When("Alice creates a new link to the space {word} with")
     public void create_new_link(String spaceName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage().openMembers(spaceName);
-        world.spacesMembersPage().addLink();
-        Map<String, String> fields = table.asMap(String.class, String.class);
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            switch (key) {
-                case "name" -> world.spacesMembersPage().setName(value);
-                case "permission" -> world.spacesMembersPage().setPermission(value);
-                case "password" -> world.spacesMembersPage().setPassword();
-                case "expirationDate" -> world.spacesMembersPage().setExpirationDate(value);
-            }
-        }
-        world.spacesMembersPage().createLink();
+        world.spacesTasks().createLinkToSpace(spaceName, table.asMap(String.class, String.class));
     }
 
     @When("Alice edits {word} over the space {word} with")
     public void edit_link(String linkName, String spaceName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage().openMembers(spaceName);
-        world.spacesMembersPage().editLink(linkName);
-        Map<String, String> fields = table.asMap(String.class, String.class);
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            switch (key) {
-                case "name" -> world.spacesMembersPage().setName(value);
-                case "permission" -> world.spacesMembersPage().setPermission(value);
-                case "password" -> world.spacesMembersPage().editPassword();
-                case "expirationDate" -> world.spacesMembersPage().setExpirationDate(value);
-            }
-        }
-        world.spacesMembersPage().createLink();
+        world.spacesTasks().editLinkOverSpace(linkName, spaceName, table.asMap(String.class, String.class));
     }
 
     @When("Alice removes {word} from the space {word}")
     public void user_removes_member(String userName, String spaceName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage().openMembers(spaceName);
-        world.spacesMembersPage().removeMember(userName);
+        world.spacesTasks().removeMemberFromSpace(userName, spaceName);
     }
 
     @When("Alice edits {word} from the space {word} with the following fields")
     public void edit_member_space(String userName, String spaceName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage().openMembers(spaceName);
-        world.spacesMembersPage().openEditMember(userName);
-        Map<String, String> fields = table.asMap(String.class, String.class);
-        for (Map.Entry<String, String> entry : fields.entrySet()) {
-            String key = entry.getKey();
-            String value = entry.getValue();
-            switch (key) {
-                case "permission" -> world.spacesMembersPage().setPermission(value);
-                case "expirationDate" -> world.spacesMembersPage().setExpirationDate(value);
-            }
-        }
-        world.spacesMembersPage().inviteMember();
+        world.spacesTasks().editMemberFromSpace(userName, spaceName, table.asMap(String.class, String.class));
     }
 
     @When("Alice removes {word} over the space {word}")
     public void remove_link_space(String linkName, String spaceName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage().openMembers(spaceName);
-        world.spacesMembersPage().removeLink(linkName);
+        world.spacesTasks().removeLinkOverSpace(linkName, spaceName);
     }
 
     @Then("Alice should{typePosNeg} see the following{spaceStatus} spaces")

@@ -31,6 +31,10 @@ import e2e.pages.ShortcutDialogPage;
 import e2e.pages.SpaceMembersPage;
 import e2e.pages.SpacesPage;
 import e2e.pages.UploadsPage;
+import e2e.tasks.FileListTasks;
+import e2e.tasks.LinksTasks;
+import e2e.tasks.SharesTasks;
+import e2e.tasks.SpacesTasks;
 import io.appium.java_client.android.AndroidDriver;
 
 public class World {
@@ -60,6 +64,11 @@ public class World {
     private FilesAPI filesAPI;
     private GraphAPI graphAPI;
     private TrashbinAPI trashbinAPI;
+
+    private LinksTasks linksTasks;
+    private SharesTasks sharesTasks;
+    private FileListTasks fileListTasks;
+    private SpacesTasks spacesTasks;
 
     public World() {
         this.driver = AndroidManager.getDriver();
@@ -217,5 +226,33 @@ public class World {
             trashbinAPI = new TrashbinAPI();
         }
         return trashbinAPI;
+    }
+
+    public LinksTasks linkTasks() {
+        if (linksTasks == null) {
+            linksTasks = new LinksTasks(this);
+        }
+        return linksTasks;
+    }
+
+    public SharesTasks sharesTasks() {
+        if (sharesTasks == null) {
+            sharesTasks = new SharesTasks(this);
+        }
+        return sharesTasks;
+    }
+
+    public FileListTasks fileListTasks() {
+        if (fileListTasks == null) {
+            fileListTasks = new FileListTasks(this);
+        }
+        return fileListTasks;
+    }
+
+    public SpacesTasks spacesTasks() {
+        if (spacesTasks == null) {
+            spacesTasks = new SpacesTasks(this);
+        }
+        return spacesTasks;
     }
 }

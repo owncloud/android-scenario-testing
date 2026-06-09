@@ -19,7 +19,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
-import e2e.LocProperties;
 import e2e.model.OCFile;
 import e2e.support.log.Log;
 import e2e.support.log.StepLogger;
@@ -180,12 +179,7 @@ public class FileListSteps {
     @When("Alice selects the option {optionsFab}")
     public void user_selects_option_upload(String operation) {
         StepLogger.logCurrentStep(Level.FINE);
-        switch (operation) {
-            case "Upload File" -> world.fileListPage().selectUploadFiles();
-            case "Picture from Camera" -> world.fileListPage().selectUploadPicture();
-            case "Create Folder" -> world.fileListPage().selectCreateFolder();
-            case "Create Shortcut" -> world.fileListPage().selectCreateShortcut();
-        }
+        world.fileListTasks().selectFabOption(operation);
     }
 
     @When("Alice refreshes the list")
@@ -255,20 +249,7 @@ public class FileListSteps {
     public void file_is_modified_adding_text(String itemName, String modificationType, String text)
             throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
-        Log.log(Level.FINE, "Modified file: " + itemName + " " + modificationType);
-        if (modificationType.equals("remotely")) {
-            world.filesAPI().pushFile(itemName, text, "Alice");
-        } else if (modificationType.equals("locally")) {
-            String folderId = System.getProperty("backend").equals("oCIS")
-                    ? world.graphAPI().getPersonal().getId()
-                    : "";
-            String username = LocProperties.getProperties().getProperty("userName1");
-            String server = System.getProperty("server")
-                    .replaceFirst("^https?://", "")
-                    .replace(":", "%3A" );
-            String itemPath = username + "@" + server + "/" + folderId + "/";
-            world.devicePage().overwriteFile(itemName, itemPath);
-        }
+        world.fileListTasks().modifyFileAddingText(itemName, modificationType, text);
     }
 
     @When("Alice closes the preview")
