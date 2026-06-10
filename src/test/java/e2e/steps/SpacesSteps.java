@@ -50,38 +50,19 @@ public class SpacesSteps {
     @Given("the following spaces have been created in {word} account")
     public void spaces_have_been_created(String userName, DataTable table) throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
-        List<Map<String, String>> rows = table.asMaps(String.class, String.class);
-        for (Map<String, String> row : rows) {
-            String name = row.get("name");
-            // Subtitle can be null
-            String subtitle = row.get("subtitle") != null ? row.get("subtitle") : "";
-            world.graphAPI().createSpace(name, subtitle, userName);
-        }
+        world.spacesPreconditions().spacesExistInAccount(userName, table.asMaps(String.class, String.class));
     }
 
     @Given("the following users are members of the space {word}")
     public void users_members_of_space(String spaceName, DataTable table) throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
-        List<Map<String, String>> rows = table.asMaps(String.class, String.class);
-        for (Map<String, String> row : rows) {
-            String userName = row.get("user");
-            String permission = row.get("permission");
-            String expDate = row.get("expirationDate");
-            String expirationDate = (expDate == null) ? "" : expDate.trim();
-            world.graphAPI().addMemberToSpace(spaceName, userName, permission, expirationDate);
-        }
+        world.spacesPreconditions().usersAreMembersOfSpace(spaceName, table.asMaps(String.class, String.class));
     }
 
     @Given("the link {word} was created on the space {word} with")
     public void links_created_on_space(String linkName, String spaceName, DataTable table) throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
-        List<Map<String, String>> rows = table.asMaps(String.class, String.class);
-        for (Map<String, String> row : rows) {
-            String permission = row.get("permission");
-            String expDate = row.get("expirationDate");
-            String expirationDate = (expDate == null) ? "" : expDate.trim();
-            world.graphAPI().addLinkToSpace(spaceName, linkName, permission, expirationDate);
-        }
+        world.spacesPreconditions().linkExistsOnSpace(linkName, spaceName, table.asMaps(String.class, String.class));
     }
 
     @When("Alice selects the spaces view")

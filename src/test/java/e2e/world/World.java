@@ -34,6 +34,12 @@ import e2e.pages.ShortcutDialogPage;
 import e2e.pages.SpaceMembersPage;
 import e2e.pages.SpacesPage;
 import e2e.pages.UploadsPage;
+import e2e.preconditions.DevicePreconditions;
+import e2e.preconditions.FileListPreconditions;
+import e2e.preconditions.LinksPreconditions;
+import e2e.preconditions.LoginPreconditions;
+import e2e.preconditions.SharesPreconditions;
+import e2e.preconditions.SpacesPreconditions;
 import e2e.tasks.FileListTasks;
 import e2e.tasks.LinksTasks;
 import e2e.tasks.SharesTasks;
@@ -76,6 +82,13 @@ public class World {
     private LinksAssertions linksAssertions;
     private SharesAssertions sharesAssertions;
     private FileListAssertions fileListAssertions;
+
+    private FileListPreconditions fileListPreconditions;
+    private DevicePreconditions devicePreconditions;
+    private LinksPreconditions linksPreconditions;
+    private LoginPreconditions loginPreconditions;
+    private SharesPreconditions sharesPreconditions;
+    private SpacesPreconditions spacesPreconditions;
 
     public World() {
         this.driver = AndroidManager.getDriver();
@@ -282,5 +295,47 @@ public class World {
             fileListAssertions = new FileListAssertions(this);
         }
         return fileListAssertions;
+    }
+
+    public FileListPreconditions fileListPreconditions() {
+        if (fileListPreconditions == null) {
+            fileListPreconditions = new FileListPreconditions(this);
+        }
+        return fileListPreconditions;
+    }
+
+    public DevicePreconditions devicePreconditions() {
+        if (devicePreconditions == null) {
+            devicePreconditions = new DevicePreconditions(this);
+        }
+        return devicePreconditions;
+    }
+
+    public LinksPreconditions linksPreconditions() {
+        if (linksPreconditions == null) {
+            linksPreconditions = new LinksPreconditions(this);
+        }
+        return linksPreconditions;
+    }
+
+    public LoginPreconditions loginPreconditions() {
+        if (loginPreconditions == null) {
+            loginPreconditions = new LoginPreconditions(this);
+        }
+        return loginPreconditions;
+    }
+
+    public SharesPreconditions sharesPreconditions() {
+        if (sharesPreconditions == null) {
+            sharesPreconditions = new SharesPreconditions(this);
+        }
+        return sharesPreconditions;
+    }
+
+    public SpacesPreconditions spacesPreconditions() {
+        if (spacesPreconditions == null) {
+            spacesPreconditions = new SpacesPreconditions(this);
+        }
+        return spacesPreconditions;
     }
 }

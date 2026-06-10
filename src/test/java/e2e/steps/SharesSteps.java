@@ -42,8 +42,7 @@ public class SharesSteps {
     public void user_has_shared_item_with_permissions(String sharingUser, int shareLevel, String type, String itemName,
                                     String recipientUser, String permissions) throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        world.shareAPI().createShare(sharingUser, itemName, recipientUser, "0", permissions, "", "", shareLevel);
-        world.shareAPI().acceptAllShares("user", recipientUser);
+        world.sharesPreconditions().privateShareExists(sharingUser, shareLevel, itemName, recipientUser, permissions);
     }
 
     @When("Alice selects {usertype} {word} as sharee")

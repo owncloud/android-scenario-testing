@@ -35,7 +35,7 @@ public class LinksSteps {
     public void user_has_shared_the_item_by_link(String sharingUser, String type, String itemName)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        world.shareAPI().createShare(sharingUser, itemName, "", "3", "1", itemName, "aa55AA.." + " link", 0);
+        world.linksPreconditions().publicLinkExists(sharingUser, itemName);
     }
 
     @When("Alice creates link on {word} {word} with the following fields")

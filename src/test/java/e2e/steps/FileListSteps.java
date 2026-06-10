@@ -6,21 +6,13 @@
 
 package e2e.steps;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
 import e2e.model.OCFile;
-import e2e.support.log.Log;
 import e2e.support.log.StepLogger;
 import e2e.world.World;
 import io.cucumber.datatable.DataTable;
@@ -66,62 +58,25 @@ public class FileListSteps {
     @Given("the following items have been created in {word} account")
     public void items_have_been_created_in_account(String userName, DataTable table) throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        List<Map<String, String>> rows = table.asMaps(String.class, String.class);
-        for (Map<String, String> row : rows) {
-            String type = row.get("type");
-            String name = row.get("name");
-            Log.log(Level.FINE, type + " " + name);
-            if (!world.filesAPI().itemExist(name)) {
-                switch (type) {
-                    case "folder", "item" -> world.filesAPI().createFolder(name, userName);
-                    case "file" -> world.filesAPI().pushFile(name, userName);
-                    case "image" -> world.filesAPI().pushFileByMime(name, "image/jpg");
-                    case "audio" -> world.filesAPI().pushFileByMime(name, "audio/mpeg3");
-                    case "video" -> world.filesAPI().pushFileByMime(name, "video/mp4");
-                    case "shortcut" -> world.filesAPI().pushFileByMime(name, "text/uri-list");
-                    case "damaged" -> world.filesAPI().pushFileByMime(name, "image/png");
-                }
-            }
-        }
+        world.fileListPreconditions().itemsExistInAccount(userName, table.asMaps(String.class, String.class));
     }
 
     @Given("the folder {word} contains {int} files")
     public void folder_contains_files(String folderName, int files) throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        if (!world.filesAPI().itemExist(folderName)) {
-            world.filesAPI().createFolder(folderName, "alice");
-        }
-        for (int i = 0; i < files; i++) {
-            world.filesAPI().pushFile(folderName + "/file_" + i + ".txt", "Alice");
-        }
+        world.fileListPreconditions().folderContainsFiles(folderName, files);
     }
 
     @Given("the device has no connection")
     public void theDeviceHasNoConnection() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().setConnectionDown();
+        world.devicePreconditions().deviceHasNoConnection();
     }
 
     @Given("the following settings have been set")
     public void settings_status(DataTable table) throws IOException, InterruptedException {
         StepLogger.logCurrentStep(Level.FINE);
-        List<Map<String, String>> rows = table.asMaps(String.class, String.class);
-        for (Map<String, String> row : rows) {
-            String setting = row.get("setting");
-            String value = row.get("value");
-            Log.log(Level.FINE, setting + " " + value);
-            String command = "adb shell content call --uri content://com.owncloud.android.test.preferences " +
-                    "--method set_boolean --arg " + setting + " --extra value:b:" + value;
-            Log.log(Level.FINE, "Command: " + command);
-            int exitCode = Runtime.getRuntime().exec(command).waitFor();
-            // 0 if correct
-            Log.log(Level.FINE, "Exit code of adb command: " + exitCode);
-            // Reopen app to apply settings changes
-            String forceStop = "adb shell am force-stop com.owncloud.android";
-            Runtime.getRuntime().exec(forceStop).waitFor();
-            String startApp = "adb shell monkey -p com.owncloud.android 1";
-            Runtime.getRuntime().exec(startApp).waitFor();
-        }
+        world.devicePreconditions().settingsHaveBeenSet(table.asMaps(String.class, String.class));
     }
 
     @When("Alice selects to set as av.offline the item {word}")
