@@ -15,6 +15,7 @@ import e2e.api.TrashbinAPI;
 import e2e.assertions.FileListAssertions;
 import e2e.assertions.LinksAssertions;
 import e2e.assertions.SharesAssertions;
+import e2e.assertions.SpacesAssertions;
 import e2e.assertions.UploadAssertions;
 import e2e.pages.AndroidManager;
 import e2e.pages.CameraPage;
@@ -85,6 +86,7 @@ public class World {
     private LinksAssertions linksAssertions;
     private SharesAssertions sharesAssertions;
     private FileListAssertions fileListAssertions;
+    private SpacesAssertions spacesAssertions;
     private UploadAssertions uploadAssertions;
 
     private FileListPreconditions fileListPreconditions;
@@ -306,6 +308,13 @@ public class World {
             fileListAssertions = new FileListAssertions(this);
         }
         return fileListAssertions;
+    }
+
+    public SpacesAssertions spacesAssertions() {
+        if (spacesAssertions == null) {
+            spacesAssertions = new SpacesAssertions(this);
+        }
+        return spacesAssertions;
     }
 
     public UploadAssertions uploadAssertions() {
