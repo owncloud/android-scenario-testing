@@ -15,6 +15,7 @@ import e2e.api.TrashbinAPI;
 import e2e.assertions.FileListAssertions;
 import e2e.assertions.LinksAssertions;
 import e2e.assertions.SharesAssertions;
+import e2e.assertions.UploadAssertions;
 import e2e.pages.AndroidManager;
 import e2e.pages.CameraPage;
 import e2e.pages.ConflictPage;
@@ -40,6 +41,7 @@ import e2e.preconditions.LinksPreconditions;
 import e2e.preconditions.LoginPreconditions;
 import e2e.preconditions.SharesPreconditions;
 import e2e.preconditions.SpacesPreconditions;
+import e2e.tasks.DocumentProviderTasks;
 import e2e.tasks.FileListTasks;
 import e2e.tasks.LinksTasks;
 import e2e.tasks.SharesTasks;
@@ -78,10 +80,12 @@ public class World {
     private SharesTasks sharesTasks;
     private FileListTasks fileListTasks;
     private SpacesTasks spacesTasks;
+    private DocumentProviderTasks documentProviderTasks;
 
     private LinksAssertions linksAssertions;
     private SharesAssertions sharesAssertions;
     private FileListAssertions fileListAssertions;
+    private UploadAssertions uploadAssertions;
 
     private FileListPreconditions fileListPreconditions;
     private DevicePreconditions devicePreconditions;
@@ -276,6 +280,13 @@ public class World {
         return spacesTasks;
     }
 
+    public DocumentProviderTasks documentProviderTasks() {
+        if (documentProviderTasks == null) {
+            documentProviderTasks = new DocumentProviderTasks(this);
+        }
+        return documentProviderTasks;
+    }
+
     public LinksAssertions linksAssertions() {
         if (linksAssertions == null) {
             linksAssertions = new LinksAssertions(this);
@@ -295,6 +306,13 @@ public class World {
             fileListAssertions = new FileListAssertions(this);
         }
         return fileListAssertions;
+    }
+
+    public UploadAssertions uploadAssertions() {
+        if (uploadAssertions == null) {
+            uploadAssertions = new UploadAssertions(this);
+        }
+        return uploadAssertions;
     }
 
     public FileListPreconditions fileListPreconditions() {

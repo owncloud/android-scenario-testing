@@ -7,12 +7,8 @@
 package e2e.steps;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.logging.Level;
 
-import e2e.model.OCFile;
 import e2e.support.log.StepLogger;
 import e2e.world.World;
 import io.cucumber.datatable.DataTable;
@@ -82,53 +78,43 @@ public class FileListSteps {
     @When("Alice selects to set as av.offline the item {word}")
     public void user_selects_to_set_as_avoffline_item(String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().executeOperation("Set as available offline", itemName);
-        world.fileListPage().closeSelectionMode();
+        world.fileListTasks().setItemAsAvailableOffline(itemName);
     }
 
     @When("Alice selects to unset as av.offline the item {word}")
     public void user_selects_to_unset_as_unavoffline_item(String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().executeOperation("Unset as available offline", itemName);
-        world.fileListPage().closeSelectionMode();
+        world.fileListTasks().unsetItemAsAvailableOffline(itemName);
     }
 
     @When("Alice selects to {word} the {itemtype} {word}")
     public void user_selects_item_to_some_operation(String operation, String type, String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        if (operation.equals("Download") || operation.equals("open")) {
-            world.fileListPage().downloadAction(itemName);
-        } else {
-            world.fileListPage().executeOperation(operation, itemName);
-        }
+        world.fileListTasks().selectOperationOnItem(operation, itemName);
     }
 
     @When("Alice selects to {word}")
     public void user_selects_item_to_some_operation_in_multi(String operation) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().selectOperation(operation);
+        world.fileListTasks().selectOperation(operation);
     }
 
     @When("Alice selects {word} as target folder")
     public void user_selects_target_folder(String targetFolder) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.folderPickerPage().selectFolder(targetFolder);
-        world.folderPickerPage().accept();
+        world.fileListTasks().selectTargetFolder(targetFolder);
     }
 
     @When("Alice selects {word} as space")
     public void user_selects_space(String spaceName) {
         StepLogger.logCurrentStep(Level.FINE);
-        if (System.getProperty("backend").equals("oCIS")) {
-            world.folderPickerPage().selectSpace(spaceName);
-        }
+        world.fileListTasks().selectSpace(spaceName);
     }
 
     @When("Alice creates new folder {word} in the folder picker")
     public void user_creates_folder_picker(String targetFolder) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.folderPickerPage().createFolder();
-        world.inputNamePage().setItemName(targetFolder);
+        world.fileListTasks().createFolderInFolderPicker(targetFolder);
     }
 
     @When("Alice selects the option {optionsFab}")
@@ -140,64 +126,55 @@ public class FileListSteps {
     @When("Alice refreshes the list")
     public void user_refreshes_list() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().refreshList();
+        world.fileListTasks().refreshList();
     }
 
     @When("Alice accepts the {word} deletion of {word}")
     public void user_accepts_deletion(String deletionType, String type) {
         StepLogger.logCurrentStep(Level.FINE);
-        if ("remote".equals(deletionType)) {
-            world.removeDialogPage().removeAll();
-        } else if ("local".equals(deletionType)) {
-            world.removeDialogPage().onlyLocal();
-        }
+        world.fileListTasks().acceptDeletion(deletionType);
     }
 
     @When("the {word} has been deleted remotely")
-    public void item_has_been_deleted_remotely(String fileName)
-            throws IOException {
+    public void item_has_been_deleted_remotely(String fileName) throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
-        world.filesAPI().removeItem(fileName, "Alice");
-        world.fileListPage().refreshList();
+        world.fileListTasks().deleteItemRemotely(fileName);
     }
 
     @When("Alice sets {word} as new name")
     public void user_sets_new_name(String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.inputNamePage().setItemName(itemName);
+        world.fileListTasks().setNewName(itemName);
     }
 
     @When("Alice opens the public link shortcut")
     public void user_opens_public_link_shortcut() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().openLinkShortcut();
-        world.fileListPage().refreshList();
+        world.fileListTasks().openPublicLinkShortcut();
     }
 
     @When("Alice opens the available offline shortcut")
     public void user_opens_av_offline_shortcut() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().openAvOffShortcut();
-        world.fileListPage().refreshList();
+        world.fileListTasks().openAvailableOfflineShortcut();
     }
 
     @When("Alice browses into {word}")
     public void user_browses_into_folder(String path) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().refreshList();
-        world.fileListPage().browseToFolder(path);
+        world.fileListTasks().browseInto(path);
     }
 
     @When("Alice browses to root folder")
     public void user_browses_root_folder() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().browseRoot();
+        world.fileListTasks().browseInto("/");
     }
 
     @When("Alice clicks on the thumbnail")
     public void user_clicks_on_the_thumbnail() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.detailsPage().downloadFromThumbnail();
+        world.fileListTasks().downloadFromThumbnail();
     }
 
     @When("file {word} is modified {modificationType} adding {word}")
@@ -210,100 +187,81 @@ public class FileListSteps {
     @When("Alice closes the preview")
     public void user_closes_preview() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.detailsPage().backListFiles();
+        world.fileListTasks().closePreview();
     }
 
     @When("Alice fixes the conflict with {conflictFix}")
     public void user_fixes_name_conflict(String conflictFix) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().fixConflict(conflictFix);
+        world.fileListTasks().fixNameConflict(conflictFix);
     }
 
     @When("Alice fixes the conflict with {conflictFix} version")
     public void user_fixes_content_conflict(String conflictFix) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.conflictPage().fixConflict(conflictFix);
+        world.fileListTasks().fixContentConflict(conflictFix);
     }
 
     @When("Alice long presses over {word}")
     public void user_longpress_over_item(String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().refreshList();
-        world.fileListPage().longPress(itemName);
+        world.fileListTasks().longPressItem(itemName);
     }
 
     @When("Alice multiselects the following items")
     public void user_selects_all_items(DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        List<List<String>> listItems = table.asLists();
-        for (List<String> rows : listItems) {
-            String name = rows.get(0);
-            world.fileListPage().selectItem(name);
-        }
+        world.fileListTasks().multiSelectItems(table.asLists());
     }
 
     @When("Alice opens a private link pointing to {word} with scheme {word}")
     public void open_private_link(String filePath, String scheme)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        OCFile item = world.filesAPI().listItems(filePath, "Alice").get(0);
-        String privateLink = world.fileListPage().getPrivateLink(scheme, item.getPrivateLink());
-        world.fileListPage().openPrivateLink(privateLink);
+        world.fileListTasks().openPrivateLinkPointingTo(filePath, scheme);
     }
 
     @When("Alice opens a private link pointing to shared {word} with scheme {word}")
     public void open_private_link_shared(String fileName, String scheme)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        ArrayList<OCFile> listShared = world.filesAPI().listShared();
-        OCFile item = null;
-        for (OCFile ocFile : listShared) {
-            if (ocFile.getName().equals(fileName)) {
-                item = ocFile;
-            }
-        }
-        String privateLink = world.fileListPage().getPrivateLink(scheme, item.getPrivateLink());
-        world.fileListPage().openPrivateLink(privateLink);
+        world.fileListTasks().openPrivateLinkPointingToSharedItem(fileName, scheme);
     }
 
     @When("Alice opens a private link pointing to non-existing item")
     public void open_fake_private_link() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().openFakePrivateLink();
+        world.fileListTasks().openPrivateLinkPointingToNonExistingItem();
     }
 
     @When("Alice opens the share shortcut")
     public void open_share_shortcut() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().openFakePrivateLink();
+        world.fileListTasks().openShareShortcut();
     }
 
     @When("Alice takes a picture")
     public void takes_picture() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.cameraPage().takePicture();
+        world.fileListTasks().takePicture();
     }
 
     @When("Alice creates a web shortcut with the following fields")
     public void creates_shortcut(DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        Map<String, String> fields = table.asMap(String.class, String.class);
-        String name = fields.get("name");
-        String url = fields.get("url");
-        world.shortcutDialogPage().typeURLName(name, url);
-        world.shortcutDialogPage().submitShortcut();
+        world.fileListTasks().createWebShortcut(table.asMap(String.class, String.class));
     }
 
     @When ("Alice opens the shortcut {word}.url")
     public void opens_shortcut(String name) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().downloadAction(name+".url");
+        world.fileListTasks().openShortcut(name);
     }
 
     @When ("Alice opens the link")
     public void opens_link() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.shortcutDialogPage().openShortcut();
+        world.fileListTasks().openLink();
     }
 
     @Then("Alice should see {string} in the (file)list")

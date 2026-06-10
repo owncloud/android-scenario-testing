@@ -26,6 +26,11 @@ public class DevicePreconditions {
         this.world = world;
     }
 
+    public void pushFileDevice(String fileName, String path) throws IOException {
+        Log.log(Level.FINE, "Pushing file to device: " + fileName + " in path: " + path);
+        world.devicePage().pushFile(fileName, path);
+    }
+
     public void deviceHasNoConnection() {
         Log.log(Level.FINE, "Setting device connection down");
         world.fileListPage().setConnectionDown();

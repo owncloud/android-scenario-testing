@@ -6,7 +6,12 @@
 
 package e2e.tasks;
 
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
 import java.util.logging.Level;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import e2e.support.log.Log;
 import e2e.world.World;
@@ -24,6 +29,14 @@ public class SharesTasks {
         this.world = world;
     }
 
+    public void selectSharee(String type, String sharee)
+            throws IOException, ParserConfigurationException, SAXException {
+        Log.log(Level.FINE, "Select sharee. Type: " + type + " - Sharee: " + sharee);
+        world.sharePage().addPrivateShare();
+        world.searchShareePage().shareWithUser(sharee);
+        world.shareAPI().acceptAllShares(type, sharee);
+    }
+
     public void editPrivateSharePermissions(String itemType, String itemName, String permissions) {
         Log.log(Level.FINE, "Edit private share permissions. Type: " + itemType
                 + " - Item: " + itemName
@@ -33,9 +46,21 @@ public class SharesTasks {
             String binaryPermissions = convertPermissionsToBinary(permissions);
             Log.log(Level.FINE, "Permissions converted: " + binaryPermissions);
             applyPrivateSharePermissions(itemType, binaryPermissions);
-        } finally { // To close the page anyway and avoid leaving it open in case of failure, which would affect next steps
+        } finally {
+            // To close the page anyway and avoid leaving it open in case of failure, which would affect next steps
             world.privateSharePage().close();
         }
+    }
+
+    public void deletePrivateShare() {
+        Log.log(Level.FINE, "Delete private share");
+        world.sharePage().deletePrivateShare();
+        world.sharePage().acceptDeletion();
+    }
+
+    public void closeShareView() {
+        Log.log(Level.FINE, "Close share view");
+        world.sharePage().close();
     }
 
     private String convertPermissionsToBinary(String permissions) {
@@ -81,7 +106,6 @@ public class SharesTasks {
         boolean currentlyEnabled = world.privateSharePage().isCreateSelected();
         Log.log(Level.FINE, "Create permission. Current: "
                 + currentlyEnabled + " - Expected: " + shouldBeEnabled);
-
         if (currentlyEnabled != shouldBeEnabled) {
             world.privateSharePage().switchCreate();
         }
@@ -100,7 +124,6 @@ public class SharesTasks {
             boolean currentlyEnabled = world.privateSharePage().isEditFileEnabled();
             Log.log(Level.FINE, "Edit File permission. Current: "
                     + currentlyEnabled + " - Expected: " + shouldBeEnabled);
-
             if (currentlyEnabled != shouldBeEnabled) {
                 world.privateSharePage().switchEditFile();
             }

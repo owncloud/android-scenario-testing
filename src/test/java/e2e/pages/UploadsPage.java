@@ -28,7 +28,7 @@ public class UploadsPage extends CommonPage {
     }
 
     public boolean isFileUploaded(String fileName) {
-        boolean fileInList = !findUIAutomatorText(fileName).isDisplayed();
+        boolean fileInList = findUIAutomatorText(fileName).isDisplayed();
         boolean uploadedListVisible = findUIAutomatorText("UPLOADED").isDisplayed();
         boolean failedListNotVisible = findListUIAutomatorText("FAILED").isEmpty();
         boolean enqueuedListNotVisible = findListUIAutomatorText("ENQUEUED").isEmpty();

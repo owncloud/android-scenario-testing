@@ -23,10 +23,6 @@ public class UploadSteps {
     @Then("Alice should see {word} as {word} in the uploads view")
     public void file_in_uploads(String fileName, String status) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().openUploadsView();
-        if (status.equals("uploaded")) {
-            world.uploadsPage().isFileUploaded(fileName);
-        }
-        world.uploadsPage().clearList();
+        world.uploadAssertions().assertFileHasStatusInUploadsView(fileName, status);
     }
 }

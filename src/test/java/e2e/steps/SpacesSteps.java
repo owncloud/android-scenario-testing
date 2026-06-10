@@ -68,68 +68,61 @@ public class SpacesSteps {
     @When("Alice selects the spaces view")
     public void user_selects_spaces_view() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListPage().openSpaces();
+        world.spacesTasks().openSpacesView();
     }
 
     @When("the following spaces are disabled in server")
     public void space_disabled_server(DataTable table) throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
-        List<Map<String, String>> rows = table.asMaps(String.class, String.class);
-        for (Map<String, String> row : rows) {
-            String name = row.get("name");
-            // Subtitle can be null
-            String subtitle = row.get("subtitle") != null ? row.get("subtitle") : "";
-            world.graphAPI().disableSpace(name, subtitle);
-        }
+        world.spacesTasks().disableSpacesInServer(table.asMaps(String.class, String.class));
     }
 
     @When("Alice filters the list using {word}")
     public void user_filters_list(String pattern) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage().typeSearch(pattern);
+        world.spacesTasks().filterSpacesList(pattern);
     }
 
     @When("Alice creates a new space with the following fields")
     public void creates_new_space(DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        handleSpace(table, "create");
+        world.spacesTasks().createSpace(table.asMap(String.class, String.class));
     }
 
     @When("Alice edits the space {word}")
     public void user_edit_space(String spaceName){
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage().openEditSpace(spaceName);
+        world.spacesTasks().openEditSpace(spaceName);
     }
 
     @When("Alice disables the space {word}")
     public void user_disables_space(String spaceName){
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage().openDisableSpace(spaceName);
+        world.spacesTasks().openDisableSpace(spaceName);
     }
 
     @When("Alice enables the space {word}")
     public void user_enables_space(String spaceName){
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage().openEnableSpace(spaceName);
+        world.spacesTasks().openEnableSpace(spaceName);
     }
 
     @When("Alice deletes the space {word}")
     public void user_deletes_space(String spaceName){
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage().openDeleteSpace(spaceName);
+        world.spacesTasks().openDeleteSpace(spaceName);
     }
 
     @When("Alice updates the space with the following fields")
     public void updates_new_space(DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        handleSpace(table, "update");
+        world.spacesTasks().updateSpace(table.asMap(String.class, String.class));
     }
 
     @When("Alice edits the image of the space {word} with the file {word}")
     public void edits_image(String spaceName, String fileName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesPage().openEditSpaceImage(spaceName);
-        world.documentProviderPage().selectImageToUpload(fileName);
+        world.spacesTasks().editSpaceImage(spaceName, fileName);
     }
 
     @When("Alice adds {word} to the space {word} with")

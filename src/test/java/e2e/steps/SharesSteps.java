@@ -49,9 +49,7 @@ public class SharesSteps {
     public void user_selects_sharee(String type, String sharee)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        world.sharePage().addPrivateShare();
-        world.searchShareePage().shareWithUser(sharee);
-        world.shareAPI().acceptAllShares(type,sharee);
+        world.sharesTasks().selectSharee(type, sharee);
     }
 
     @When("Alice edits the share on {itemtype} {word} with permissions {word}")
@@ -63,14 +61,13 @@ public class SharesSteps {
     @When("Alice deletes the share")
     public void user_deletes_share() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.sharePage().deletePrivateShare();
-        world.sharePage().acceptDeletion();
+        world.sharesTasks().deletePrivateShare();
     }
 
     @When("Alice closes share view")
     public void user_closes_shares_view() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.sharePage().close();
+        world.sharesTasks().closeShareView();
     }
 
     @Then("share should be created/edited on {word} with the following fields")
