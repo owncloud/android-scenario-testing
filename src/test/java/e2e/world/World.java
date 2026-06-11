@@ -12,6 +12,7 @@ import e2e.api.FilesAPI;
 import e2e.api.GraphAPI;
 import e2e.api.ShareAPI;
 import e2e.api.TrashbinAPI;
+import e2e.assertions.DeviceAssertions;
 import e2e.assertions.FileListAssertions;
 import e2e.assertions.LinksAssertions;
 import e2e.assertions.SharesAssertions;
@@ -88,6 +89,7 @@ public class World {
     private FileListAssertions fileListAssertions;
     private SpacesAssertions spacesAssertions;
     private UploadAssertions uploadAssertions;
+    private DeviceAssertions deviceAssertions;
 
     private FileListPreconditions fileListPreconditions;
     private DevicePreconditions devicePreconditions;
@@ -322,6 +324,13 @@ public class World {
             uploadAssertions = new UploadAssertions(this);
         }
         return uploadAssertions;
+    }
+
+    public DeviceAssertions deviceAssertions() {
+        if (deviceAssertions == null) {
+            deviceAssertions = new DeviceAssertions(this);
+        }
+        return deviceAssertions;
     }
 
     public FileListPreconditions fileListPreconditions() {

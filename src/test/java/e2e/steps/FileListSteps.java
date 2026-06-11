@@ -391,7 +391,7 @@ public class FileListSteps {
     public void file_downloaded_in_device(String itemType, String itemName, String sense)
             throws IOException {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListAssertions().assertItemStorageInDevice(itemType, itemName, sense);
+        world.deviceAssertions().assertItemStorageInDevice(itemType, itemName, sense);
     }
 
     @Then("the file {word} should be stored in the account")

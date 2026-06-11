@@ -157,34 +157,6 @@ public class FileListAssertions {
         assertTrue(world.detailsPage().isDamagedPreviewed());
     }
 
-    public void assertItemStorageInDevice(String itemType, String itemName, String sense)
-            throws IOException {
-        String folderId = getPersonalFolderIdForCurrentBackend();
-        if (!folderId.isEmpty()) {
-            Log.log(Level.FINE, "ID from personal space: " + folderId);
-        }
-        String currentPath = folderId;
-        String expectedItemName = itemName;
-        if (itemName.contains("/")) {
-            String[] parts = itemName.split("/");
-            for (int i = 0; i < parts.length - 1; i++) {
-                currentPath = currentPath + "/" + parts[i];
-                world.devicePage().pullList(currentPath);
-            }
-            expectedItemName = itemType.equals("file")
-                    ? parts[parts.length - 1]
-                    : parts[parts.length - 2];
-        }
-        String listFiles = world.devicePage().pullList(currentPath);
-        Log.log(Level.FINE, "List of files before assertion: " + listFiles
-                + ". ItemName: " + expectedItemName);
-        if (isPositiveSense(sense)) {
-            assertTrue(listFiles.contains(expectedItemName));
-        } else if (isNegativeSense(sense)) {
-            assertFalse(listFiles.contains(expectedItemName));
-        }
-    }
-
     public void assertConflictDialogIsDisplayed() {
         assertTrue(world.conflictPage().isConflictPageDisplayed());
     }
@@ -201,13 +173,6 @@ public class FileListAssertions {
 
     private String getLastPathToken(String itemName) {
         return itemName.substring(itemName.lastIndexOf('/') + 1);
-    }
-
-    private String getPersonalFolderIdForCurrentBackend() throws IOException {
-        if (!"oCIS".equals(System.getProperty("backend"))) {
-            return "";
-        }
-        return world.graphAPI().getPersonal().getId().replace("$", "\\$");
     }
 
     private boolean isPositiveSense(String sense) {
