@@ -73,7 +73,7 @@ public class FileListAssertions {
     }
 
     public void assertDetailedInformation(String itemName, String type, String size) {
-        world.detailsPage().removeShareSheet();
+        world.detailsPage().closeShareSheet();
         assertEquals(itemName, world.detailsPage().getName());
         assertEquals(size, world.detailsPage().getSize());
         assertEquals(type, world.detailsPage().getType());
@@ -103,6 +103,7 @@ public class FileListAssertions {
             case "file" -> assertTrue(world.detailsPage().isItemPreviewed());
             case "audio" -> assertTrue(world.detailsPage().isAudioPreviewed());
             case "image" -> {
+                world.detailsPage().acceptImagePreviewDialogIfDisplayed();
                 assertTrue(world.detailsPage().isImagePreviewed());
                 world.detailsPage().displayControls();
             }
@@ -119,14 +120,14 @@ public class FileListAssertions {
         assertTrue(world.fileListPage().isDisplayedListCorrect(path, listServer));
     }
 
-    public void assertErrorMessageOrItemIsDisplayed(List<List<String>> listItems) {
+    public void assertErrorMessageDisplayed(List<List<String>> listItems) {
         String error = listItems.get(0).get(0);
         Log.log(Level.FINE, "Error/Message to check: " + error);
         assertTrue(world.fileListPage().errorDisplayed(error));
     }
 
     public void assertFileContainsText(String text) {
-        assertTrue(world.detailsPage().isTextInFile(text));
+        assertTrue(world.detailsPage().isTextDisplayedInPreview(text));
     }
 
     public void assertShareSheetIsDisplayed(String itemName) {

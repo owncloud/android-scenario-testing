@@ -88,7 +88,7 @@ public class SpacesTasks {
     public void editSpaceImage(String spaceName, String fileName) {
         Log.log(Level.FINE, "Edit image of space " + spaceName + " with file " + fileName);
         world.spacesPage().openEditSpaceImage(spaceName);
-        world.documentProviderPage().selectImageToUpload(fileName);
+        world.documentProviderPage().selectFile(fileName);
     }
 
     public void addMemberToSpace(String userName, String spaceName, Map<String, String> fields) {

@@ -85,8 +85,8 @@ public class Hooks {
             world.graphAPI().removeSpacesOfUser();
         }
         //Remove owncloud folder from device
-        world.devicePage().cleanUpDevice();
+        world.deviceClient().cleanUpDevice();
         //Remove tmp folder from device
-        world.devicePage().cleanUpTemp();
+        world.deviceClient().cleanUpTemp();
     }
 }

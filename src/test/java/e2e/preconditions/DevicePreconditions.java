@@ -28,7 +28,7 @@ public class DevicePreconditions {
 
     public void pushFileDevice(String fileName, String path) throws IOException {
         Log.log(Level.FINE, "Pushing file to device: " + fileName + " in path: " + path);
-        world.devicePage().pushFile(fileName, path);
+        world.deviceClient().pushFile(fileName, path);
     }
 
     public void deviceHasNoConnection() {

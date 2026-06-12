@@ -41,43 +41,41 @@ public class LoginPage extends CommonPage {
     @AndroidFindBy(id = "android:id/button1")
     private WebElement acceptHttp;
 
-    private String server;
-
     public LoginPage(AndroidDriver driver) {
         super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
     }
 
     public void typeURL(String server) {
-        Log.log(Level.FINE, "Starts: Type URL.");
-        //App takes a while in charging
-        waitById(10, urlServer.get(0));
+        Log.log(Level.FINE, "Type URL");
+        waitById(WAIT_TIME, urlServer.get(0));
         urlServer.get(0).sendKeys(server);
-        this.server = server;
+    }
+
+    public void clickCheckServer() {
+        Log.log(Level.FINE, "Click check server button");
         checkServerButton.click();
     }
 
-    public void typeCredentials(String username, String password) {
-        Log.log(Level.FINE, "Starts: Type credentials: username: "
-                + username + " - password: " + password);
-        acceptWarning();
+    public void typeUsername(String username) {
         userNameText.sendKeys(username);
+    }
+
+    public void typePassword(String password) {
         passwordText.sendKeys(password);
     }
 
-    public void submitLogin() {
-        Log.log(Level.FINE, "Starts: Submit login");
-        loginButton.click();
+    public void acceptCertificateWarning() {
+        Log.log(Level.FINE, "Accept certificate warning");
+        acceptCertificate.click();
     }
 
-    public void acceptWarning() {
-        Log.log(Level.FINE, "Accept warning");
-        String prefix = server.split("://")[0];
-        Log.log(Level.FINE, "Prefix: " + prefix);
-        if (prefix.equals("https")) {
-            acceptCertificate.click();
-        } else { //http
-            acceptHttp.click();
-        }
+    public void acceptHttpWarning() {
+        Log.log(Level.FINE, "Accept HTTP warning");
+        acceptHttp.click();
+    }
+
+    public void submitLogin() {
+        loginButton.click();
     }
 }

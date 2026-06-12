@@ -32,9 +32,6 @@ public class DetailsPage extends CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/fdSize")
     private WebElement itemSize;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/fdProgressText")
-    private WebElement downloading;
-
     @AndroidFindBy(id = "com.owncloud.android:id/text_preview")
     private WebElement textPreview;
 
@@ -43,12 +40,6 @@ public class DetailsPage extends CommonPage {
 
     @AndroidFindBy(id = "com.owncloud.android:id/media_controller")
     private WebElement mediaControls;
-
-    @AndroidFindBy(id = "com.owncloud.android:id/currentTimeText")
-    private WebElement currentTime;
-
-    @AndroidFindBy(id = "com.owncloud.android:id/totalTimeText")
-    private WebElement totalTime;
 
     @AndroidFindBy(id = "com.owncloud.android:id/photo_view")
     private WebElement photoPreview;
@@ -97,17 +88,17 @@ public class DetailsPage extends CommonPage {
         photoPreview.click();
     }
 
-    public void removeShareSheet() {
+    public void closeShareSheet() {
         if (toolbar.isEmpty()) {
             driver.navigate().back();
         }
     }
 
-    public void downloadFromThumbnail() {
+    public void tapThumbnail() {
         thumbnail.click();
     }
 
-    public boolean isTextInFile(String text) {
+    public boolean isTextDisplayedInPreview(String text) {
         waitUntilTextIsNotEmpty(WAIT_TIME, "com.owncloud.android:id/text_preview");
         return findUIAutomatorText(text).isDisplayed();
     }
@@ -120,11 +111,14 @@ public class DetailsPage extends CommonPage {
         return textPreview.isDisplayed();
     }
 
-    public boolean isImagePreviewed() {
-        //If Android's ugly dialog is displayed
+    public void acceptImagePreviewDialogIfDisplayed() {
         if (!gotIt.isEmpty()) {
+            Log.log(Level.FINE, "Accepting image preview dialog");
             gotIt.get(0).click();
         }
+    }
+
+    public boolean isImagePreviewed() {
         return photoPreview.isDisplayed();
     }
 

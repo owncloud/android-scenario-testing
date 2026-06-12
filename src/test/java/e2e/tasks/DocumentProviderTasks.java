@@ -20,6 +20,9 @@ public class DocumentProviderTasks {
 
     public void selectFileToUpload(String fileName) {
         Log.log(Level.FINE, "Selecting file to upload: " + fileName);
-        world.documentProviderPage().selectFileToUpload(fileName);
+        world.documentProviderPage().openRootsMenu();
+        world.documentProviderPage().selectDownloadsRoot();
+        world.documentProviderPage().selectFile(fileName);
+        world.documentProviderPage().waitUntilOwnCloudIsDisplayed();
     }
 }

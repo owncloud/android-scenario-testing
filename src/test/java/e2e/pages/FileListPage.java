@@ -155,7 +155,7 @@ public class FileListPage extends CommonPage {
     }
 
     public boolean isFileListVisible() {
-        Log.log(Level.FINE, "Starts: is File list Visible");
+        Log.log(Level.FINE, "Starts: is File list Visible: ");
         return !toolbar.isEmpty();
     }
 

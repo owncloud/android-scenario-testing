@@ -32,6 +32,29 @@ public class ConflictPage extends CommonPage {
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
     }
 
+    /*public void fixConflict (String conflict) {
+        switch (conflict) {
+            case "local" -> selectLocalVersion();
+            case "server" -> selectServerVersion();
+            case "keep both" -> selectBothVersions();
+        }
+    }*/
+
+    public void selectLocalVersion() {
+        Log.log(Level.FINE, "Starts: Fix conflict with local version");
+        localVersionButton.click();
+    }
+
+    public void selectServerVersion() {
+        Log.log(Level.FINE, "Starts: Fix conflict with server version");
+        serverVersionButton.click();
+    }
+
+    public void selectBothVersions() {
+        Log.log(Level.FINE, "Starts: Fix conflict by keeping both versions");
+        bothVersionButton.click();
+    }
+
     public boolean isConflictPageDisplayed() {
         return isButtonVisibleWithText(localVersionButton, "LOCAL VERSION") &&
                 isButtonVisibleWithText(serverVersionButton, "SERVER VERSION") &&
@@ -40,29 +63,5 @@ public class ConflictPage extends CommonPage {
 
     private boolean isButtonVisibleWithText(WebElement button, String expectedText) {
         return button.isDisplayed() && button.getText().contains(expectedText);
-    }
-
-    public void fixConflict (String conflict){
-        switch (conflict){
-            case "local" -> selectLocalVersion();
-            case "server" -> selectServerVersion();
-            case "keep both" -> selectBothVersions();
-        }
-    }
-
-
-    private void selectLocalVersion() {
-        Log.log(Level.FINE, "Starts: Fix conflict with local version");
-        localVersionButton.click();
-    }
-
-    private void selectServerVersion() {
-        Log.log(Level.FINE, "Starts: Fix conflict with server version");
-        serverVersionButton.click();
-    }
-
-    private void selectBothVersions() {
-        Log.log(Level.FINE, "Starts: Fix conflict by keeping both versions");
-        bothVersionButton.click();
     }
 }

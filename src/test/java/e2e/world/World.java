@@ -22,7 +22,6 @@ import e2e.pages.AndroidManager;
 import e2e.pages.CameraPage;
 import e2e.pages.ConflictPage;
 import e2e.pages.DetailsPage;
-import e2e.pages.DevicePage;
 import e2e.pages.DocumentProviderPage;
 import e2e.pages.FileListPage;
 import e2e.pages.FolderPickerPage;
@@ -43,6 +42,7 @@ import e2e.preconditions.LinksPreconditions;
 import e2e.preconditions.LoginPreconditions;
 import e2e.preconditions.SharesPreconditions;
 import e2e.preconditions.SpacesPreconditions;
+import e2e.support.device.DeviceClient;
 import e2e.tasks.DocumentProviderTasks;
 import e2e.tasks.FileListTasks;
 import e2e.tasks.LinksTasks;
@@ -69,7 +69,7 @@ public class World {
     private UploadsPage uploadsPage;
     private CameraPage cameraPage;
     private ShortcutDialogPage shortcutDialogPage;
-    private DevicePage devicePage;
+    private DeviceClient deviceClient;
     private ConflictPage conflictPage;
     private SpaceMembersPage spacesMembersPage;
 
@@ -207,13 +207,6 @@ public class World {
         return shortcutDialogPage;
     }
 
-    public DevicePage devicePage() {
-        if (devicePage == null) {
-            devicePage = new DevicePage(driver);
-        }
-        return devicePage;
-    }
-
     public ConflictPage conflictPage() {
         if (conflictPage == null) {
             conflictPage = new ConflictPage(driver);
@@ -254,6 +247,13 @@ public class World {
             trashbinAPI = new TrashbinAPI();
         }
         return trashbinAPI;
+    }
+
+    public DeviceClient deviceClient() {
+        if (deviceClient == null) {
+            deviceClient = new DeviceClient(driver);
+        }
+        return deviceClient;
     }
 
     public LinksTasks linkTasks() {

@@ -29,13 +29,13 @@ public class DeviceAssertions {
             String[] parts = itemName.split("/");
             for (int i = 0; i < parts.length - 1; i++) {
                 currentPath = currentPath + "/" + parts[i];
-                world.devicePage().pullList(currentPath);
+                world.deviceClient().pullList(currentPath);
             }
             expectedItemName = itemType.equals("file")
                     ? parts[parts.length - 1]
                     : parts[parts.length - 2];
         }
-        String listFiles = world.devicePage().pullList(currentPath);
+        String listFiles = world.deviceClient().pullList(currentPath);
         Log.log(Level.FINE, "List of files before assertion: " + listFiles
                 + ". ItemName: " + expectedItemName);
         if (isPositiveSense(sense)) {

@@ -342,7 +342,7 @@ public class FileListSteps {
     @Then("Alice should see the following error/message/item(s)")
     public void user_should_see_following_error(DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListAssertions().assertErrorMessageOrItemIsDisplayed(table.asLists());
+        world.fileListAssertions().assertErrorMessageDisplayed(table.asLists());
     }
 
     @Then("Alice should see the file {word} with {word}")

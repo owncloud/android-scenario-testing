@@ -30,20 +30,25 @@ public class CameraPage extends CommonPage {
         super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
     }
-    public void takePicture() {
-        Log.log(Level.FINE, "Starts: taking picture from camera");
+
+    public void waitUntilCameraIsDisplayed() {
+        Log.log(Level.FINE, "Waiting until camera is displayed");
         String cameraViewId = "com.android.camera2:id/activity_root_view";
         waitById(WAIT_TIME, cameraViewId);
-        clickShutterByCoordinate();
-        doneButton.click();
     }
 
-    private void clickShutterByCoordinate() {
-        Log.log(Level.FINE, "Starts: Clicking on shutter coordinate");
-        //Clicking in the shutter by coordinate because id changes in Android emus and versions
+    public void tapShutterButton() {
+        Log.log(Level.FINE, "Tapping camera shutter by coordinates");
+        double SHUTTER_X = 0.50;
+        double SHUTTER_Y = 0.90;
         Dimension size = driver.manage().window().getSize();
-        double X = (double) (size.width) / 2;
-        double Y = (double) (size.height) * 0.90;
-        tap((int) X, (int) Y);
+        double x = size.width * SHUTTER_X;
+        double y = size.height * SHUTTER_Y;
+        tap((int) x, (int) y);
+    }
+
+    public void confirmPicture() {
+        Log.log(Level.FINE, "Confirming picture");
+        doneButton.click();
     }
 }

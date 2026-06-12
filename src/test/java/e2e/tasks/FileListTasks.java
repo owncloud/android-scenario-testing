@@ -138,7 +138,7 @@ public class FileListTasks {
 
     public void downloadFromThumbnail() {
         Log.log(Level.FINE, "Download from thumbnail");
-        world.detailsPage().downloadFromThumbnail();
+        world.detailsPage().tapThumbnail();
     }
 
     public void closePreview() {
@@ -153,7 +153,11 @@ public class FileListTasks {
 
     public void fixContentConflict(String conflictFix) {
         Log.log(Level.FINE, "Fix content conflict with: " + conflictFix);
-        world.conflictPage().fixConflict(conflictFix);
+        switch (conflictFix) {
+            case "local" -> world.conflictPage().selectLocalVersion();
+            case "server" -> world.conflictPage().selectServerVersion();
+            case "keep both" -> world.conflictPage().selectBothVersions();
+        }
     }
 
     public void longPressItem(String itemName) {
@@ -203,7 +207,9 @@ public class FileListTasks {
 
     public void takePicture() {
         Log.log(Level.FINE, "Take picture");
-        world.cameraPage().takePicture();
+        world.cameraPage().waitUntilCameraIsDisplayed();
+        world.cameraPage().tapShutterButton();
+        world.cameraPage().confirmPicture();
     }
 
     public void createWebShortcut(Map<String, String> fields) {
@@ -242,7 +248,7 @@ public class FileListTasks {
 
     private void modifyFileLocally(String itemName) throws IOException {
         String itemPath = buildLocalSyncedFolderPath();
-        world.devicePage().overwriteFile(itemName, itemPath);
+        world.deviceClient().overwriteFile(itemName, itemPath);
     }
 
     private String buildLocalSyncedFolderPath() throws IOException {
