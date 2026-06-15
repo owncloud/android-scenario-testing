@@ -9,7 +9,6 @@ package e2e.steps;
 import java.util.Map;
 import java.util.logging.Level;
 
-import e2e.support.log.Log;
 import e2e.support.log.StepLogger;
 import e2e.world.World;
 import io.cucumber.datatable.DataTable;
@@ -38,7 +37,7 @@ public class LinksSteps {
         world.linksPreconditions().publicLinkExists(sharingUser, itemName);
     }
 
-    @When("Alice creates link on {word} {word} with the following fields")
+    @When("Alice creates link on {itemtype} {word} with the following fields")
     public void user_creates_link_with_fields(String type, String itemName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
         Map<String, String> fields = table.asMap(String.class, String.class);
@@ -55,7 +54,7 @@ public class LinksSteps {
     @When("Alice deletes the link on {word}")
     public void user_deletes_link(String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.linkTasks().deletePublicLink();
+        world.linkTasks().deletePublicLink(itemName);
     }
 
     @Then("link should be created/edited on {word} with the following fields")
@@ -70,7 +69,6 @@ public class LinksSteps {
     public void link_should_not_exist_anymore(String itemName)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        Log.log(Level.FINE, "Checking if item exists: " + itemName);
         world.linksAssertions().assertPublicLinkDoesNotExistAnymore(itemName);
     }
 }

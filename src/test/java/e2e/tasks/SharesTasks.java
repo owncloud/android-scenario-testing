@@ -41,7 +41,7 @@ public class SharesTasks {
         Log.log(Level.FINE, "Edit private share permissions. Type: " + itemType
                 + " - Item: " + itemName
                 + " - Permissions: " + permissions);
-        world.sharePage().openPrivateShare(itemName);
+        world.sharePage().editPrivateShare(itemName);
         try {
             String binaryPermissions = convertPermissionsToBinary(permissions);
             Log.log(Level.FINE, "Permissions converted: " + binaryPermissions);

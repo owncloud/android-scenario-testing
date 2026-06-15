@@ -46,12 +46,6 @@ public class SharePage extends CommonPage {
     @AndroidFindBy(id = "android:id/button1")
     private WebElement acceptDeletion;
 
-    @AndroidFindBy(id = "android:id/button3")
-    private WebElement cancelDeletion;
-
-    @AndroidFindBy(id = "com.owncloud.android:id/shareNoUsers")
-    private WebElement noPrivateShares;
-
     @AndroidFindBy(id = "com.owncloud.android:id/shareNoPublicLinks")
     private WebElement noPublicLinks;
 
@@ -68,39 +62,40 @@ public class SharePage extends CommonPage {
         addPrivateShare.click();
     }
 
-    public void addPublicLink() {
+    public void addLink() {
         Log.log(Level.FINE, "Starts: add public link");
         addPublicLink.click();
     }
 
-    public void openPrivateShare(String itemName) {
+    public void editPrivateShare(String itemName) {
         Log.log(Level.FINE, "Starts: edit private share: " + itemName);
         editPrivateShare.click();
     }
 
-    public void openPublicLink(String itemName) {
-        Log.log(Level.FINE, "Starts: open public link: " + itemName);
+    public void editLink(String itemName) {
+        Log.log(Level.FINE, "Starts: edit link: " + itemName);
         editPublicLink.click();
-    }
-
-    public boolean isItemInListPrivateShares(String sharee) {
-        return !shareeInfo.isEmpty() && !findListUIAutomatorText(sharee).isEmpty();
-    }
-
-    public boolean isItemInListPublicShares(String itemName) {
-        return !linkInfo.isEmpty() && !findListUIAutomatorText(itemName).isEmpty();
-    }
-
-    public boolean isListPublicLinksEmpty() {
-        return noPublicLinks.isDisplayed();
     }
 
     public void deletePrivateShare() {
         removePrivateShare.click();
     }
 
-    public void deletePublicShare() {
+    public void deleteLink(String itemName) {
+        Log.log(Level.FINE, "Starts: delete link: " + itemName);
         removePublicLink.click();
+    }
+
+    public boolean isItemInListPrivateShares(String sharee) {
+        return !shareeInfo.isEmpty() && !findListUIAutomatorText(sharee).isEmpty();
+    }
+
+    public boolean isItemInListLinks(String itemName) {
+        return !linkInfo.isEmpty() && !findListUIAutomatorText(itemName).isEmpty();
+    }
+
+    public boolean isListLinksEmpty() {
+        return noPublicLinks.isDisplayed();
     }
 
     public void acceptDeletion() {

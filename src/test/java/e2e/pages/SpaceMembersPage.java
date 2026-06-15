@@ -12,7 +12,6 @@ import org.openqa.selenium.support.PageFactory;
 import java.util.List;
 import java.util.logging.Level;
 
-import e2e.support.date.DateUtils;
 import e2e.support.log.Log;
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
@@ -22,52 +21,49 @@ import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 public class SpaceMembersPage extends CommonPage {
 
     @AndroidFindBy(id = "com.owncloud.android:id/add_member_button")
-    private WebElement addMember;
+    private WebElement addMemberButton;
 
     @AndroidFindBy(id = "com.owncloud.android:id/add_public_link_button")
-    private WebElement addLink;
+    private WebElement addLinkButton;
 
     @AndroidFindBy(id = "com.owncloud.android:id/search_src_text")
-    private WebElement searchMember;
+    private WebElement memberSearchInput;
 
     @AndroidFindBy(id = "com.owncloud.android:id/public_link_name_edit_text")
-    private WebElement linkName;
+    private WebElement linkNameInput;
 
     @AndroidFindBy(id = "com.owncloud.android:id/set_password_button")
-    private WebElement setPassword;
+    private WebElement setPasswordButton;
 
     @AndroidFindBy(id = "com.owncloud.android:id/remove_password_button")
-    private WebElement removePassword;
+    private WebElement removePasswordButton;
 
     @AndroidFindBy(id = "com.owncloud.android:id/generate_password_button")
-    private WebElement generateRandomPassword;
+    private WebElement generateRandomPasswordButton;
 
     @AndroidFindBy(id = "com.owncloud.android:id/set_password_button")
-    private WebElement submitPassword;
+    private WebElement submitPasswordButton;
 
     @AndroidFindBy(id = "com.owncloud.android:id/permissions_title")
     private WebElement permissionsTitle;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/member_name")
-    private List<WebElement> searchMemberList;
-
-    @AndroidFindBy(id = "com.owncloud.android:id/expiration_date_layout")
-    private WebElement expirationDateLayout;
+    @AndroidFindBy(id = MEMBER_NAME_ID)
+    private List<WebElement> memberSearchResults;
 
     @AndroidFindBy(id = "com.owncloud.android:id/expiration_date_switch")
     private WebElement expirationDateSwitch;
 
     @AndroidFindBy(id = "com.owncloud.android:id/invite_member_button")
-    private WebElement inviteMember;
+    private WebElement inviteMemberButton;
 
     @AndroidFindBy(id = "com.owncloud.android:id/create_public_link_button")
-    private WebElement createLink;
+    private WebElement createLinkButton;
 
     @AndroidFindBy(id = "com.owncloud.android:id/member_item_layout")
     private List<WebElement> memberList;
 
     @AndroidFindBy(id = "com.owncloud.android:id/public_link_item_layout")
-    private List<WebElement> linkItem;
+    private List<WebElement> linkList;
 
     @AndroidFindBy(id = "android:id/next")
     private WebElement nextButton;
@@ -75,236 +71,208 @@ public class SpaceMembersPage extends CommonPage {
     @AndroidFindBy(id = "android:id/button1")
     private WebElement okButton;
 
-    private final String editMemberId = "com.owncloud.android:id/edit_member_button";
-    private final String memberNameId = "com.owncloud.android:id/member_name";
-    private final String removeMemberId = "com.owncloud.android:id/remove_member_button";
-    private final String linkDisplayName = "com.owncloud.android:id/public_link_display_name";
-    private final String editLink = "com.owncloud.android:id/edit_public_link_button";
-    private final String removeLink = "com.owncloud.android:id/remove_public_link_button";
+    private static final String EDIT_MEMBER_BUTTON_ID = "com.owncloud.android:id/edit_member_button";
+    private static final String MEMBER_NAME_ID = "com.owncloud.android:id/member_name";
+    private static final String REMOVE_MEMBER_BUTTON_ID = "com.owncloud.android:id/remove_member_button";
+    private static final String PUBLIC_LINK_DISPLAY_NAME_ID = "com.owncloud.android:id/public_link_display_name";
+    private static final String EDIT_PUBLIC_LINK_BUTTON_ID = "com.owncloud.android:id/edit_public_link_button";
+    private static final String REMOVE_PUBLIC_LINK_BUTTON_ID = "com.owncloud.android:id/remove_public_link_button";
+    private static final String EXPIRATION_DATE_ID = "com.owncloud.android:id/expiration_date";
+    private static final String YES_BUTTON_TEXT = "YES";
 
     public SpaceMembersPage(AndroidDriver driver) {
         super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
     }
 
-    public void addMember(String userName) {
-        Log.log(Level.FINE, "Starts: Add Member " + userName);
-        addMember.click();
-        searchMember.sendKeys(userName);
-        searchMemberList.get(0).click();
+    public void addMember() {
+        Log.log(Level.FINE, "Tap add member");
+        addMemberButton.click();
+    }
+
+    public void selectMember(String userName) {
+        Log.log(Level.FINE, "Select member: " + userName);
+        memberSearchInput.sendKeys(userName);
+        memberSearchResults.get(0).click();
     }
 
     public void addLink() {
-        Log.log(Level.FINE, "Starts: Add Link ");
-        addLink.click();
+        Log.log(Level.FINE, "Tap add public link");
+        addLinkButton.click();
     }
 
     public void setName(String linkName) {
+        Log.log(Level.FINE, "Set public link name: " + linkName);
         waitById(WAIT_TIME, permissionsTitle);
-        this.linkName.sendKeys(linkName);
+        linkNameInput.clear();
+        linkNameInput.sendKeys(linkName);
     }
 
     public void setPermission(String permission) {
+        Log.log(Level.FINE, "Set permission: " + permission);
         waitById(WAIT_TIME, permissionsTitle);
         findUIAutomatorSubText(permission).click();
     }
 
-    public void setPassword(){
-        setPassword.click();
-        generateRandomPassword.click();
-        submitPassword.click();
+    public void tapSetPassword() {
+        Log.log(Level.FINE, "Tap set password");
+        setPasswordButton.click();
     }
 
-    public void editPassword(){
-        removePassword.click();
-        setPassword.click();
-        generateRandomPassword.click();
-        submitPassword.click();
+    public void tapRemovePassword() {
+        Log.log(Level.FINE, "Tap remove password");
+        removePasswordButton.click();
     }
 
-    public void setExpirationDate(String days) {
-        Log.log(Level.FINE, "Starts: Add expiration date in days " + days);
-        // To normalize null values
-        days = normalizeOptional(days);
-        boolean isSwitchOn = "true".equals(expirationDateSwitch.getAttribute("checked"));
-        Log.log(Level.FINE, "Switch state: " + isSwitchOn);
-        boolean hasDays = days != null;
-        if (!isSwitchOn && hasDays) { // Switch it on and set days
-            expirationDateSwitch.click();
-            selectExpirationDate(days);
-        } else if (isSwitchOn && hasDays) { // Just set days
-            // For any unexpected reason in emulator, the switch needs to be off and on again
-            // to be able to set the expiration date
-            expirationDateSwitch.click();
-            expirationDateSwitch.click();
-            selectExpirationDate(days);
-        } else if (isSwitchOn && !hasDays) { // Switch it off
-            expirationDateSwitch.click();
+    public void tapGenerateRandomPassword() {
+        Log.log(Level.FINE, "Tap generate random password");
+        generateRandomPasswordButton.click();
+    }
+
+    public void tapSubmitPassword() {
+        Log.log(Level.FINE, "Submit generated password");
+        submitPasswordButton.click();
+    }
+
+    public boolean isExpirationDateEnabled() {
+        return "true".equals(expirationDateSwitch.getAttribute("checked"));
+    }
+
+    public void toggleExpirationDate() {
+        Log.log(Level.FINE, "Toggle expiration date");
+        expirationDateSwitch.click();
+    }
+
+    public boolean isCalendarDateVisible(String date) {
+        return !findListAccesibility(date).isEmpty();
+    }
+
+    public void tapNextCalendarPage() {
+        Log.log(Level.FINE, "Tap next calendar page");
+        nextButton.click();
+    }
+
+    public void selectCalendarDate(String date) {
+        Log.log(Level.FINE, "Select calendar date: " + date);
+        findAccesibility(date).click();
+    }
+
+    public void tapOk() {
+        Log.log(Level.FINE, "Tap OK");
+        okButton.click();
+    }
+
+    public void confirmDialog() {
+        Log.log(Level.FINE, "Confirm dialog");
+        List<WebElement> yesButtons = findListUIAutomatorText(YES_BUTTON_TEXT);
+        if (yesButtons.isEmpty()) {
+            throw new IllegalStateException("Confirmation button was not found: " + YES_BUTTON_TEXT);
         }
+        yesButtons.get(0).click();
     }
 
     public void inviteMember() {
-        Log.log(Level.FINE, "Starts: Invite member with button");
-        inviteMember.click();
+        Log.log(Level.FINE, "Invite member");
+        inviteMemberButton.click();
     }
 
-    public void openEditMember(String userName){
-        Log.log(Level.FINE, "Starts: edit member " + userName);
+    public void openEditMember(String userName) {
+        Log.log(Level.FINE, "Open edit member: " + userName);
+        findMemberByName(userName).findElement(AppiumBy.id(EDIT_MEMBER_BUTTON_ID)).click();
+    }
+
+    public void tapRemoveMember(String userName) {
+        Log.log(Level.FINE, "Tap remove member: " + userName);
+        findMemberByName(userName).findElement(AppiumBy.id(REMOVE_MEMBER_BUTTON_ID)).click();
+    }
+
+    public void createLink() {
+        Log.log(Level.FINE, "Create public link");
+        createLinkButton.click();
+        // Wait until link is created and add link button appears again.
+        waitById(WAIT_TIME, addLinkButton);
+    }
+
+    public void editLink(String linkName) {
+        Log.log(Level.FINE, "Open edit link: " + linkName);
+        findLinkByName(linkName).findElement(AppiumBy.id(EDIT_PUBLIC_LINK_BUTTON_ID)).click();
+    }
+
+    public void tapRemoveLink(String linkName) {
+        Log.log(Level.FINE, "Tap remove link: " + linkName);
+        findLinkByName(linkName).findElement(AppiumBy.id(REMOVE_PUBLIC_LINK_BUTTON_ID)).click();
+    }
+
+    public boolean isMemberDisplayed(String userName) {
+        return findMemberByNameOrNull(userName) != null;
+    }
+
+    public boolean isMemberDisplayedWithPermission(String userName, String permission) {
+        WebElement member = findMemberByNameOrNull(userName);
+        if (member == null) {
+            return false;
+        }
+        return !member.findElements(AppiumBy.androidUIAutomator(
+                "new UiSelector().textContains(\"" + permission + "\")")).isEmpty();
+    }
+
+    public boolean isLinkDisplayed(String linkName) {
+        return findLinkByNameOrNull(linkName) != null;
+    }
+
+    public boolean isLinkDisplayedWithPermission(String linkName, String permission) {
+        WebElement link = findLinkByNameOrNull(linkName);
+        if (link == null) {
+            return false;
+        }
+        return !link.findElements(AppiumBy.androidUIAutomator(
+                "new UiSelector().text(\"" + permission + "\")")).isEmpty();
+    }
+
+    public boolean isLinkDisplayedWithExpirationDate(String linkName, String expirationDate) {
+        WebElement link = findLinkByNameOrNull(linkName);
+        if (link == null) {
+            return false;
+        }
+        return !link.findElements(AppiumBy.androidUIAutomator(
+                "new UiSelector().textContains(\"" + expirationDate + "\")")).isEmpty();
+    }
+
+    public boolean isExpirationDateDisplayed(String expectedExpirationDate) {
+        List<WebElement> expirationDates = findListId(EXPIRATION_DATE_ID);
+        if (expectedExpirationDate == null) {
+            return expirationDates.isEmpty();
+        }
+        return !expirationDates.isEmpty() && expectedExpirationDate.equals(expirationDates.get(0).getText());
+    }
+
+    private WebElement findMemberByName(String userName) {
+        return findMemberByNameOrNull(userName);
+    }
+
+    private WebElement findMemberByNameOrNull(String userName) {
         for (WebElement member : memberList) {
-            WebElement nameElement = member.findElement(AppiumBy.id(memberNameId));
+            WebElement nameElement = member.findElement(AppiumBy.id(MEMBER_NAME_ID));
             String memberName = nameElement.getText();
             if (memberName.contains(userName)) {
-                member.findElement(AppiumBy.id(editMemberId)).click();
-                break;
-            }
-        }
-    }
-
-    public void removeMember(String userName) {
-        Log.log(Level.FINE, "Starts: remove member " + userName);
-        for (WebElement member : memberList) {
-            WebElement nameElement = member.findElement(AppiumBy.id(memberNameId));
-            String memberName = nameElement.getText();
-            if (memberName.contains(userName)) {
-                member.findElement(AppiumBy.id(removeMemberId)).click();
-                findListUIAutomatorText("YES").get(0).click();
-                break;
-            }
-        }
-    }
-
-    public boolean isMemberOfSpace(String userName, String spaceName) {
-        Log.log(Level.FINE, "Starts: check if member of space: " + userName + " " + spaceName);
-        waitById(WAIT_TIME, memberList.get(0));
-        for (WebElement member : memberList) {
-            WebElement nameElement = member.findElement(AppiumBy.id(memberNameId));
-            String memberName = nameElement.getText();
-            if (memberName.contains(userName)) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    public void createLink(){
-        Log.log(Level.FINE, "Starts: Save Link with button");
-        createLink.click();
-        //Wait till link is created and appears in the list
-        waitById(WAIT_TIME, addLink);
-    }
-
-    public void editLink(String linkName){
-        Log.log(Level.FINE, "Starts: Edit Link " + linkName);
-        for (WebElement link : linkItem) {
-            String linkInList = link.findElement(AppiumBy.id(linkDisplayName)).getText();
-            Log.log(Level.FINE, "Checking link in list: " + linkInList);
-            if (linkInList.equals(linkName)) {
-                Log.log(Level.FINE, "Link found, opening edit screen: " + linkName);
-                link.findElement(AppiumBy.id(editLink)).click();
-                return;
-            }
-        }
-        Log.log(Level.FINE, "Link not found in the list: " + linkName);
-    }
-
-    public void removeLink(String linkName){
-        Log.log(Level.FINE, "Starts: Remove Link " + linkName);
-        for (WebElement link : linkItem) {
-            String linkInList = link.findElement(AppiumBy.id
-                    (linkDisplayName)).getText();
-            Log.log(Level.FINE, "Checking link in list: " + linkInList);
-            if (linkInList.equals(linkName)) {
-                Log.log(Level.FINE, "Link found, removing: " + linkName);
-                link.findElement(AppiumBy.id(removeLink)).click();
-                okButton.click();
-                return;
-            }
-        }
-        Log.log(Level.FINE, "Link not found in the list: " + linkName);
-    }
-
-    public boolean isUserMember(String userName, String permission) {
-        Log.log(Level.FINE, "Starts: check membership: " + userName);
-        // For every member, check if name and role match
-        for (WebElement member : memberList) {
-            boolean memberFound = member.findElement(AppiumBy.androidUIAutomator(
-                    "new UiSelector().text(\"" + userName + "\")")).isDisplayed();
-            boolean roleFound = member.findElement(AppiumBy.androidUIAutomator(
-                    "new UiSelector().textContains(\"" + permission + "\")")).isDisplayed();
-            if (memberFound && roleFound) {
-                Log.log(Level.FINE, userName + " found");
-                return true;
-            } else {
-                Log.log(Level.FINE, userName + " not found");
-            }
-        }
-        return false;
-    }
-
-    public boolean isLinkCreated(String linkName, String permission, String expirationDate) {
-        Log.log(Level.FINE, "Starts: Check Link: " + linkName);
-        WebElement link = getLinkByName(linkName);
-        boolean permissionCorrect = false;
-        boolean expirationDateCorrect = true;
-        if (link != null) {
-            Log.log(Level.FINE, "Link found in UI: " + linkName);
-            permissionCorrect = link.findElement(AppiumBy.androidUIAutomator(
-                    "new UiSelector().text(\"" + permission + "\")")).isDisplayed();
-            if (expirationDate != null && !expirationDate.equals("")) {
-                String expDate = DateUtils.formatDate(expirationDate, DateUtils.DateFormatType.NUMERIC);
-                Log.log(Level.FINE, "Expiration date to check: " + expDate);
-                expirationDateCorrect = link.findElement(AppiumBy.androidUIAutomator(
-                        "new UiSelector().textContains(\"" + expDate + "\")")).isDisplayed();
-            }
-            Log.log(Level.FINE, "Permission correct: " + permissionCorrect);
-        }
-        return permissionCorrect && expirationDateCorrect;
-    }
-
-    private WebElement getLinkByName(String linkName){
-        Log.log(Level.FINE, "Starts: Check Link: " + linkName);
-        for (WebElement link : linkItem) {
-            if (link.findElement(AppiumBy.androidUIAutomator(
-                    "new UiSelector().text(\"" + linkName + "\")")).isDisplayed()){
-                return link;
+                return member;
             }
         }
         return null;
     }
 
-    public boolean isExpirationDateCorrect(String days) {
-        Log.log(Level.FINE, "Starts: check expiration date: " + days);
-        boolean dateCorrect;
-        int expiration = days==null ? 0 : Integer.parseInt(days);
-        List<WebElement> expirationDate = findListId("com.owncloud.android:id/expiration_date");
-        if (expiration != 0) { // Checking existing expiration date
-            // Get date from number of days
-            String expDate = DateUtils.formatDate(Integer.toString(expiration), DateUtils.DateFormatType.NUMERIC);
-            Log.log(Level.FINE, "Date to check: " + expDate + " Expiration: " + expiration);
-            Log.log(Level.FINE, "Expiration date: " + expirationDate.get(0).getText());
-            dateCorrect = expirationDate.get(0).getText().equals(expDate);
-            return dateCorrect;
-        } else { // No expiration date
-            return expirationDate.isEmpty();
-        }
+    private WebElement findLinkByName(String linkName) {
+        return findLinkByNameOrNull(linkName);
     }
 
-    private void selectExpirationDate(String days) {
-        Log.log(Level.FINE, "Starts: select expiration date: " + days);
-        String dateToSet = DateUtils.dateInDaysAndroidFormat(days);
-        Log.log(Level.FINE, "Date to set: " + dateToSet);
-        if (findListAccesibility(dateToSet).isEmpty()) {
-            Log.log(Level.FINE, "Date not found, next page");
-            nextButton.click();
+    private WebElement findLinkByNameOrNull(String linkName) {
+        for (WebElement link : linkList) {
+            String linkInList = link.findElement(AppiumBy.id(PUBLIC_LINK_DISPLAY_NAME_ID)).getText();
+            Log.log(Level.FINE, "Checking public link in list: " + linkInList);
+            if (linkName.equals(linkInList)) {
+                return link;
+            }
         }
-        findAccesibility(dateToSet).click();
-        okButton.click();
-    }
-
-    private String normalizeOptional(String value) {
-        if (value == null)
-            return null;
-        String v = value.trim();
-        return v.isEmpty() ? null : v;
+        return null;
     }
 }

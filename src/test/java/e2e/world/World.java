@@ -26,9 +26,9 @@ import e2e.pages.DocumentProviderPage;
 import e2e.pages.FileListPage;
 import e2e.pages.FolderPickerPage;
 import e2e.pages.InputNamePage;
+import e2e.pages.LinksPage;
 import e2e.pages.LoginPage;
 import e2e.pages.PrivateSharePage;
-import e2e.pages.PublicLinksPage;
 import e2e.pages.RemoveDialogPage;
 import e2e.pages.SearchShareePage;
 import e2e.pages.SharePage;
@@ -61,7 +61,7 @@ public class World {
     private RemoveDialogPage removeDialogPage;
     private DetailsPage detailsPage;
     private SharePage sharePage;
-    private PublicLinksPage publicLinksPage;
+    private LinksPage linksPage;
     private SearchShareePage searchShareePage;
     private PrivateSharePage privateSharePage;
     private SpacesPage spacesPage;
@@ -151,11 +151,11 @@ public class World {
         return sharePage;
     }
 
-    public PublicLinksPage publicLinksPage() {
-        if (publicLinksPage == null) {
-            publicLinksPage = new PublicLinksPage(driver);
+    public LinksPage publicLinksPage() {
+        if (linksPage == null) {
+            linksPage = new LinksPage(driver);
         }
-        return publicLinksPage;
+        return linksPage;
     }
 
     public SearchShareePage searchShareePage() {

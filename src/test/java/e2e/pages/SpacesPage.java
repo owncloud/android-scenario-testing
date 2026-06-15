@@ -22,39 +22,54 @@ import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 
 public class SpacesPage extends CommonPage {
 
-    @AndroidFindBy(id = "spaces_list_item_card")
-    private List<WebElement> deviceSpacesList;
+    private static final String NO_QUOTA_RESTRICTION = "No restriction";
+
+    private static final String SPACE_CARD_ID =
+            "com.owncloud.android:id/spaces_list_item_card";
+
+    private static final String SPACE_NAME_ID =
+            "com.owncloud.android:id/spaces_list_item_name";
+
+    private static final String SPACE_SUBTITLE_ID =
+            "com.owncloud.android:id/spaces_list_item_subtitle";
+
+    private static final String SPACE_DISABLED_LABEL_ID =
+            "com.owncloud.android:id/spaces_list_item_disabled_label";
+
+    private static final String QUOTA_SWITCH_ID =
+            "com.owncloud.android:id/create_space_dialog_quota_switch";
+
+    private static final String YES_BUTTON_TEXT = "YES";
+
+    @AndroidFindBy(id = SPACE_CARD_ID)
+    private List<WebElement> spaceCards;
 
     @AndroidFindBy(id = "com.owncloud.android:id/fab_create_space")
-    private WebElement createSpace;
+    private WebElement createSpaceButton;
 
     @AndroidFindBy(id = "com.owncloud.android:id/create_space_dialog_name_value")
-    private WebElement nameEditText;
+    private WebElement nameInput;
 
     @AndroidFindBy(id = "com.owncloud.android:id/create_space_dialog_subtitle_value")
-    private WebElement subtitleEditText;
+    private WebElement subtitleInput;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/create_space_dialog_quota_switch")
+    @AndroidFindBy(id = QUOTA_SWITCH_ID)
     private WebElement quotaSwitch;
 
     @AndroidFindBy(id = "com.owncloud.android:id/create_space_dialog_quota_value")
-    private WebElement quotaValueEdittext;
+    private WebElement quotaValueInput;
 
     @AndroidFindBy(id = "com.owncloud.android:id/create_space_dialog_quota_unit_label")
     private WebElement quotaUnit;
 
     @AndroidFindBy(id = "com.owncloud.android:id/create_space_button")
-    private WebElement createButton;
+    private WebElement createOrSaveButton;
 
     @AndroidFindBy(id = "com.owncloud.android:id/root_toolbar_title")
     private WebElement searchBar;
 
     @AndroidFindBy(id = "com.owncloud.android:id/search_src_text")
     private WebElement searchInput;
-
-    private final String spaceNameId = "com.owncloud.android:id/spaces_list_item_name";
-    private final String cardId = "com.owncloud.android:id/spaces_list_item_card";
-    private final String spaceSubtitleId = "com.owncloud.android:id/spaces_list_item_subtitle";
 
     public SpacesPage(AndroidDriver driver) {
         super(driver);
@@ -75,141 +90,202 @@ public class SpacesPage extends CommonPage {
             this.label = label;
         }
 
-        public String getLabel() {
+        public String label() {
             return label;
         }
     }
 
-    public void createSpace (String name, String subtitle, String quota){
-        Log.log(Level.FINE, "Starts: Create space " + name);
-        createSpace.click();
-        fillSpaceInfo(name, subtitle, quota);
+    public void createSpace(String name, String subtitle, String quota) {
+        Log.log(Level.FINE, "Create space: " + name);
+        tapCreateSpace();
+        fillSpaceForm(name, subtitle, quota);
+        submitSpaceForm();
+        waitUntilSpaceDialogIsClosed();
     }
 
-    public void openMembers(String spaceName){
-        Log.log(Level.FINE, "Starts: Open members " + spaceName);
-        findUIAutomatorDescription(spaceName + " space menu").click();
-        openMenuOption(MenuItems.MEMBERS.getLabel());
+    public void editSpace(String name, String subtitle, String quota) {
+        Log.log(Level.FINE, "Update space: " + name);
+        fillSpaceForm(name, subtitle, quota);
+        submitSpaceForm();
+        waitUntilSpaceDialogIsClosed();
     }
 
-    public void openEditSpace(String spaceName){
-        Log.log(Level.FINE, "Starts: Open edit space " + spaceName);
-        findUIAutomatorDescription(spaceName + " space menu").click();
-        openMenuOption(MenuItems.EDIT.getLabel());
+    public void openMembers(String spaceName) {
+        Log.log(Level.FINE, "Open members for space: " + spaceName);
+        openSpaceMenu(spaceName);
+        selectMenuOption(MenuItems.MEMBERS);
     }
 
-    public void openDisableSpace(String spaceName){
-        Log.log(Level.FINE, "Starts: Open disable space " + spaceName);
-        findUIAutomatorDescription(spaceName + " space menu").click();
-        openMenuOption(MenuItems.DISABLE.getLabel());
-        findListUIAutomatorText("YES").get(0).click();
+    public void openEditSpace(String spaceName) {
+        Log.log(Level.FINE, "Open edit space: " + spaceName);
+        openSpaceMenu(spaceName);
+        selectMenuOption(MenuItems.EDIT);
     }
 
-    public void openEnableSpace(String spaceName){
-        Log.log(Level.FINE, "Starts: Open enable space " + spaceName);
-        findUIAutomatorDescription(spaceName + " space menu").click();
-        openMenuOption(MenuItems.ENABLE.getLabel());
-        findListUIAutomatorText("YES").get(0).click();
+    public void openEditSpaceImage(String spaceName) {
+        Log.log(Level.FINE, "Open edit image for space: " + spaceName);
+        openSpaceMenu(spaceName);
+        selectMenuOption(MenuItems.EDIT_IMAGE);
     }
 
-    public void openDeleteSpace(String spaceName){
-        Log.log(Level.FINE, "Starts: Open delete space " + spaceName);
-        findUIAutomatorDescription(spaceName + " space menu").click();
-        openMenuOption(MenuItems.DELETE.getLabel());
-        findListUIAutomatorText("YES").get(0).click();
-        waitByIdInvisible(WAIT_TIME, cardId);
+    public void openDisableSpace(String spaceName) {
+        Log.log(Level.FINE, "Disable space: " + spaceName);
+        openSpaceMenu(spaceName);
+        selectMenuOption(MenuItems.DISABLE);
+        confirmDialog();
     }
 
-    public void editSpace (String name, String subtitle, String quota){
-        Log.log(Level.FINE, "Starts: Update space " + name);
-        fillSpaceInfo(name, subtitle, quota);
+    public void openEnableSpace(String spaceName) {
+        Log.log(Level.FINE, "Enable space: " + spaceName);
+        openSpaceMenu(spaceName);
+        selectMenuOption(MenuItems.ENABLE);
+        confirmDialog();
     }
 
-    private void fillSpaceInfo(String spaceName, String subtitle, String quota) {
-        Log.log(Level.FINE, "Starts: fill space info: " + spaceName + ", " + subtitle + ", " + quota);
-        nameEditText.clear();
-        nameEditText.sendKeys(spaceName);
-        subtitleEditText.clear();
-        subtitleEditText.sendKeys(subtitle);
-        setQuota(quota);
-        createButton.click();
-        // Wait until the dialog disappears
-        waitByIdInvisible(WAIT_TIME, "com.owncloud.android:id/create_space_dialog_quota_switch");
-    }
-
-    private void setQuota(String quota) {
-        Log.log(Level.FINE, "Starts: set quota: " + quota);
-        boolean withQuota = !"No restriction".equals(quota);
-        boolean switchChecked = Boolean.parseBoolean(quotaSwitch.getAttribute("checked"));
-        if (withQuota != switchChecked) {
-            quotaSwitch.click();
-        }
-        if (withQuota) {
-            waitById(WAIT_TIME, quotaValueEdittext);
-            quotaValueEdittext.clear();
-            quotaValueEdittext.sendKeys(quota);
-        }
-    }
-
-    public void openEditSpaceImage(String spaceName){
-        Log.log(Level.FINE, "Starts: Open edit space image " + spaceName);
-        findUIAutomatorDescription(spaceName + " space menu").click();
-        openMenuOption(MenuItems.EDIT_IMAGE.getLabel());
+    public void openDeleteSpace(String spaceName) {
+        Log.log(Level.FINE, "Delete space: " + spaceName);
+        openSpaceMenu(spaceName);
+        selectMenuOption(MenuItems.DELETE);
+        confirmDialog();
+        waitUntilSpaceCardIsInvisible();
     }
 
     public void typeSearch(String pattern) {
-        Log.log(Level.FINE, "Starts: type search " + pattern);
+        Log.log(Level.FINE, "Type space search: " + pattern);
         searchBar.click();
         searchInput.sendKeys(pattern);
     }
 
     public void openSpace(String spaceName) {
-        deviceSpacesList.get(0).click();
+        Log.log(Level.FINE, "Open space: " + spaceName);
+        findSpaceCardByName(spaceName).click();
     }
 
     public boolean isSpaceDisplayed(String spaceName, String spaceSubtitle, String status) {
-        Log.log(Level.FINE, "Starts: check if space " + spaceName + " is " + status);
-        // Loop to check every space in the device
-        List<WebElement> cardsDisplayed = driver.findElements(By.id(cardId));
+        Log.log(Level.FINE, "Check if space " + spaceName + " is displayed with status: " + status);
+        List<WebElement> cardsDisplayed = driver.findElements(By.id(SPACE_CARD_ID));
         HashMap<String, String> spacesInDevice = new HashMap<>();
         for (int i = 0; i < cardsDisplayed.size(); i++) {
-            Log.log(Level.FINE, "Checking space number " + i);
-            // We have to double the check because the UI changes making the DOM different
-            WebElement individualSpace = driver.findElements(By.id(cardId)).get(i);
-            // Get space name in the card
-            String spaceNameCard = individualSpace.findElement(By.id(spaceNameId))
-                    .getAttribute("text").trim();
-            // Get description in the card
-            String spaceSubtitleCard = "";
-            List<WebElement> spaceSubtitles = individualSpace.findElements(By.id(spaceSubtitleId));
-            if (!spaceSubtitles.isEmpty()) {
-                spaceSubtitleCard = spaceSubtitles.get(0).getAttribute("text").trim();
+            WebElement spaceCard = driver.findElements(By.id(SPACE_CARD_ID)).get(i);
+            if ("disabled".equals(status) && !isDisabledSpace(spaceCard)) {
+                continue;
             }
-            if (status.equals("disabled")){
-                if (individualSpace.findElements(By.id("com.owncloud.android:id/spaces_list_item_disabled_label")).isEmpty())
-                    continue;
-            }
-            Log.log(Level.FINE, "Card: " + spaceNameCard + " - " +
-                    (spaceSubtitleCard.equals("")?"empty":spaceSubtitleCard));
-            Log.log(Level.FINE, "Scenario: " + spaceName + " - " +
-                    (spaceSubtitle.equals("")?"empty":spaceSubtitle));
+            String spaceNameCard = getSpaceName(spaceCard);
+            String spaceSubtitleCard = getSpaceSubtitle(spaceCard);
+            Log.log(Level.FINE, "Card: " + spaceNameCard + " - " + (spaceSubtitleCard.isEmpty() ? "empty" : spaceSubtitleCard));
+            Log.log(Level.FINE, "Scenario: " + spaceNameCard + " - " + (spaceSubtitleCard.isEmpty() ? "empty" : spaceSubtitleCard));
             spacesInDevice.put(spaceNameCard, spaceSubtitleCard);
         }
-        // Check all spaces from the list are in the device
-        return spacesInDevice.containsKey(spaceName) &&
-                Objects.equals(spacesInDevice.get(spaceName), spaceSubtitle);
+        return spacesInDevice.containsKey(spaceName)
+                && Objects.equals(spacesInDevice.get(spaceName), spaceSubtitle);
     }
 
     public boolean isQuotaDisplayed(String value, String unit) {
-        Log.log(Level.FINE, "Starts: check quota: " + value + " " + unit);
-        String displayedQuota = quotaValueEdittext.getAttribute("text");
+        Log.log(Level.FINE, "Check quota: " + value + " " + unit);
+        String displayedQuota = quotaValueInput.getAttribute("text");
         String displayedUnit = quotaUnit.getAttribute("text");
-        Log.log(Level.FINE, "Displayed: " + displayedQuota + " " + displayedUnit);
-        return (value.equals(displayedQuota) && unit.equals(displayedUnit));
+        Log.log(Level.FINE, "Displayed quota: " + displayedQuota + " " + displayedUnit);
+        return value.equals(displayedQuota) && unit.equals(displayedUnit);
     }
 
-    private void openMenuOption(String option) {
-        Log.log(Level.FINE, "Starts: open menu option: " + option);
-        findListUIAutomatorText(option).get(0).click();
+    public void tapCreateSpace() {
+        Log.log(Level.FINE, "Tap create space");
+        createSpaceButton.click();
+    }
+
+    public void clearAndTypeName(String name) {
+        Log.log(Level.FINE, "Type space name: " + name);
+        nameInput.clear();
+        nameInput.sendKeys(name);
+    }
+
+    public void clearAndTypeSubtitle(String subtitle) {
+        Log.log(Level.FINE, "Type space subtitle: " + subtitle);
+        subtitleInput.clear();
+        subtitleInput.sendKeys(subtitle);
+    }
+
+    public void setQuota(String quota) {
+        Log.log(Level.FINE, "Set space quota: " + quota);
+        boolean quotaEnabled = !NO_QUOTA_RESTRICTION.equals(quota);
+        boolean switchChecked = Boolean.parseBoolean(quotaSwitch.getAttribute("checked"));
+        if (quotaEnabled != switchChecked) {
+            quotaSwitch.click();
+        }
+        if (quotaEnabled) {
+            waitById(WAIT_TIME, quotaValueInput);
+            quotaValueInput.clear();
+            quotaValueInput.sendKeys(quota);
+        }
+    }
+
+    public void submitSpaceForm() {
+        Log.log(Level.FINE, "Submit space form");
+        createOrSaveButton.click();
+    }
+
+    public void waitUntilSpaceDialogIsClosed() {
+        Log.log(Level.FINE, "Wait until space dialog is closed");
+        waitByIdInvisible(WAIT_TIME, QUOTA_SWITCH_ID);
+    }
+
+    public void openSpaceMenu(String spaceName) {
+        Log.log(Level.FINE, "Open space menu: " + spaceName);
+        findUIAutomatorDescription(spaceName + " space menu").click();
+    }
+
+    public void confirmDialog() {
+        Log.log(Level.FINE, "Confirm dialog");
+        List<WebElement> yesButtons = findListUIAutomatorText(YES_BUTTON_TEXT);
+        if (yesButtons.isEmpty()) {
+            throw new IllegalStateException("Confirmation button was not found: " + YES_BUTTON_TEXT);
+        }
+        yesButtons.get(0).click();
+    }
+
+    public void waitUntilSpaceCardIsInvisible() {
+        Log.log(Level.FINE, "Wait until space card is invisible");
+        waitByIdInvisible(WAIT_TIME, SPACE_CARD_ID);
+    }
+
+    private void fillSpaceForm(String name, String subtitle, String quota) {
+        Log.log(Level.FINE, "Fill space form. Name: " + name + " - Subtitle: " + subtitle
+                + " - Quota: " + quota);
+        clearAndTypeName(name);
+        clearAndTypeSubtitle(subtitle);
+        setQuota(quota);
+    }
+
+    private void selectMenuOption(MenuItems menuItem) {
+        Log.log(Level.FINE, "Open space menu option: " + menuItem.label());
+        List<WebElement> options = findListUIAutomatorText(menuItem.label());
+        options.get(0).click();
+    }
+
+    private WebElement findSpaceCardByName(String spaceName) {
+        List<WebElement> cardsDisplayed = driver.findElements(By.id(SPACE_CARD_ID));
+        for (WebElement spaceCard : cardsDisplayed) {
+            String cardName = getSpaceName(spaceCard);
+            if (spaceName.equals(cardName)) {
+                return spaceCard;
+            }
+        }
+        return null;
+    }
+
+    private String getSpaceName(WebElement spaceCard) {
+        return spaceCard.findElement(By.id(SPACE_NAME_ID)).getAttribute("text").trim();
+    }
+
+    private String getSpaceSubtitle(WebElement spaceCard) {
+        List<WebElement> subtitles = spaceCard.findElements(By.id(SPACE_SUBTITLE_ID));
+        if (subtitles.isEmpty()) {
+            return "";
+        }
+        return subtitles.get(0).getAttribute("text").trim();
+    }
+
+    private boolean isDisabledSpace(WebElement spaceCard) {
+        return !spaceCard.findElements(By.id(SPACE_DISABLED_LABEL_ID)).isEmpty();
     }
 }

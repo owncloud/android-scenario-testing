@@ -6,11 +6,12 @@
 
 package e2e.tasks;
 
-import e2e.support.log.Log;
-import e2e.world.World;
-
 import java.util.Map;
 import java.util.logging.Level;
+
+import e2e.support.date.DateUtils;
+import e2e.support.log.Log;
+import e2e.world.World;
 
 public class LinksTasks {
 
@@ -22,46 +23,45 @@ public class LinksTasks {
 
     public void createPublicLink(String itemName, Map<String, String> fields) {
         Log.log(Level.FINE, "Create public link on item: " + itemName);
-        world.sharePage().addPublicLink();
+        world.sharePage().addLink();
         for (Map.Entry<String, String> entry : fields.entrySet()) {
-            applyPublicLinkCreationField(itemName, entry.getKey(), entry.getValue());
+            applyPublicLinkCreationField(entry.getKey(), entry.getValue());
         }
-        world.publicLinksPage().submitLink();
+        world.publicLinksPage().clickSave();
     }
 
     public void editPublicLink(String itemName, Map<String, String> fields) {
         Log.log(Level.FINE, "Edit public link on item: " + itemName);
-        world.sharePage().openPublicLink(itemName);
+        world.sharePage().editLink(itemName);
         for (Map.Entry<String, String> entry : fields.entrySet()) {
-            applyPublicLinkEditionField(itemName, entry.getKey(), entry.getValue());
+            applyPublicLinkEditionField(entry.getKey(), entry.getValue());
         }
-        world.publicLinksPage().submitLink();
+        world.publicLinksPage().clickSave();
     }
 
-    public void deletePublicLink() {
-        Log.log(Level.FINE, "Delete public link");
-        world.sharePage().deletePublicShare();
+    public void deletePublicLink(String itemName) {
+        Log.log(Level.FINE, "Delete public link: " + itemName);
+        world.sharePage().deleteLink(itemName);
         world.sharePage().acceptDeletion();
     }
 
-    private void applyPublicLinkCreationField(String itemName, String key, String value) {
+    private void applyPublicLinkCreationField(String key, String value) {
         switch (key) {
             case "name" -> world.publicLinksPage().addLinkName(value);
-            case "password" -> world.publicLinksPage().typePassword(itemName, value);
+            case "password" -> world.publicLinksPage().typePassword(value);
             case "password-auto" -> world.publicLinksPage().generatePassword();
-            case "permission", "permissions" -> world.publicLinksPage().setPermission(value);
-            case "expiration days" -> world.publicLinksPage().setExpiration(value);
+            case "permission", "permissions" -> selectPermissions(value);
+            case "expiration days" -> setExpiration(value);
             default -> Log.log(Level.FINE, "Ignoring unsupported public link creation field: " + key);
         }
     }
 
-    private void applyPublicLinkEditionField(String itemName, String key, String value) {
+    private void applyPublicLinkEditionField(String key, String value) {
         switch (key) {
             case "name" -> world.publicLinksPage().addLinkName(value);
-            case "password" -> world.publicLinksPage().typePassword(itemName, value);
-            case "expiration days" -> world.publicLinksPage().setExpiration(value);
+            case "password" -> world.publicLinksPage().typePassword(value);
+            case "expiration days" -> setExpiration(value);
             case "permission", "permissions" -> selectPermissions(value);
-            default -> Log.log(Level.FINE, "Ignoring unsupported public link edition field: " + key);
         }
     }
 
@@ -79,7 +79,19 @@ public class LinksTasks {
                 Log.log(Level.FINE, "Select Upload Only (File Drop)");
                 world.publicLinksPage().selectUploadOnly();
             }
-            default -> throw new IllegalArgumentException("Unsupported public link permissions: " + value);
         }
+    }
+
+    public void setExpiration(String days) {
+        Log.log(Level.FINE, "Starts: Set Expiration date in days: " + days);
+        world.publicLinksPage().clickExpirationSwitch();
+        String dateToSet = DateUtils.dateInDaysAndroidFormat(days);
+        Log.log(Level.FINE, "Days: " + days + " Date to set: " + dateToSet);
+        if (world.publicLinksPage().findListAccesibility(dateToSet).isEmpty()) {
+            Log.log(Level.FINE, "Date not found, next page");
+            world.publicLinksPage().clickNextButton();
+        }
+        world.publicLinksPage().findAccesibility(dateToSet).click();
+        world.publicLinksPage().clickOkButton();
     }
 }

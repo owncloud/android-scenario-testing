@@ -183,7 +183,7 @@ public class SpacesSteps {
     @Then("{word} should not be member of the space {word}")
     public void is_user_member(String userName, String spaceName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesAssertions().assertUserIsNotMemberOfSpace(userName, spaceName);
+        world.spacesAssertions().assertUserIsNotMemberOfSpace(userName);
     }
 
     @Then("Alice should see the link {word} on {word} with")

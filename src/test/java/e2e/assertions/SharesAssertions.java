@@ -92,7 +92,7 @@ public class SharesAssertions {
 
     private void assertPrivateSharePermissionsAreCorrect(String itemName, String expectedPermissions) {
         Log.log(Level.FINE, "Checking private share permissions: " + expectedPermissions);
-        world.sharePage().openPrivateShare(itemName);
+        world.sharePage().editPrivateShare(itemName);
         try {
             switch (expectedPermissions) {
                 case "1" -> assertOnlyReadPermission();

@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.logging.Level;
 
+import e2e.support.date.DateUtils;
 import e2e.support.log.Log;
 import e2e.world.World;
 
@@ -34,8 +35,7 @@ public class SpacesTasks {
         for (Map<String, String> row : rows) {
             String name = row.get("name");
             String subtitle = getOptionalTrimmedValue(row, "subtitle", DEFAULT_SUBTITLE);
-            Log.log(Level.FINE, "Disable space in server. Name: " + name
-                    + " - Subtitle: " + subtitle);
+            Log.log(Level.FINE, "Disable space in server. Name: " + name + " - Subtitle: " + subtitle);
             world.graphAPI().disableSpace(name, subtitle);
         }
     }
@@ -49,9 +49,7 @@ public class SpacesTasks {
         String name = getRequiredValue(fields, "name");
         String subtitle = getOptionalTrimmedValue(fields, "subtitle", DEFAULT_SUBTITLE);
         String quota = getOptionalTrimmedValue(fields, "quota", DEFAULT_QUOTA);
-        Log.log(Level.FINE, "Create space. Name: " + name
-                + " - Subtitle: " + subtitle
-                + " - Quota: " + quota);
+        Log.log(Level.FINE, "Create space. Name: " + name + " - Subtitle: " + subtitle + " - Quota: " + quota);
         world.spacesPage().createSpace(name, subtitle, quota);
     }
 
@@ -79,9 +77,7 @@ public class SpacesTasks {
         String name = getRequiredValue(fields, "name");
         String subtitle = getOptionalTrimmedValue(fields, "subtitle", DEFAULT_SUBTITLE);
         String quota = getOptionalTrimmedValue(fields, "quota", DEFAULT_QUOTA);
-        Log.log(Level.FINE, "Update space. Name: " + name
-                + " - Subtitle: " + subtitle
-                + " - Quota: " + quota);
+        Log.log(Level.FINE, "Update space. Name: " + name + " - Subtitle: " + subtitle + " - Quota: " + quota);
         world.spacesPage().editSpace(name, subtitle, quota);
     }
 
@@ -94,7 +90,8 @@ public class SpacesTasks {
     public void addMemberToSpace(String userName, String spaceName, Map<String, String> fields) {
         Log.log(Level.FINE, "Add member " + userName + " to space " + spaceName);
         openMembersView(spaceName);
-        world.spacesMembersPage().addMember(userName);
+        world.spacesMembersPage().addMember();
+        world.spacesMembersPage().selectMember(userName);
         applyMemberFields(fields);
         world.spacesMembersPage().inviteMember();
     }
@@ -110,7 +107,8 @@ public class SpacesTasks {
     public void removeMemberFromSpace(String userName, String spaceName) {
         Log.log(Level.FINE, "Remove member " + userName + " from space " + spaceName);
         openMembersView(spaceName);
-        world.spacesMembersPage().removeMember(userName);
+        world.spacesMembersPage().tapRemoveMember(userName);
+        world.spacesMembersPage().confirmDialog();
     }
 
     public void createLinkToSpace(String spaceName, Map<String, String> fields) {
@@ -132,7 +130,8 @@ public class SpacesTasks {
     public void removeLinkOverSpace(String linkName, String spaceName) {
         Log.log(Level.FINE, "Remove link " + linkName + " over space " + spaceName);
         openMembersView(spaceName);
-        world.spacesMembersPage().removeLink(linkName);
+        world.spacesMembersPage().tapRemoveLink(linkName);
+        world.spacesMembersPage().tapOk();
     }
 
     private void openMembersView(String spaceName) {
@@ -148,8 +147,7 @@ public class SpacesTasks {
     private void applyMemberField(String key, String value) {
         switch (key) {
             case "permission" -> world.spacesMembersPage().setPermission(value);
-            case "expirationDate" -> world.spacesMembersPage().setExpirationDate(value);
-            default -> Log.log(Level.FINE, "Ignoring unsupported space member field: " + key);
+            case "expirationDate" -> setExpirationDate(value);
         }
     }
 
@@ -163,9 +161,8 @@ public class SpacesTasks {
         switch (key) {
             case "name" -> world.spacesMembersPage().setName(value);
             case "permission" -> world.spacesMembersPage().setPermission(value);
-            case "password" -> world.spacesMembersPage().setPassword();
-            case "expirationDate" -> world.spacesMembersPage().setExpirationDate(value);
-            default -> Log.log(Level.FINE, "Ignoring unsupported space link creation field: " + key);
+            case "password" -> setGeneratedPassword();
+            case "expirationDate" -> setExpirationDate(value);
         }
     }
 
@@ -179,10 +176,59 @@ public class SpacesTasks {
         switch (key) {
             case "name" -> world.spacesMembersPage().setName(value);
             case "permission" -> world.spacesMembersPage().setPermission(value);
-            case "password" -> world.spacesMembersPage().editPassword();
-            case "expirationDate" -> world.spacesMembersPage().setExpirationDate(value);
-            default -> Log.log(Level.FINE, "Ignoring unsupported space link edition field: " + key);
+            case "password" -> editGeneratedPassword();
+            case "expirationDate" -> setExpirationDate(value);
         }
+    }
+
+    private void setGeneratedPassword() {
+        world.spacesMembersPage().tapSetPassword();
+        world.spacesMembersPage().tapGenerateRandomPassword();
+        world.spacesMembersPage().tapSubmitPassword();
+    }
+
+    private void editGeneratedPassword() {
+        world.spacesMembersPage().tapRemovePassword();
+        setGeneratedPassword();
+    }
+
+    private void setExpirationDate(String days) {
+        Log.log(Level.FINE, "Set expiration date in days: " + days);
+        String normalizedDays = normalizeOptional(days);
+        boolean switchEnabled = world.spacesMembersPage().isExpirationDateEnabled();
+        boolean hasDays = normalizedDays != null;
+        Log.log(Level.FINE, "Expiration switch enabled: " + switchEnabled);
+        Log.log(Level.FINE, "Has expiration days: " + hasDays);
+        if (!switchEnabled && hasDays) {
+            world.spacesMembersPage().toggleExpirationDate();
+            selectExpirationDate(normalizedDays);
+        } else if (switchEnabled && hasDays) {
+            // emulator needs switch off/on before setting a new date. ugly.
+            world.spacesMembersPage().toggleExpirationDate();
+            world.spacesMembersPage().toggleExpirationDate();
+            selectExpirationDate(normalizedDays);
+        } else if (switchEnabled) {
+            world.spacesMembersPage().toggleExpirationDate();
+        }
+    }
+
+    private void selectExpirationDate(String days) {
+        String dateToSet = DateUtils.dateInDaysAndroidFormat(days);
+        Log.log(Level.FINE, "Date to set: " + dateToSet);
+        if (!world.spacesMembersPage().isCalendarDateVisible(dateToSet)) {
+            Log.log(Level.FINE, "Date not found in current calendar page. Moving to next page");
+            world.spacesMembersPage().tapNextCalendarPage();
+        }
+        world.spacesMembersPage().selectCalendarDate(dateToSet);
+        world.spacesMembersPage().tapOk();
+    }
+
+    private String normalizeOptional(String value) {
+        if (value == null) {
+            return null;
+        }
+        String trimmedValue = value.trim();
+        return trimmedValue.isEmpty() ? null : trimmedValue;
     }
 
     private String getRequiredValue(Map<String, String> fields, String key) {

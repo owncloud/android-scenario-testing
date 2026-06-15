@@ -8,6 +8,7 @@ package e2e.assertions;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -98,32 +99,6 @@ public class SpacesAssertions {
         }
     }
 
-    public void assertUserIsNotMemberOfSpace(String userName, String spaceName) {
-        assertFalse(world.spacesMembersPage().isMemberOfSpace(userName, spaceName));
-    }
-
-    public void assertLinkIsVisibleOnSpace(String linkName, String spaceName, Map<String, String> fields)
-            throws IOException {
-        OCSpaceLink backendLink = world.graphAPI().getLinkOfSpace(spaceName, linkName);
-        assertTrue(backendLink != null);
-        Log.log(Level.FINE, "Link in backend: name: " + backendLink.getLinkName() + " permission: " + backendLink.getPermission()
-                + " expirationDate: " + backendLink.getExpirationDate());
-        String expectedPermission = getOptionalValue(fields, "permission", "");
-        String expectedExpirationDate = getOptionalValue(fields, "expirationDate", "");
-        Log.log(Level.FINE, "Link from scenario: name: " + linkName + " permission: " + expectedPermission
-                + " expirationDate: " + expectedExpirationDate);
-        assertTrue(world.spacesMembersPage().isLinkCreated(linkName, expectedPermission, expectedExpirationDate));
-        assertEquals(linkName, backendLink.getLinkName());
-        assertEquals(getLinkPermissionDisplayName(expectedPermission), backendLink.getPermission());
-        assertLinkExpirationDateMatches(backendLink, expectedExpirationDate);
-    }
-
-    public void assertLinkIsNotVisibleOnSpace(String linkName, String spaceName) throws IOException {
-        assertFalse(world.spacesMembersPage().isLinkCreated(linkName, "", ""));
-        OCSpaceLink backendLink = world.graphAPI().getLinkOfSpace(spaceName, linkName);
-        assertNull(backendLink);
-    }
-
     private void assertSpaceIsVisibleLocally(String name, String subtitle, String status) {
         assertTrue(world.spacesPage().isSpaceDisplayed(name, subtitle, status));
     }
@@ -148,40 +123,12 @@ public class SpacesAssertions {
         assertTrue(found);
     }
 
-    private void assertSpaceMemberField(String userName, OCSpaceMember member, String key, String value) {
-        switch (key) {
-            case "permission" -> assertMemberPermission(userName, member, value);
-            case "expirationDate" -> assertMemberExpirationDate(member, value);
-        }
-    }
-
-    private void assertMemberPermission(String userName, OCSpaceMember member, String expectedPermission) {
-        assertTrue(world.spacesMembersPage().isUserMember(userName, expectedPermission));
-        assertTrue(member.getPermission().contains(expectedPermission));
-    }
-
-    private void assertMemberExpirationDate(OCSpaceMember member, String expectedExpirationDays) {
-        assertTrue(world.spacesMembersPage().isExpirationDateCorrect(expectedExpirationDays));
-        Log.log(Level.FINE, "Remote date: " + member.getExpirationDate());
-        if (expectedExpirationDays != null) {
-            String remoteDate = member.getExpirationDate().substring(0, 10) + " 23:59:59";
-            String expectedDate = DateUtils.dateInDaysWithServerFormat(expectedExpirationDays);
-            Log.log(Level.FINE, "Days: " + expectedExpirationDays);
-            Log.log(Level.FINE, "Date in server: " + remoteDate);
-            Log.log(Level.FINE, "Date in local: " + expectedDate);
-            assertEquals(expectedDate, remoteDate);
-        } else {
-            assertNull(member.getExpirationDate());
-        }
-    }
-
     private void assertLinkExpirationDateMatches(OCSpaceLink backendLink, String expectedExpirationDays) {
         if (expectedExpirationDays == null || expectedExpirationDays.isEmpty()) {
             assertNull(backendLink.getExpirationDate());
             return;
         }
-        String expectedDatePrefix = DateUtils.dateInDaysWithServerFormat(expectedExpirationDays)
-                .substring(0, 10);
+        String expectedDatePrefix = DateUtils.dateInDaysWithServerFormat(expectedExpirationDays).substring(0, 10);
         assertTrue(backendLink.getExpirationDate().startsWith(expectedDatePrefix));
     }
 
@@ -203,8 +150,7 @@ public class SpacesAssertions {
     }
 
     private String getRequiredValue(Map<String, String> fields, String key) {
-        String value = fields.get(key);
-        return value;
+        return fields.get(key);
     }
 
     private String getRequiredTrimmedValue(Map<String, String> fields, String key) {
@@ -219,5 +165,71 @@ public class SpacesAssertions {
     private String getOptionalTrimmedValue(Map<String, String> fields, String key, String defaultValue) {
         String value = fields.get(key);
         return value == null ? defaultValue : value.trim();
+    }
+
+    private void assertSpaceMemberField(String userName, OCSpaceMember member, String key, String value) {
+        switch (key) {
+            case "permission" -> assertMemberPermission(userName, member, value);
+            case "expirationDate" -> assertMemberExpirationDate(member, value);
+        }
+    }
+
+    public void assertUserIsNotMemberOfSpace(String userName) {
+        assertFalse(world.spacesMembersPage().isMemberDisplayed(userName));
+    }
+
+    private void assertMemberPermission(String userName, OCSpaceMember member, String expectedPermission) {
+        assertTrue(world.spacesMembersPage().isMemberDisplayedWithPermission(userName, expectedPermission));
+        assertTrue(member.getPermission().contains(expectedPermission));
+    }
+
+    private void assertMemberExpirationDate(OCSpaceMember member, String expectedExpirationDays) {
+        String expectedLocalDate = expectedExpirationDays == null ? null
+                : DateUtils.formatDate(expectedExpirationDays, DateUtils.DateFormatType.NUMERIC);
+        assertTrue(world.spacesMembersPage().isExpirationDateDisplayed(expectedLocalDate));
+        Log.log(Level.FINE, "Remote date: " + member.getExpirationDate());
+        if (expectedExpirationDays != null) {
+            String remoteDate = member.getExpirationDate().substring(0, 10) + " 23:59:59";
+            String expectedDate = DateUtils.dateInDaysWithServerFormat(expectedExpirationDays);
+            Log.log(Level.FINE, "Days: " + expectedExpirationDays);
+            Log.log(Level.FINE, "Date in server: " + remoteDate);
+            Log.log(Level.FINE, "Date in local: " + expectedDate);
+            assertEquals(expectedDate, remoteDate);
+        } else {
+            assertNull(member.getExpirationDate());
+        }
+    }
+
+    public void assertLinkIsVisibleOnSpace(String linkName, String spaceName, Map<String, String> fields)
+            throws IOException {
+        OCSpaceLink backendLink = world.graphAPI().getLinkOfSpace(spaceName, linkName);
+        assertNotNull(backendLink);
+        Log.log(Level.FINE, "Link in backend: name: " + backendLink.getLinkName() + " permission: " + backendLink.getPermission()
+                + " expirationDate: " + backendLink.getExpirationDate());
+        String expectedPermission = getOptionalValue(fields, "permission", "");
+        String expectedExpirationDate = getOptionalValue(fields, "expirationDate", "");
+        Log.log(Level.FINE, "Link from scenario: name: " + linkName + " permission: " + expectedPermission
+                + " expirationDate: " + expectedExpirationDate);
+        assertPublicLinkIsDisplayedLocally(linkName, expectedPermission, expectedExpirationDate);
+        assertEquals(linkName, backendLink.getLinkName());
+        assertEquals(getLinkPermissionDisplayName(expectedPermission), backendLink.getPermission());
+        assertLinkExpirationDateMatches(backendLink, expectedExpirationDate);
+    }
+
+    public void assertLinkIsNotVisibleOnSpace(String linkName, String spaceName) throws IOException {
+        assertFalse(world.spacesMembersPage().isLinkDisplayed(linkName));
+        OCSpaceLink backendLink = world.graphAPI().getLinkOfSpace(spaceName, linkName);
+        assertNull(backendLink);
+    }
+
+    private void assertPublicLinkIsDisplayedLocally(String linkName, String expectedPermission, String expectedExpirationDays) {
+        assertTrue(world.spacesMembersPage().isLinkDisplayed(linkName));
+        if (expectedPermission != null && !expectedPermission.isEmpty()) {
+            assertTrue(world.spacesMembersPage().isLinkDisplayedWithPermission(linkName, expectedPermission));
+        }
+        if(expectedExpirationDays != null && !expectedExpirationDays.isEmpty()) {
+            String expectedLocalExpirationDate = DateUtils.formatDate(expectedExpirationDays, DateUtils.DateFormatType.NUMERIC);
+            assertTrue(world.spacesMembersPage().isLinkDisplayedWithExpirationDate(linkName, expectedLocalExpirationDate));
+        }
     }
 }

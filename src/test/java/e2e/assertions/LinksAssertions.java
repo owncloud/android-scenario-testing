@@ -18,6 +18,7 @@ import java.util.logging.Level;
 import javax.xml.parsers.ParserConfigurationException;
 
 import e2e.model.OCShare;
+import e2e.support.date.DateUtils;
 import e2e.support.log.Log;
 import e2e.world.World;
 
@@ -41,9 +42,9 @@ public class LinksAssertions {
     public void assertPublicLinkDoesNotExistAnymore(String itemName)
             throws IOException, ParserConfigurationException, SAXException {
         Log.log(Level.FINE, "Checking public link does not exist anymore: " + itemName);
-        assertTrue(world.sharePage().isListPublicLinksEmpty());
+        assertTrue(world.sharePage().isListLinksEmpty());
         assertTrue(world.shareAPI().getLinksByDefault().isEmpty());
-        assertFalse(world.sharePage().isItemInListPublicShares(itemName + " link"));
+        assertFalse(world.sharePage().isItemInListLinks(itemName + " link"));
     }
 
     private void assertPublicLinkUiFields(String itemName, Map<String, String> fields) {
@@ -65,12 +66,12 @@ public class LinksAssertions {
 
     private void assertPublicLinkNameIsVisible(String linkName) {
         Log.log(Level.FINE, "Checking link name: " + linkName);
-        assertTrue(world.sharePage().isItemInListPublicShares(linkName));
+        assertTrue(world.sharePage().isItemInListLinks(linkName));
     }
 
     private void assertPublicLinkPasswordIsEnabled(String itemName) {
         Log.log(Level.FINE, "Checking public link password is enabled");
-        world.sharePage().openPublicLink(itemName);
+        world.sharePage().editLink(itemName);
         try {
             assertTrue(world.publicLinksPage().isPasswordEnabled());
         } finally {
@@ -80,26 +81,59 @@ public class LinksAssertions {
 
     private void assertPublicLinkUserIsVisible(String itemName) {
         Log.log(Level.FINE, "Checking public link user/item: " + itemName);
-        assertTrue(world.sharePage().isItemInListPublicShares(itemName));
+        assertTrue(world.sharePage().isItemInListLinks(itemName));
     }
 
-    private void assertPublicLinkPermissionsAreCorrect(String itemName, String expectedPermissions) {
-        Log.log(Level.FINE, "Checking public link permissions: " + expectedPermissions);
-        world.sharePage().openPublicLink(itemName);
-        try {
-            assertTrue(world.publicLinksPage().arePermissionsCorrect(expectedPermissions));
-        } finally {
-            world.publicLinksPage().close();
+    private boolean areLinksPermissionsCorrect(String permissions) {
+        Log.Log.log(Level.FINE, "Starts: Check permissions: " + permissions);
+        switch (permissions) {
+            case ("1") -> {
+                return world.publicLinksPage().isDownloadViewSelected();
+            }
+            case ("15")-> {
+                return world.publicLinksPage().isDownloadViewUploadSelected();
+            }
+            case ("4") -> {
+                return world.publicLinksPage().isUploadOnlySelected();
+            }
         }
+        return false;
     }
 
     private void assertPublicLinkExpirationIsCorrect(String itemName, String expectedExpirationDays) {
         Log.log(Level.FINE, "Checking public link expiration days: " + expectedExpirationDays);
-        world.sharePage().openPublicLink(itemName);
+        world.sharePage().editLink(itemName);
         try {
-            assertTrue(world.publicLinksPage().isExpirationCorrect(expectedExpirationDays));
+            assertTrue(assertExpirationCorrect(expectedExpirationDays));
         } finally {
             world.publicLinksPage().close();
         }
+    }
+
+    private void assertPublicLinkPermissionsAreCorrect(String itemName, String expectedPermissions) {
+        Log.log(Level.FINE, "Checking public link permissions: " + expectedPermissions);
+        world.sharePage().editLink(itemName);
+        try {
+            assertTrue(areLinksPermissionsCorrect(expectedPermissions));
+        } finally {
+            world.publicLinksPage().close();
+        }
+    }
+
+    private boolean assertExpirationCorrect(String days) {
+        Log.Log.log(Level.FINE, "Starts: Check expiration in days: " + days);
+        boolean switchEnabled;
+        boolean dateCorrect = false;
+        int expiration = Integer.parseInt(days);
+        String shortDate = DateUtils.formatDate(Integer.toString(expiration), DateUtils.DateFormatType.TEXT);
+        Log.Log.log(Level.FINE, "Date to check: " + shortDate + " Expiration: " + expiration);
+        //switchEnabled = parseIntBool(expirationSwitch.getAttribute("checked"));
+        switchEnabled = world.publicLinksPage().isExpirationSwitchEnabled();
+        Log.Log.log(Level.FINE, "SwitchEnabled -> " + switchEnabled);
+        if (switchEnabled) {
+            dateCorrect = world.publicLinksPage().isExpirationDateCorrect(shortDate);
+        }
+        Log.Log.log(Level.FINE, "Date Correct -> " + dateCorrect);
+        return switchEnabled && dateCorrect;
     }
 }

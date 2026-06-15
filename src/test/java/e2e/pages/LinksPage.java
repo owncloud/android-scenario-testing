@@ -11,15 +11,13 @@ import static e2e.support.log.Log.Log;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 
-import java.util.List;
 import java.util.logging.Level;
 
-import e2e.support.date.DateUtils;
 import io.appium.java_client.android.AndroidDriver;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 
-public class PublicLinksPage extends CommonPage {
+public class LinksPage extends CommonPage {
 
     @AndroidFindBy(id = "com.owncloud.android:id/shareViaLinkNameValue")
     private WebElement namePublicLink;
@@ -32,9 +30,6 @@ public class PublicLinksPage extends CommonPage {
 
     @AndroidFindBy(id = "com.owncloud.android:id/shareViaLinkEditPermissionUploadFiles")
     private WebElement uploadOnlyOption;
-
-    @AndroidFindBy(id = "com.owncloud.android:id/shareViaLinkPasswordSwitch")
-    private List<WebElement> passwordSwitch;
 
     @AndroidFindBy(id = "com.owncloud.android:id/shareViaLinkPasswordValue")
     private WebElement textPassword;
@@ -60,7 +55,7 @@ public class PublicLinksPage extends CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/saveButton")
     private WebElement saveButton;
 
-    public PublicLinksPage(AndroidDriver driver) {
+    public LinksPage(AndroidDriver driver) {
         super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
     }
@@ -69,15 +64,6 @@ public class PublicLinksPage extends CommonPage {
         Log.log(Level.FINE, "Starts: Add link name: " + linkName);
         namePublicLink.clear();
         namePublicLink.sendKeys(linkName);
-    }
-
-    public void setPermission(String permission) {
-        Log.log(Level.FINE, "Starts: Set link permission: " + permission);
-        switch (permission) {
-            case ("1") -> downloadViewOption.click();
-            case ("15")-> downloadViewUploadOption.click();
-            case ("4") -> uploadOnlyOption.click();
-        }
     }
 
     public void selectDownloadView() {
@@ -95,33 +81,8 @@ public class PublicLinksPage extends CommonPage {
         uploadOnlyOption.click();
     }
 
-    public boolean arePermissionsCorrect(String permissions) {
-        Log.log(Level.FINE, "Starts: Check permissions: " + permissions);
-        switch (permissions) {
-            case ("1") -> {
-                if (parseIntBool(downloadViewOption.getAttribute("checked"))) {
-                    Log.log(Level.FINE, "Download / View is selected");
-                    return true;
-                }
-            }
-            case ("15")-> {
-                if (parseIntBool(downloadViewUploadOption.getAttribute("checked"))) {
-                    Log.log(Level.FINE, "Download / View / Upload is selected");
-                    return true;
-                }
-            }
-            case ("4") -> {
-                if (parseIntBool(uploadOnlyOption.getAttribute("checked"))) {
-                    Log.log(Level.FINE, "Upload only is selected");
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    public void typePassword(String itemName, String password) {
-        Log.log(Level.FINE, "Starts: Add link password: " + password);
+    public void typePassword(String password) {
+        Log.log(Level.FINE, "Starts: Add link password");
         //To avoid password keyboard to appear
         if (driver.isKeyboardShown()) {
             driver.hideKeyboard();
@@ -138,40 +99,43 @@ public class PublicLinksPage extends CommonPage {
         generatePassword.click();
     }
 
-    public boolean isPasswordEnabled() {
-        boolean switchEnabled = true;
-        boolean passVisible;
-        passVisible = textPassword.isDisplayed();
-        return switchEnabled && passVisible;
+    public void clickExpirationSwitch() {
+        Log.log(Level.FINE, "Starts: Click expiration switch");
+        expirationSwitch.click();
     }
 
-    public void setExpiration(String days) {
-        Log.log(Level.FINE, "Starts: Set Expiration date in days: " + days);
-        expirationSwitch.click();
-        String dateToSet = DateUtils.dateInDaysAndroidFormat(days);
-        Log.log(Level.FINE, "Days: " + days + " Date to set: " + dateToSet);
-        if (findListAccesibility(dateToSet).isEmpty()) {
-            Log.log(Level.FINE, "Date not found, next page");
-            nextButton.click();
-        }
-        findAccesibility(dateToSet).click();
+    public void clickNextButton() {
+        Log.log(Level.FINE, "Starts: Click next button");
+        nextButton.click();
+    }
+
+    public void clickOkButton() {
+        Log.log(Level.FINE, "Starts: Click OK button");
         okButton.click();
     }
 
-    public boolean isExpirationCorrect(String days) {
-        Log.log(Level.FINE, "Starts: Check expiration in days: " + days);
-        boolean switchEnabled;
-        boolean dateCorrect = false;
-        int expiration = Integer.parseInt(days);
-        String shortDate = DateUtils.formatDate(Integer.toString(expiration), DateUtils.DateFormatType.TEXT);
-        Log.log(Level.FINE, "Date to check: " + shortDate + " Expiration: " + expiration);
-        switchEnabled = parseIntBool(expirationSwitch.getAttribute("checked"));
-        Log.log(Level.FINE, "SwitchEnabled -> " + switchEnabled);
-        if (switchEnabled) {
-            dateCorrect = expirationDate.getText().equals(shortDate);
-        }
-        Log.log(Level.FINE, "Date Correct -> " + dateCorrect);
-        return switchEnabled && dateCorrect;
+    public boolean isDownloadViewSelected() {
+        return parseIntBool(downloadViewOption.getAttribute("checked"));
+    }
+
+    public boolean isDownloadViewUploadSelected() {
+        return parseIntBool(downloadViewUploadOption.getAttribute("checked"));
+    }
+
+    public boolean isUploadOnlySelected() {
+        return parseIntBool(uploadOnlyOption.getAttribute("checked"));
+    }
+
+    public boolean isPasswordEnabled() {
+        return textPassword.isDisplayed();
+    }
+
+    public boolean isExpirationSwitchEnabled() {
+        return parseIntBool(expirationSwitch.getAttribute("checked"));
+    }
+
+    public boolean isExpirationDateCorrect(String shortDate) {
+        return expirationDate.getText().equals(shortDate);
     }
 
     public void close() {
@@ -179,7 +143,7 @@ public class PublicLinksPage extends CommonPage {
         cancelButton.click();
     }
 
-    public void submitLink() {
+    public void clickSave() {
         Log.log(Level.FINE, "Starts: Submit public link");
         //Depending on the screen size, the save button could need some scroll
         swipe(0.50, 0.60, 0.50, 0.20);
