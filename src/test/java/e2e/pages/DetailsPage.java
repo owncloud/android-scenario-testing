@@ -99,7 +99,8 @@ public class DetailsPage extends CommonPage {
     }
 
     public boolean isTextDisplayedInPreview(String text) {
-        waitUntilTextIsNotEmpty(WAIT_TIME, "com.owncloud.android:id/text_preview");
+        // Giving additional time since it could take a bit longer to load the text preview
+        waitUntilTextIsNotEmpty(WAIT_TIME + 10, "com.owncloud.android:id/text_preview");
         return findUIAutomatorText(text).isDisplayed();
     }
 
