@@ -204,6 +204,7 @@ public class FileListPage extends CommonPage {
     }
 
     public void openSpaces() {
+        waitById(WAIT_TIME, spacesTab);
         spacesTab.click();
     }
 
