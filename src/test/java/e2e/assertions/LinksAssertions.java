@@ -73,9 +73,9 @@ public class LinksAssertions {
         Log.log(Level.FINE, "Checking public link password is enabled");
         world.sharePage().editLink(itemName);
         try {
-            assertTrue(world.publicLinksPage().isPasswordEnabled());
+            assertTrue(world.linksPage().isPasswordEnabled());
         } finally {
-            world.publicLinksPage().close();
+            world.linksPage().close();
         }
     }
 
@@ -88,13 +88,13 @@ public class LinksAssertions {
         Log.Log.log(Level.FINE, "Starts: Check permissions: " + permissions);
         switch (permissions) {
             case ("1") -> {
-                return world.publicLinksPage().isDownloadViewSelected();
+                return world.linksPage().isDownloadViewSelected();
             }
             case ("15")-> {
-                return world.publicLinksPage().isDownloadViewUploadSelected();
+                return world.linksPage().isDownloadViewUploadSelected();
             }
             case ("4") -> {
-                return world.publicLinksPage().isUploadOnlySelected();
+                return world.linksPage().isUploadOnlySelected();
             }
         }
         return false;
@@ -106,7 +106,7 @@ public class LinksAssertions {
         try {
             assertTrue(assertExpirationCorrect(expectedExpirationDays));
         } finally {
-            world.publicLinksPage().close();
+            world.linksPage().close();
         }
     }
 
@@ -116,7 +116,7 @@ public class LinksAssertions {
         try {
             assertTrue(areLinksPermissionsCorrect(expectedPermissions));
         } finally {
-            world.publicLinksPage().close();
+            world.linksPage().close();
         }
     }
 
@@ -127,11 +127,10 @@ public class LinksAssertions {
         int expiration = Integer.parseInt(days);
         String shortDate = DateUtils.formatDate(Integer.toString(expiration), DateUtils.DateFormatType.TEXT);
         Log.Log.log(Level.FINE, "Date to check: " + shortDate + " Expiration: " + expiration);
-        //switchEnabled = parseIntBool(expirationSwitch.getAttribute("checked"));
-        switchEnabled = world.publicLinksPage().isExpirationSwitchEnabled();
+        switchEnabled = world.linksPage().isExpirationSwitchEnabled();
         Log.Log.log(Level.FINE, "SwitchEnabled -> " + switchEnabled);
         if (switchEnabled) {
-            dateCorrect = world.publicLinksPage().isExpirationDateCorrect(shortDate);
+            dateCorrect = world.linksPage().isExpirationDateCorrect(shortDate);
         }
         Log.Log.log(Level.FINE, "Date Correct -> " + dateCorrect);
         return switchEnabled && dateCorrect;

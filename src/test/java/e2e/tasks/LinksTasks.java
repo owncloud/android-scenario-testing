@@ -27,7 +27,7 @@ public class LinksTasks {
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             applyPublicLinkCreationField(entry.getKey(), entry.getValue());
         }
-        world.publicLinksPage().clickSave();
+        world.linksPage().clickSave();
     }
 
     public void editPublicLink(String itemName, Map<String, String> fields) {
@@ -36,7 +36,7 @@ public class LinksTasks {
         for (Map.Entry<String, String> entry : fields.entrySet()) {
             applyPublicLinkEditionField(entry.getKey(), entry.getValue());
         }
-        world.publicLinksPage().clickSave();
+        world.linksPage().clickSave();
     }
 
     public void deletePublicLink(String itemName) {
@@ -47,9 +47,9 @@ public class LinksTasks {
 
     private void applyPublicLinkCreationField(String key, String value) {
         switch (key) {
-            case "name" -> world.publicLinksPage().addLinkName(value);
-            case "password" -> world.publicLinksPage().typePassword(value);
-            case "password-auto" -> world.publicLinksPage().generatePassword();
+            case "name" -> world.linksPage().addLinkName(value);
+            case "password" -> world.linksPage().typePassword(value);
+            case "password-auto" -> world.linksPage().generatePassword();
             case "permission", "permissions" -> selectPermissions(value);
             case "expiration days" -> setExpiration(value);
             default -> Log.log(Level.FINE, "Ignoring unsupported public link creation field: " + key);
@@ -58,8 +58,8 @@ public class LinksTasks {
 
     private void applyPublicLinkEditionField(String key, String value) {
         switch (key) {
-            case "name" -> world.publicLinksPage().addLinkName(value);
-            case "password" -> world.publicLinksPage().typePassword(value);
+            case "name" -> world.linksPage().addLinkName(value);
+            case "password" -> world.linksPage().typePassword(value);
             case "expiration days" -> setExpiration(value);
             case "permission", "permissions" -> selectPermissions(value);
         }
@@ -69,29 +69,29 @@ public class LinksTasks {
         switch (value) {
             case "1" -> {
                 Log.log(Level.FINE, "Select Download / View");
-                world.publicLinksPage().selectDownloadView();
+                world.linksPage().selectDownloadView();
             }
             case "15" -> {
                 Log.log(Level.FINE, "Select Download / View / Upload");
-                world.publicLinksPage().selectDownloadViewUpload();
+                world.linksPage().selectDownloadViewUpload();
             }
             case "4" -> {
                 Log.log(Level.FINE, "Select Upload Only (File Drop)");
-                world.publicLinksPage().selectUploadOnly();
+                world.linksPage().selectUploadOnly();
             }
         }
     }
 
     public void setExpiration(String days) {
         Log.log(Level.FINE, "Starts: Set Expiration date in days: " + days);
-        world.publicLinksPage().clickExpirationSwitch();
+        world.linksPage().clickExpirationSwitch();
         String dateToSet = DateUtils.dateInDaysAndroidFormat(days);
         Log.log(Level.FINE, "Days: " + days + " Date to set: " + dateToSet);
-        if (world.publicLinksPage().findListAccesibility(dateToSet).isEmpty()) {
+        if (world.linksPage().findListAccesibility(dateToSet).isEmpty()) {
             Log.log(Level.FINE, "Date not found, next page");
-            world.publicLinksPage().clickNextButton();
+            world.linksPage().clickNextButton();
         }
-        world.publicLinksPage().findAccesibility(dateToSet).click();
-        world.publicLinksPage().clickOkButton();
+        world.linksPage().findAccesibility(dateToSet).click();
+        world.linksPage().clickOkButton();
     }
 }

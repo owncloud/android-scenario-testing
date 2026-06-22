@@ -106,14 +106,14 @@ Feature: Private Share
       | folder | Share12     | Bob    |
 
   @shareshortcut @nooc10
-  Rule: Public link Shortcut
+  Rule: Link Shortcut
 
   Scenario Outline: Content in shares shortcut
     Given the following items have been created in Bob account
       | type   | name   |
       | <type> | <item> |
     And Bob has shared <type> <item> with <sharee> with permissions 31
-    When <sharee> opens the public link shortcut
+    When <sharee> opens the link shortcut
     Then <sharee> should see <item> in the shares list
 
     Examples:

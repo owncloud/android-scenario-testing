@@ -147,10 +147,10 @@ public class FileListSteps {
         world.fileListTasks().setNewName(itemName);
     }
 
-    @When("Alice opens the public link shortcut")
+    @When("Alice opens the link shortcut")
     public void user_opens_public_link_shortcut() {
         StepLogger.logCurrentStep(Level.FINE);
-        world.fileListTasks().openPublicLinkShortcut();
+        world.fileListTasks().openLinkShortcut();
     }
 
     @When("Alice opens the available offline shortcut")

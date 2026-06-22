@@ -113,7 +113,7 @@ public class FileListTasks {
         world.inputNamePage().setItemName(itemName);
     }
 
-    public void openPublicLinkShortcut() {
+    public void openLinkShortcut() {
         Log.log(Level.FINE, "Open public link shortcut");
         world.fileListPage().openLinkShortcut();
         world.fileListPage().refreshList();

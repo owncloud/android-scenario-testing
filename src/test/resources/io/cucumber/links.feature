@@ -1,5 +1,5 @@
 @links
-Feature: Public Links
+Feature: Links
 
   As an user
   I want to handle links on my files or folders
@@ -9,10 +9,10 @@ Feature: Public Links
     Given user Alice is logged
 
   @createlink
-  Rule: Create a public link
+  Rule: Create a link
 
   @smoke @nooc10
-  Scenario Outline: Create a public link with name
+  Scenario Outline: Create a link with name
     Given the following items have been created in Alice account
       | type   | name   |
       | <type> | <item> |
@@ -29,7 +29,7 @@ Feature: Public Links
       | file   | Links2.txt | link2 |
 
   @nooc10
-  Scenario Outline: Create a public link with custom password
+  Scenario Outline: Create a link with custom password
     Given the following items have been created in Alice account
       | type   | name   |
       | <type> | <item> |
@@ -47,7 +47,7 @@ Feature: Public Links
       | file   | Links4.txt | link4 | aa55AA.. |
 
   @nooc10
-  Scenario Outline: Create a public link with generated password
+  Scenario Outline: Create a link with generated password
     Given the following items have been created in Alice account
       | type   | name   |
       | <type> | <item> |
@@ -65,7 +65,7 @@ Feature: Public Links
       | file   | Links6.txt | link6 |
 
   @nooc10 @expiration
-  Scenario Outline: Create a public link with expiration date
+  Scenario Outline: Create a link with expiration date
     Given the following items have been created in Alice account
       | type   | name   |
       | <type> | <item> |
@@ -84,7 +84,7 @@ Feature: Public Links
       | file   | Links8.txt | link8 | 17         |
 
   @nooc10
-  Scenario Outline: Create a public link with permissions on a folder
+  Scenario Outline: Create a link with permissions on a folder
     Given the following items have been created in Alice account
       | type   | name   |
       | folder | <item> |
@@ -105,7 +105,7 @@ Feature: Public Links
 
 
   @editlink
-  Rule: Edit a public link
+  Rule: Edit a link
 
   Scenario Outline: Edit existing share on a folder, changing permissions
     Given the following items have been created in Alice account
@@ -140,7 +140,7 @@ Feature: Public Links
       | expiration days | 1 |
 
   @deletelink
-  Rule: Delete a public link
+  Rule: Delete a link
 
   Scenario Outline: Delete existing link
     Given the following items have been created in Alice account
@@ -158,9 +158,9 @@ Feature: Public Links
 
   #ignored because this feature is missing in Android app for oCIS
   @linkshortcut @ignore
-  Rule: Public link Shortcut
+  Rule: Link Shortcut
 
-  Scenario: Public link shortcut shows correct links
+  Scenario: Link shortcut shows correct links
     Given the following items have been created in Alice account
       | type   | name        |
       | file   | Links18.txt |
@@ -169,7 +169,7 @@ Feature: Public Links
       | folder | Links21     |
     And Alice has shared the file Links18.txt by link
     And Alice has shared the folder Links20 by link
-    When Alice opens the public link shortcut
+    When Alice opens the link shortcut
     Then Alice should see "Links18.txt" in the list
     And Alice should see "Links20" in the list
     But Alice should not see Links19.txt in the links list
@@ -180,7 +180,7 @@ Feature: Public Links
       | type   | name   |
       | <type> | <item> |
     And Alice has shared the <type> <item> by link
-    When Alice opens the public link shortcut
+    When Alice opens the link shortcut
     And Alice selects to share the <type> <item>
     And Alice deletes the link on <item>
     And Alice closes share view

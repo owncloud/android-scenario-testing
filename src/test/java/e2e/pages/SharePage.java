@@ -47,7 +47,7 @@ public class SharePage extends CommonPage {
     private WebElement acceptDeletion;
 
     @AndroidFindBy(id = "com.owncloud.android:id/shareNoPublicLinks")
-    private WebElement noPublicLinks;
+    private WebElement noLinks;
 
     @AndroidFindBy(xpath = "//android.widget.ImageButton[@content-desc=\"Back\"]")
     private WebElement close;
@@ -95,7 +95,7 @@ public class SharePage extends CommonPage {
     }
 
     public boolean isListLinksEmpty() {
-        return noPublicLinks.isDisplayed();
+        return noLinks.isDisplayed();
     }
 
     public void acceptDeletion() {

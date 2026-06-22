@@ -151,7 +151,7 @@ public class World {
         return sharePage;
     }
 
-    public LinksPage publicLinksPage() {
+    public LinksPage linksPage() {
         if (linksPage == null) {
             linksPage = new LinksPage(driver);
         }
