@@ -26,6 +26,8 @@ public class CameraPage extends CommonPage {
     @AndroidFindBy(id = "com.android.camera2:id/done_button")
     private WebElement doneButton;
 
+    private static final String CAMERA_VIEW_ID = "com.android.camera2:id/activity_root_view";
+
     public CameraPage(AndroidDriver driver) {
         super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
@@ -33,15 +35,14 @@ public class CameraPage extends CommonPage {
 
     public void waitUntilCameraIsDisplayed() {
         Log.log(Level.FINE, "Waiting until camera is displayed");
-        String cameraViewId = "com.android.camera2:id/activity_root_view";
-        waitById(WAIT_TIME, cameraViewId);
+        waitById(WAIT_TIME, CAMERA_VIEW_ID);
     }
 
     public void tapShutterButton() {
         Log.log(Level.FINE, "Tapping camera shutter by coordinates");
+        Dimension size = driver.manage().window().getSize();
         double SHUTTER_X = 0.50;
         double SHUTTER_Y = 0.90;
-        Dimension size = driver.manage().window().getSize();
         double x = size.width * SHUTTER_X;
         double y = size.height * SHUTTER_Y;
         tap((int) x, (int) y);

@@ -27,18 +27,14 @@ public class ConflictPage extends CommonPage {
     @AndroidFindBy(id = "android:id/button3")
     private WebElement bothVersionButton;
 
+    private static final String LOCAL_VERSION_TEXT = "LOCAL VERSION";
+    private static final String SERVER_VERSION_TEXT = "SERVER VERSION";
+    private static final String BOTH_VERSION_TEXT = "KEEP BOTH";
+
     public ConflictPage(AndroidDriver driver) {
         super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
     }
-
-    /*public void fixConflict (String conflict) {
-        switch (conflict) {
-            case "local" -> selectLocalVersion();
-            case "server" -> selectServerVersion();
-            case "keep both" -> selectBothVersions();
-        }
-    }*/
 
     public void selectLocalVersion() {
         Log.log(Level.FINE, "Starts: Fix conflict with local version");
@@ -56,9 +52,9 @@ public class ConflictPage extends CommonPage {
     }
 
     public boolean isConflictPageDisplayed() {
-        return isButtonVisibleWithText(localVersionButton, "LOCAL VERSION") &&
-                isButtonVisibleWithText(serverVersionButton, "SERVER VERSION") &&
-                isButtonVisibleWithText(bothVersionButton, "KEEP BOTH");
+        return isButtonVisibleWithText(localVersionButton, LOCAL_VERSION_TEXT) &&
+                isButtonVisibleWithText(serverVersionButton, SERVER_VERSION_TEXT) &&
+                isButtonVisibleWithText(bothVersionButton, BOTH_VERSION_TEXT);
     }
 
     private boolean isButtonVisibleWithText(WebElement button, String expectedText) {

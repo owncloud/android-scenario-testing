@@ -19,29 +19,29 @@ import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 
 public class PrivateSharePage extends CommonPage {
 
-    private final String createboxId = "com.owncloud.android:id/canEditCreateCheckBox";
-    private final String changeboxId = "com.owncloud.android:id/canEditChangeCheckBox";
-    private final String deleteboxId = "com.owncloud.android:id/canEditDeleteCheckBox";
-    private final String editboxId = "com.owncloud.android:id/canEditSwitch";
-    private final String shareboxId = "com.owncloud.android:id/canShareSwitch";
-
-    @AndroidFindBy(id = createboxId)
+    @AndroidFindBy(id = CREATE_CHECKBOX_ID)
     private WebElement create;
 
-    @AndroidFindBy(id = changeboxId)
+    @AndroidFindBy(id = CHANGE_CHECKBOX_ID)
     private WebElement change;
 
-    @AndroidFindBy(id = deleteboxId)
+    @AndroidFindBy(id = DELETE_CHECKBOX_ID)
     private WebElement delete;
 
-    @AndroidFindBy(id = editboxId)
+    @AndroidFindBy(id = EDIT_SWITCH_ID)
     private WebElement edit;
 
-    @AndroidFindBy(id = shareboxId)
+    @AndroidFindBy(id = SHARE_SWITCH_ID)
     private WebElement share;
 
     @AndroidFindBy(id = "com.owncloud.android:id/closeButton")
     private WebElement close;
+
+    private static final String CREATE_CHECKBOX_ID = "com.owncloud.android:id/canEditCreateCheckBox";
+    private static final String CHANGE_CHECKBOX_ID = "com.owncloud.android:id/canEditChangeCheckBox";
+    private static final String DELETE_CHECKBOX_ID = "com.owncloud.android:id/canEditDeleteCheckBox";
+    private static final String EDIT_SWITCH_ID = "com.owncloud.android:id/canEditSwitch";
+    private static final String SHARE_SWITCH_ID = "com.owncloud.android:id/canShareSwitch";
 
     public PrivateSharePage(AndroidDriver driver) {
         super(driver);
@@ -79,27 +79,27 @@ public class PrivateSharePage extends CommonPage {
     }
 
     public boolean isCreateSelected() {
-        return checkSwitch(createboxId);
+        return checkSwitch(CREATE_CHECKBOX_ID);
     }
 
     public boolean isChangeSelected() {
-        return checkSwitch(changeboxId);
+        return checkSwitch(CHANGE_CHECKBOX_ID);
     }
 
     public boolean isDeleteSelected() {
-        return checkSwitch(deleteboxId);
+        return checkSwitch(DELETE_CHECKBOX_ID);
     }
 
     public boolean isEditFileEnabled() {
-        return checkSwitch(editboxId);
+        return checkSwitch(EDIT_SWITCH_ID);
     }
 
     public boolean isShareEnabled() {
-        return parseIntBool(findId(shareboxId).getAttribute("checked"));
+        return parseIntBool(findId(SHARE_SWITCH_ID).getAttribute("checked"));
     }
 
     public boolean isEditEnabled() {
-        return parseIntBool(findId(editboxId).getAttribute("checked"));
+        return parseIntBool(findId(EDIT_SWITCH_ID).getAttribute("checked"));
     }
 
     private boolean checkSwitch(String id) {

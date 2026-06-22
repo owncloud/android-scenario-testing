@@ -23,14 +23,7 @@ import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 
 public class FileListPage extends CommonPage {
 
-    private final String shareoption_id = "com.owncloud.android:id/action_share_file";
-    private final String avofflineoption_id = "com.owncloud.android:id/action_set_available_offline";
-    private final String unavofflineoption_id = "com.owncloud.android:id/action_set_unavailable_offline";
-    private final String downloadoption_id = "com.owncloud.android:id/action_download_file";
-    private final String syncoption_id = "com.owncloud.android:id/action_sync_file";
-    private final String deleteoption_id = "com.owncloud.android:id/action_remove_file";
-
-    @AndroidFindBy(uiAutomator = "new UiSelector().resourceId(\"com.owncloud.android:id/action_mode_close_button\");")
+    @AndroidFindBy(uiAutomator = "new UiSelector().resourceId(\"com.owncloud.android:id/action_mode_close_button\")")
     private WebElement closeSelectionMode;
 
     @AndroidFindBy(id = "com.owncloud.android:id/fab_expand_menu_button")
@@ -58,7 +51,7 @@ public class FileListPage extends CommonPage {
     private List<WebElement> toolbar;
 
     @AndroidFindBy(id = "com.owncloud.android:id/bottom_nav_view")
-    WebElement bottomBar;
+    private WebElement bottomBar;
 
     @AndroidFindBy(id = "com.owncloud.android:id/file_list_constraint_layout")
     private WebElement fileCell;
@@ -82,19 +75,27 @@ public class FileListPage extends CommonPage {
     private WebElement avOffShortcut;
 
     @AndroidFindBy(id = "nav_spaces")
-    WebElement spacesTab;
+    private WebElement spacesTab;
 
     @AndroidFindBy(id = "nav_uploads")
-    WebElement uploads;
+    private WebElement uploads;
 
     @AndroidFindBy(id = "com.owncloud.android:id/list_empty_dataset_title")
-    WebElement emptyMessage;
+    private WebElement emptyMessage;
 
     @AndroidFindBy(id = "com.owncloud.android:id/dialog_file_already_exists_title")
-    WebElement conflictTitle;
+    private WebElement conflictTitle;
 
     @AndroidFindBy(id = "android:id/chooser_header")
-    List<WebElement> chooserHeader;
+    private List<WebElement> chooserHeader;
+
+    private static final String SHARE_OPTION_ID = "com.owncloud.android:id/action_share_file";
+    private static final String AVAILABLE_OFFLINE_OPTION_ID = "com.owncloud.android:id/action_set_available_offline";
+    private static final String UNAVAILABLE_OFFLINE_OPTION_ID = "com.owncloud.android:id/action_set_unavailable_offline";
+    private static final String DOWNLOAD_OPTION_ID = "com.owncloud.android:id/action_download_file";
+    private static final String SYNC_OPTION_ID = "com.owncloud.android:id/action_sync_file";
+    private static final String DELETE_OPTION_ID = "com.owncloud.android:id/action_remove_file";
+    private static final String MORE_OPTIONS_DESCRIPTION = "More options";
 
     public FileListPage(AndroidDriver driver) {
         super(driver);
@@ -102,9 +103,13 @@ public class FileListPage extends CommonPage {
     }
 
     public void refreshList() {
+        final double startX = 0.50;
+        final double startY = 0.30;
+        final double endX = 0.50;
+        final double endY = 0.80;
         Log.log(Level.FINE, "Refresh list");
         waitById(WAIT_TIME, bottomBar);
-        swipe(0.50, 0.30, 0.50, 0.80);
+        swipe(startX, startY, endX, endY);
     }
 
     public void selectCreateFolder() {
@@ -155,7 +160,7 @@ public class FileListPage extends CommonPage {
     }
 
     public boolean isFileListVisible() {
-        Log.log(Level.FINE, "Starts: is File list Visible: ");
+        Log.log(Level.FINE, "Starts: is File list Visible");
         return !toolbar.isEmpty();
     }
 
@@ -166,27 +171,26 @@ public class FileListPage extends CommonPage {
 
     public void selectItemList(String path) {
         Log.log(Level.FINE, "Starts: select item from list: " + path);
-        String fileName = path.contains("/") ? browseToFile(path) : path;
-        Log.log(Level.FINE, "Item name to select: " + fileName);
+        String itemName = path.contains("/") ? browseToFile(path) : path;
+        Log.log(Level.FINE, "Item name to select: " + itemName);
         refreshList();
-        waitByTextVisible(WAIT_TIME, fileName);
-        longPress(fileName);
+        waitByTextVisible(WAIT_TIME, itemName);
+        longPress(itemName);
     }
 
     public void selectOperation(String operationName) {
-        if (operationName.equals("share")) {  //placed in toolbar
-            findId(shareoption_id).click();
+        if ("share".equals(operationName)) {
+            findId(SHARE_OPTION_ID).click();
             return;
         }
-        if (operationName.equals("Delete")) { //placed in toolbar when multiselection
-            findId(deleteoption_id).click();
+        if ("Delete".equals(operationName)) {
+            findId(DELETE_OPTION_ID).click();
             return;
         }
         Log.log(Level.FINE, "Operation: " + operationName + " placed in menu");
         selectOperationMenu(operationName);
     }
 
-    //Select once multiselection mode is on
     public void selectItem(String itemName) {
         Log.log(Level.FINE, "Starts: select item: " + itemName);
         findUIAutomatorText(itemName).click();
@@ -198,8 +202,9 @@ public class FileListPage extends CommonPage {
     }
 
     public void openAvOffShortcut() {
+        final String downloadEnqueuedText = "Download enqueued";
         Log.log(Level.FINE, "Starts: open av offline shortcut");
-        waitByTextInvisible(WAIT_TIME, "Download enqueued");
+        waitByTextInvisible(WAIT_TIME, downloadEnqueuedText);
         avOffShortcut.click();
     }
 
@@ -220,8 +225,8 @@ public class FileListPage extends CommonPage {
     public boolean isFileMarkedAsDownloaded(String path) {
         Log.log(Level.FINE, "Starts: Check if file is downloaded: " + path);
         selectItemList(path);
-        List<WebElement> downloadOptions = findListId(downloadoption_id);
-        List<WebElement> syncOptions = findListId(syncoption_id);
+        List<WebElement> downloadOptions = findListId(DOWNLOAD_OPTION_ID);
+        List<WebElement> syncOptions = findListId(SYNC_OPTION_ID);
         return downloadOptions.isEmpty() && !syncOptions.isEmpty();
     }
 
@@ -229,20 +234,20 @@ public class FileListPage extends CommonPage {
         Log.log(Level.FINE, "Starts: Check is file is av. offline: " + path);
         refreshList();
         selectItemList(path);
-        findUIAutomatorDescription("More options").click();
-        return findListId(avofflineoption_id).isEmpty();
+        openMenuActions();
+        return findListId(AVAILABLE_OFFLINE_OPTION_ID).isEmpty();
     }
 
     public boolean isItemMarkedAsUnAvOffline(String path) {
         Log.log(Level.FINE, "Starts: Check is file is unav. offline: " + path);
         refreshList();
         selectItemList(path);
-        findUIAutomatorDescription("More options").click();
-        return findListId(unavofflineoption_id).isEmpty();
+        openMenuActions();
+        return findListId(UNAVAILABLE_OFFLINE_OPTION_ID).isEmpty();
     }
 
     private void openMenuActions() {
-        findUIAutomatorDescription("More options").click();
+        findUIAutomatorDescription(MORE_OPTIONS_DESCRIPTION).click();
     }
 
     private void selectOperationMenu(String operationName) {
@@ -263,8 +268,9 @@ public class FileListPage extends CommonPage {
     }
 
     public void fixConflict(String option) {
+        final String replaceOption = "replace";
         Log.log(Level.FINE, "Starts: Fix Conflict: " + option);
-        if (option.equals("replace")) {
+        if (replaceOption.equals(option)) {
             replace.click();
         } else {
             keepBoth.click();
@@ -272,21 +278,23 @@ public class FileListPage extends CommonPage {
     }
 
     public boolean isDisplayedListCorrect(String path, ArrayList<OCFile> listServer) {
-        browseToFolder(path); // Mover a la carpeta
+        final int maxVisibleNameLength = 15;
+        browseToFolder(path);
         String userName1 = LocProperties.getProperties().getProperty("userName1");
-        return listServer.stream().filter(
-                        ocfile -> !ocfile.getName().equalsIgnoreCase(userName1) && ocfile.getName().length() <= 15)
-                .allMatch(ocfile -> {
-                    while (!isItemInList(ocfile.getName()) && !endList(listServer.size())) {
-                        refreshList();
-                    }
-                    return isItemInList(ocfile.getName());
-                });
+        return listServer.stream()
+            .filter(ocfile -> !ocfile.getName().equalsIgnoreCase(userName1)
+                    && ocfile.getName().length() <= maxVisibleNameLength)
+            .allMatch(ocfile -> {
+                while (!isItemInList(ocfile.getName()) && !endList(listServer.size())) {
+                    refreshList();
+                }
+                return isItemInList(ocfile.getName());
+            });
     }
 
     private boolean endList(int numberItems) {
-        return !findListUIAutomatorText(Integer.toString(numberItems - 1) + " files")
-                .isEmpty();
+        String endListText = Integer.toString(numberItems - 1) + " files";
+        return !findListUIAutomatorText(endListText).isEmpty();
     }
 
     private WebElement getElementFromFileList(String itemName) {
@@ -294,55 +302,61 @@ public class FileListPage extends CommonPage {
         if (isItemInList(itemName)) {
             Log.log(Level.FINE, "Item found: " + itemName);
             return findUIAutomatorText(itemName);
-        } else {
-            Log.log(Level.FINE, "Item not found: " + itemName);
-            return null;
         }
+        Log.log(Level.FINE, "Item not found: " + itemName);
+        return null;
     }
 
     public String getPrivateLink(String scheme, String privateLink) {
+        final String escapedDollar = "\\$";
         Log.log(Level.FINE, "Starts: Create private link: " + scheme + " " + privateLink);
         String originalScheme = getScheme(privateLink);
-        //Scaping the $... will improve with something native
         String linkToOpen = privateLink.replace(originalScheme, scheme)
-                .replace("$", "\\$");
+                .replace("$", escapedDollar);
         Log.log(Level.FINE, "Link to open: " + linkToOpen);
         return linkToOpen;
     }
 
     private String getScheme(String originalURL) {
-        return originalURL.split("://")[0];
+        final String schemeSeparator = "://";
+        return originalURL.split(schemeSeparator)[0];
     }
 
     public void openPrivateLink(String privateLink) {
+        final String fabExpandMenuButtonId = "com.owncloud.android:id/fab_expand_menu_button";
         Log.log(Level.FINE, "Starts: Open private link: " + privateLink);
-        //Waiting till list of files is loaded
-        waitById(WAIT_TIME, "com.owncloud.android:id/fab_expand_menu_button");
+        waitById(WAIT_TIME, fabExpandMenuButtonId);
         driver.get(privateLink);
     }
 
     public void openFakePrivateLink() {
+        final String fakeScheme = "owncloud";
+        final String fakeFilePath = "/f/11111111111";
         Log.log(Level.FINE, "Starts: Open fake private link");
-        String originalScheme = getScheme(System.getProperty("server"));
-        String fakeURL = System.getProperty("server").replace(originalScheme, "owncloud")
-                + "/f/11111111111";
+        String server = System.getProperty("server");
+        String originalScheme = getScheme(server);
+        String fakeURL = server.replace(originalScheme, fakeScheme) + fakeFilePath;
         Log.log(Level.FINE, "Fake URL: " + fakeURL);
         driver.get(fakeURL);
     }
 
     public boolean isItemOpened(String itemType, String itemName) {
+        final String fileType = "file";
+        final String folderType = "folder";
+        final String fileDetailImageId = "com.owncloud.android:id/fdImageDetailFile";
+        final int chooserDismissX = 200;
+        final int chooserDismissY = 300;
         Log.log(Level.FINE, "Starts: checking if item is opened: " + itemType + " " + itemName);
-        if (itemType.equals("file")) {
+        if (fileType.equals(itemType)) {
             Log.log(Level.FINE, "Opening file");
-            //Waiting till file is opened and the dialog shown
             if (!chooserHeader.isEmpty()) {
-                //To dismiss the dialog if the specific version shows the chooser header
-                tap(200, 300);
+                tap(chooserDismissX, chooserDismissY);
             }
             boolean fileNameVisible = findUIAutomatorText(itemName).isDisplayed();
-            boolean fileTypeIconVisible = findId("com.owncloud.android:id/fdImageDetailFile").isDisplayed();
+            boolean fileTypeIconVisible = findId(fileDetailImageId).isDisplayed();
             return fileNameVisible && fileTypeIconVisible;
-        } else if (itemType.equals("folder")) {
+        }
+        if (folderType.equals(itemType)) {
             Log.log(Level.FINE, "Opening folder");
             boolean folderNameVisible = findUIAutomatorText(itemName).isDisplayed();
             boolean hamburgerButtonVisible = !hamburgerButton.isEmpty();

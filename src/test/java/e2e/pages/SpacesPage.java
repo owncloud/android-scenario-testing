@@ -22,25 +22,6 @@ import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 
 public class SpacesPage extends CommonPage {
 
-    private static final String NO_QUOTA_RESTRICTION = "No restriction";
-
-    private static final String SPACE_CARD_ID =
-            "com.owncloud.android:id/spaces_list_item_card";
-
-    private static final String SPACE_NAME_ID =
-            "com.owncloud.android:id/spaces_list_item_name";
-
-    private static final String SPACE_SUBTITLE_ID =
-            "com.owncloud.android:id/spaces_list_item_subtitle";
-
-    private static final String SPACE_DISABLED_LABEL_ID =
-            "com.owncloud.android:id/spaces_list_item_disabled_label";
-
-    private static final String QUOTA_SWITCH_ID =
-            "com.owncloud.android:id/create_space_dialog_quota_switch";
-
-    private static final String YES_BUTTON_TEXT = "YES";
-
     @AndroidFindBy(id = SPACE_CARD_ID)
     private List<WebElement> spaceCards;
 
@@ -70,6 +51,14 @@ public class SpacesPage extends CommonPage {
 
     @AndroidFindBy(id = "com.owncloud.android:id/search_src_text")
     private WebElement searchInput;
+
+    private static final String NO_QUOTA_RESTRICTION = "No restriction";
+    private static final String SPACE_CARD_ID = "com.owncloud.android:id/spaces_list_item_card";
+    private static final String SPACE_NAME_ID = "com.owncloud.android:id/spaces_list_item_name";
+    private static final String SPACE_SUBTITLE_ID = "com.owncloud.android:id/spaces_list_item_subtitle";
+    private static final String SPACE_DISABLED_LABEL_ID = "com.owncloud.android:id/spaces_list_item_disabled_label";
+    private static final String QUOTA_SWITCH_ID = "com.owncloud.android:id/create_space_dialog_quota_switch";
+    private static final String YES_BUTTON_TEXT = "YES";
 
     public SpacesPage(AndroidDriver driver) {
         super(driver);

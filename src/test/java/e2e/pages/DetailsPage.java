@@ -62,6 +62,8 @@ public class DetailsPage extends CommonPage {
     @AndroidFindBy(xpath = "//android.widget.ImageButton[@content-desc=\"Back\"]")
     private WebElement back;
 
+    private static final String TEXT_PREVIEW_ID = "com.owncloud.android:id/text_preview";
+
     public DetailsPage(AndroidDriver driver) {
         super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
@@ -100,7 +102,7 @@ public class DetailsPage extends CommonPage {
 
     public boolean isTextDisplayedInPreview(String text) {
         // Giving additional time since it could take a bit longer to load the text preview
-        waitUntilTextIsNotEmpty(WAIT_TIME + 10, "com.owncloud.android:id/text_preview");
+        waitUntilTextIsNotEmpty(WAIT_TIME + 10, TEXT_PREVIEW_ID);
         return findUIAutomatorText(text).isDisplayed();
     }
 

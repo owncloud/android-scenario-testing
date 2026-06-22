@@ -49,9 +49,13 @@ public class CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/nav_all_files")
     private WebElement toRoot;
 
-    protected static AndroidDriver driver;
     protected static final int WAIT_TIME = 7;
-    private static final SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd_HHmmss");
+    private static final String UI_AUTOMATOR_TEXT_TEMPLATE = "new UiSelector().text(\"%s\")";
+    private static final String UI_AUTOMATOR_TEXT_CONTAINS_TEMPLATE = "new UiSelector().textContains(\"%s\")";
+    private static final String UI_AUTOMATOR_DESCRIPTION_TEMPLATE = "new UiSelector().description(\"%s\")";
+    private static final String ROOT_PATH = "/";
+    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMdd_HHmmss");
+    protected static AndroidDriver driver;
     private static boolean recordingStarted = false;
 
     public CommonPage(AndroidDriver driver) {
@@ -78,21 +82,22 @@ public class CommonPage {
 
     public WebElement findUIAutomatorText(String text) {
         return driver.findElement(AppiumBy.androidUIAutomator(
-                "new UiSelector().text(\"" + text + "\")"));
+                String.format(UI_AUTOMATOR_TEXT_TEMPLATE, text)));
     }
+
     public WebElement findUIAutomatorSubText(String text) {
         return driver.findElement(AppiumBy.androidUIAutomator(
-                "new UiSelector().textContains(\"" + text + "\");"));
+                String.format(UI_AUTOMATOR_TEXT_CONTAINS_TEMPLATE, text)));
     }
 
     public WebElement findUIAutomatorDescription(String description) {
         return driver.findElement(AppiumBy.androidUIAutomator(
-                "new UiSelector().description(\"" + description + "\");"));
+                String.format(UI_AUTOMATOR_DESCRIPTION_TEMPLATE, description)));
     }
 
     public List<WebElement> findListUIAutomatorText(String finder) {
         return driver.findElements(AppiumBy.androidUIAutomator(
-                "new UiSelector().textContains(\"" + finder + "\");"));
+                String.format(UI_AUTOMATOR_TEXT_CONTAINS_TEMPLATE, finder)));
     }
 
     public WebElement findAccesibility(String id) {
@@ -107,44 +112,55 @@ public class CommonPage {
 
     public static void waitByXpath(int timeToWait, String resourceXpath) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeToWait));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(AppiumBy.xpath(resourceXpath)));
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                AppiumBy.xpath(resourceXpath)));
     }
 
     public static void waitById(int timeToWait, String resourceId) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeToWait));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(AppiumBy.id(resourceId)));
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                AppiumBy.id(resourceId)));
     }
 
     public static void waitById(int timeToWait, WebElement mobileElement) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeToWait));
+
         wait.until(ExpectedConditions.visibilityOf(mobileElement));
     }
 
     public static void waitByIdInvisible(int timeToWait, String resourceId) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeToWait));
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(AppiumBy.id(resourceId)));
+
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                AppiumBy.id(resourceId)));
     }
 
     public static void waitByIdInvisible(int timeToWait, WebElement mobileElement) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeToWait));
+
         wait.until(ExpectedConditions.invisibilityOf(mobileElement));
     }
 
     public static void waitByTextVisible(int timeToWait, String text) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeToWait));
-        wait.until(ExpectedConditions.visibilityOfElementLocated(AppiumBy.androidUIAutomator(
-                "new UiSelector().textContains(\"" + text + "\");")));
+
+        wait.until(ExpectedConditions.visibilityOfElementLocated(
+                AppiumBy.androidUIAutomator(
+                        String.format(UI_AUTOMATOR_TEXT_CONTAINS_TEMPLATE, text))));
     }
 
     public void waitByTextInvisible(int timeToWait, String text) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeToWait));
-        wait.until(ExpectedConditions.invisibilityOfElementLocated(AppiumBy.androidUIAutomator(
-                "new UiSelector().textContains(\"" + text + "\");")));
+
+        wait.until(ExpectedConditions.invisibilityOfElementLocated(
+                AppiumBy.androidUIAutomator(
+                        String.format(UI_AUTOMATOR_TEXT_CONTAINS_TEMPLATE, text))));
     }
 
     public void waitUntilTextIsNotEmpty(int timeToWait, String resourceId) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeToWait));
-
         ExpectedCondition<Boolean> textNotEmpty = driver -> {
             WebElement element = driver.findElement(AppiumBy.id(resourceId));
             String text = element.getText();
@@ -154,7 +170,7 @@ public class CommonPage {
     }
 
     protected HashMap turnListToHashmap(List<List<String>> dataList) {
-        HashMap<String, String> mapFields = new HashMap<String, String>();
+        HashMap<String, String> mapFields = new HashMap<>();
         for (List<String> rows : dataList) {
             mapFields.put(rows.get(0), rows.get(1));
         }
@@ -164,93 +180,88 @@ public class CommonPage {
     /* Finger actions */
 
     public void swipe(double startx, double starty, double endx, double endy) {
+        final String fingerName = "finger";
+        final int pointerMoveDurationMs = 1000;
         Dimension size = driver.manage().window().getSize();
         int startY = (int) (size.height * starty);
         int endY = (int) (size.height * endy);
         int startX = (int) (size.width * startx);
         int endX = (int) (size.width * endx);
-        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, fingerName);
         Sequence swipe = new Sequence(finger, 1);
-        swipe.addAction(finger.createPointerMove(Duration.ofMillis(1000),
-                PointerInput.Origin.viewport(), startX, startY));
-        swipe.addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()));
-        swipe.addAction(finger.createPointerMove(Duration.ofMillis(1000),
-                PointerInput.Origin.viewport(), endX, endY));
-        swipe.addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
+        swipe.addAction(finger.createPointerMove(
+                Duration.ofMillis(pointerMoveDurationMs),
+                PointerInput.Origin.viewport(),
+                startX,
+                startY));
+
+        swipe.addAction(finger.createPointerDown(
+                PointerInput.MouseButton.LEFT.asArg()));
+        swipe.addAction(finger.createPointerMove(
+                Duration.ofMillis(pointerMoveDurationMs),
+                PointerInput.Origin.viewport(),
+                endX,
+                endY));
+        swipe.addAction(finger.createPointerUp(
+                PointerInput.MouseButton.LEFT.asArg()));
         driver.perform(Arrays.asList(swipe));
     }
 
     public void longPress(String text) {
+        final String fileNameId = "com.owncloud.android:id/Filename";
+        final String textViewXpath =
+                "//android.widget.TextView[@resource-id=\"%s\" and @text=\"%s\"]";
+        final String longClickGesture = "mobile: longClickGesture";
+        final int durationMs = 2000;
         Log.log(Level.FINE, "Starting long press on element with text: " + text);
-        WebElement element = driver.findElement(
-                AppiumBy.xpath("//android.widget.TextView[@resource-id=" +
-                        "\"com.owncloud.android:id/Filename\" and @text=\"" + text + "\"]")
-        );
-        driver.executeScript(
-                "mobile: longClickGesture",
-                Map.of(
-                        "elementId", ((RemoteWebElement) element).getId(),
-                        "duration", 2000
-                )
-        );
+        WebElement element = driver.findElement(AppiumBy.xpath(
+                String.format(textViewXpath, fileNameId, text)));
+        driver.executeScript(longClickGesture, Map.of("elementId", ((RemoteWebElement) element).getId(),
+                        "duration", durationMs));
     }
 
     public void tap(int X, int Y) {
+        final String fingerName = "finger";
+        final int pointerMoveDurationSeconds = 1;
         Log.log(Level.FINE, "Starts: tap on X: " + X + ", Y: " + Y);
-        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, "finger");
+        PointerInput finger = new PointerInput(PointerInput.Kind.TOUCH, fingerName);
         Sequence tapSeq = new Sequence(finger, 1);
-        tapSeq.addAction(finger.createPointerMove(Duration.ofSeconds(1), PointerInput.Origin.viewport(), X, Y))
-                .addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
+        tapSeq.addAction(finger.createPointerMove(Duration.ofSeconds(pointerMoveDurationSeconds),
+                PointerInput.Origin.viewport(), X, Y)).addAction(finger.createPointerDown(PointerInput.MouseButton.LEFT.asArg()))
                 .addAction(finger.createPointerUp(PointerInput.MouseButton.LEFT.asArg()));
         driver.perform(Arrays.asList(tapSeq));
     }
 
     /* Browsing methods used in several pages */
 
-    /*
-     * Receives: name of the folder in the current list to browse into
-     */
     public void browseInto(String folderName) {
         Log.log(Level.FINE, "Starts: browse to " + folderName);
         findUIAutomatorSubText(folderName).click();
     }
 
-    /*
-     * Browses to root folder using the shortcut in the bottom bar
-     */
     public void browseRoot() {
         Log.log(Level.FINE, "Starts: browse to root");
         toRoot.click();
     }
 
-    /*
-     * Receives: path to a folder. If path does not contain "/", folder is in root.
-     * Otherwise browsing to.
-     */
     public void browseToFolder(String path) {
-        if (path.equals("/")) { //Go to Root
+        if (ROOT_PATH.equals(path)) {
             browseRoot();
-        } else if (path.contains("/")) { //browsing to the folder
-            int i = 0;
-            String[] route = path.split("/");
-            for (i = 0; i < route.length; i++) {
-                Log.log(Level.FINE, "browsing to " + route[i]);
-                browseInto(route[i]);
+        } else if (path.contains(ROOT_PATH)) {
+            String[] route = path.split(ROOT_PATH);
+            for (String folder : route) {
+                Log.log(Level.FINE, "browsing to " + folder);
+                browseInto(folder);
             }
-        } else { //no path to browse, just clicking
+        } else {
             browseInto(path);
         }
     }
 
-    /*
-     * Receives: path to a file. If path does not contain "/", file is in the root folder,
-     * otherwise browsing to
-     * Returns: File name (last chunk of the path), after browsing to reach it.
-     */
     public String browseToFile(String path) {
-        String[] route = path.split("/");
-        int i = 0;
-        if (route.length > 0) { //browse
+        String[] route = path.split(ROOT_PATH);
+        if (route.length > 0) {
+            int i;
             for (i = 0; i < route.length - 1; i++) {
                 Log.log(Level.FINE, "browsing to " + route[i]);
                 browseInto(route[i]);
@@ -265,21 +276,14 @@ public class CommonPage {
         return Boolean.parseBoolean(s);
     }
 
-    public void setConnectionDown(){
+    public void setConnectionDown() {
         Log.log(Level.FINE, "Starts: Set connection down");
-        driver.setConnection(new ConnectionStateBuilder()
-                .withWiFiDisabled()
-                .withDataDisabled()
-                .build());
+        driver.setConnection(new ConnectionStateBuilder().withWiFiDisabled().withDataDisabled().build());
     }
 
-    public void setConnectionUp(){
+    public void setConnectionUp() {
         Log.log(Level.FINE, "Starts: Set connection up");
-        driver.setConnection(new ConnectionStateBuilder()
-                .withWiFiEnabled()
-                .withDataEnabled()
-                .build());
-        // Wait till connection is up
+        driver.setConnection(new ConnectionStateBuilder().withWiFiEnabled().withDataEnabled().build());
         WebDriverWait wait = new WebDriverWait(driver, Duration.of(WAIT_TIME, ChronoUnit.SECONDS));
         wait.until(new ExpectedCondition<Boolean>() {
             @Override
@@ -293,40 +297,48 @@ public class CommonPage {
 
     /* Methods to help debugging */
 
-    public static void takeScreenshot(String name) {
-        try {
-            String sd = sdf.format(new Timestamp(System.currentTimeMillis()).getTime());
-            File screenShotFile = (driver).getScreenshotAs(OutputType.FILE);
-            FileUtils.copyFile(screenShotFile, new File("screenshots/" + name + "_" + sd + ".png"));
-            Log.log(Level.FINE, "Take screenshot " + name + " at: " + sd);
-        } catch (IOException e) {
-            Log.log(Level.FINE, "Screenshot not taken");
-        }
+    public static void takeScreenshot(String name) throws IOException {
+        final String screenshotsFolder = "screenshots";
+        final String screenshotExtension = ".png";
+        String timestamp = SDF.format(new Timestamp(System.currentTimeMillis()).getTime());
+        File screenShotFile = driver.getScreenshotAs(OutputType.FILE);
+        File destinationFile = new File(screenshotsFolder + "/" + name + "_"
+                        + timestamp + screenshotExtension);
+        FileUtils.copyFile(screenShotFile, destinationFile);
+        Log.log(Level.FINE, "Take screenshot " + name + " at: " + timestamp);
     }
 
     public static void startRecording() {
+        final int bitRate = 2_000_000;
+        final String videoSize = "360x640";
         try {
             AndroidStartScreenRecordingOptions androidStartScreenRecordingOptions =
                     new AndroidStartScreenRecordingOptions();
-            androidStartScreenRecordingOptions.withBitRate(2000000);
-            androidStartScreenRecordingOptions.withVideoSize("360x640");
+            androidStartScreenRecordingOptions.withBitRate(bitRate);
+            androidStartScreenRecordingOptions.withVideoSize(videoSize);
             driver.startRecordingScreen(androidStartScreenRecordingOptions);
             recordingStarted = true;
-        } catch (Exception e) { // In case the recording fails, scenario result is not affected
+        } catch (Exception e) {
             recordingStarted = false;
-            Log.log(Level.FINE, "Screen recording not initiated. Error:  " + e.getMessage());
+            Log.log(Level.FINE, "Screen recording not initiated. Error:  "
+                    + e.getMessage());
         }
     }
 
     public static void stopRecording(String filename, String featureName, boolean failed) {
-        if (!recordingStarted) return;
+        final String videoFolder = "video";
+        final String videoExtension = ".mp4";
+        if (!recordingStarted) {
+            return;
+        }
         try {
             String base64String = driver.stopRecordingScreen();
             byte[] data = Base64.decodeBase64(base64String);
-            if (failed) { // If the test failed, save the video
+            if (failed) {
                 createFeatureFolder(featureName);
-                String destinationPath = "video/" + featureName + "/" + filename + "_" +
-                        sdf.format(new Timestamp(System.currentTimeMillis()).getTime()) + ".mp4";
+                String timestamp = SDF.format(new Timestamp(System.currentTimeMillis()).getTime());
+                String destinationPath = videoFolder + "/" + featureName + "/" + filename + "_"
+                        + timestamp + videoExtension;
                 Path path = Paths.get(destinationPath);
                 try {
                     Files.write(path, data);
@@ -334,7 +346,7 @@ public class CommonPage {
                     Log.log(Level.FINE, e.getMessage());
                 }
             }
-        } catch (WebDriverException wde) { // In case the recording fails, scenario result is not affected
+        } catch (WebDriverException wde) {
             Log.log(Level.FINE, "Error when stopping screen recording: " + wde.getMessage());
             recordingStarted = false;
         } catch (Exception e) {
@@ -344,7 +356,8 @@ public class CommonPage {
     }
 
     private static void createFeatureFolder(String featureName) {
-        File folder = new File("video/" + featureName);
+        final String videoFolder = "video";
+        File folder = new File(videoFolder + "/" + featureName);
         if (!folder.exists()) {
             folder.mkdirs();
         }

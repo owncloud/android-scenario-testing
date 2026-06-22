@@ -18,6 +18,10 @@ public class UploadsPage extends CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/uploadListGroupButtonClear")
     private WebElement clear;
 
+    private static final String UPLOADED_LABEL = "UPLOADED";
+    private static final String FAILED_LABEL = "FAILED";
+    private static final String ENQUEUED_LABEL = "ENQUEUED";
+
     public UploadsPage(AndroidDriver driver) {
         super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
@@ -29,9 +33,9 @@ public class UploadsPage extends CommonPage {
 
     public boolean isFileUploaded(String fileName) {
         boolean fileInList = findUIAutomatorText(fileName).isDisplayed();
-        boolean uploadedListVisible = findUIAutomatorText("UPLOADED").isDisplayed();
-        boolean failedListNotVisible = findListUIAutomatorText("FAILED").isEmpty();
-        boolean enqueuedListNotVisible = findListUIAutomatorText("ENQUEUED").isEmpty();
+        boolean uploadedListVisible = findUIAutomatorText(UPLOADED_LABEL).isDisplayed();
+        boolean failedListNotVisible = findListUIAutomatorText(FAILED_LABEL).isEmpty();
+        boolean enqueuedListNotVisible = findListUIAutomatorText(ENQUEUED_LABEL).isEmpty();
         return fileInList && uploadedListVisible && failedListNotVisible
                 && enqueuedListNotVisible;
     }

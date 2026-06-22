@@ -24,14 +24,9 @@ public class DocumentProviderPage extends CommonPage {
     @AndroidFindBy(xpath = "//android.widget.ImageButton[@content-desc=\"Show roots\"]")
     private WebElement hamburger;
 
-    private static final String ROOTS_LIST_SELECTOR =
-            "new UiSelector().resourceId(\"com.google.android.documentsui:id/roots_list\")";
-
-    private static final String DOWNLOADS_OPTION_SELECTOR =
-            "new UiSelector().textContains(\"Downloads\")";
-
-    private static final String OWNCLOUD_BOTTOM_NAV_VIEW_ID =
-            "com.owncloud.android:id/bottom_nav_view";
+    private static final String ROOTS_LIST_SELECTOR = "new UiSelector().resourceId(\"com.google.android.documentsui:id/roots_list\")";
+    private static final String DOWNLOADS_OPTION_SELECTOR = "new UiSelector().textContains(\"Downloads\")";
+    private static final String BOTTOM_NAV_VIEW_ID = "com.owncloud.android:id/bottom_nav_view";
 
     public DocumentProviderPage(AndroidDriver driver) {
         super(driver);
@@ -57,6 +52,6 @@ public class DocumentProviderPage extends CommonPage {
 
     public void waitUntilOwnCloudIsDisplayed() {
         Log.log(Level.FINE, "Wait until ownCloud is displayed after document selection");
-        waitById(WAIT_TIME, OWNCLOUD_BOTTOM_NAV_VIEW_ID);
+        waitById(WAIT_TIME, BOTTOM_NAV_VIEW_ID);
     }
 }
