@@ -22,6 +22,7 @@ import java.util.logging.Level;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import e2e.LocProperties;
 import e2e.model.OCFile;
 import e2e.support.log.Log;
 import e2e.world.World;
@@ -29,7 +30,6 @@ import e2e.world.World;
 public class FileListAssertions {
 
     private static final String EXAMPLE_FILES_PATH = "src/test/resources/io/cucumber/example-files/";
-
     private final World world;
 
     public FileListAssertions(World world) {
@@ -56,7 +56,8 @@ public class FileListAssertions {
         }
     }
 
-    public void assertItemIsVisibleInsideFolder(String itemName, String targetFolder) throws IOException {
+    public void assertItemIsVisibleInsideFolder(String itemName, String targetFolder)
+            throws IOException {
         world.fileListPage().browseInto(targetFolder);
         assertTrue(world.fileListPage().isItemInList(itemName));
         assertTrue(world.filesAPI().itemExist(targetFolder + "/" + itemName));
@@ -82,14 +83,14 @@ public class FileListAssertions {
 
     public void assertItemIsMarkedAsDownloaded(String itemName) {
         world.detailsPage().backListFiles();
-        assertTrue(world.fileListPage().isFileMarkedAsDownloaded(itemName));
+        assertFileIsMarkedAsDownloaded(itemName);
     }
 
     public void assertItemAvailabilityOfflineStatus(String sense, String itemName) {
         if (isPositiveSense(sense)) {
-            assertTrue(world.fileListPage().isItemMarkedAsAvOffline(itemName));
+            assertItemIsMarkedAsAvailableOffline(itemName);
         } else if (isNegativeSense(sense)) {
-            assertTrue(world.fileListPage().isItemMarkedAsUnAvOffline(itemName));
+            assertItemIsMarkedAsUnavailableOffline(itemName);
         }
     }
 
@@ -115,9 +116,8 @@ public class FileListAssertions {
     public void assertFolderFileListMatchesServer(String path)
             throws IOException, ParserConfigurationException, SAXException {
         world.fileListPage().refreshList();
-        world.fileListPage().browseToFolder(path);
-        ArrayList<OCFile> listServer = world.filesAPI().listItems(path, "Alice");
-        assertTrue(world.fileListPage().isDisplayedListCorrect(path, listServer));
+        ArrayList<OCFile> serverFiles = world.filesAPI().listItems(path, "Alice");
+        assertDisplayedListMatchesServer(path, serverFiles);
     }
 
     public void assertErrorMessageDisplayed(List<List<String>> listItems) {
@@ -141,13 +141,13 @@ public class FileListAssertions {
 
     public void assertConflictDialogWithMessageIsDisplayed(List<List<String>> listItems) {
         String message = listItems.get(0).get(0);
-        Log.log(Level.FINE, "Message to check: " + message);
+        Log.log(Level.FINE, "Conflict message to check: " + message);
         assertTrue(world.fileListPage().isConflictDisplayed());
         assertTrue(world.fileListPage().errorDisplayed(message));
     }
 
     public void assertItemIsOpenedInApp(String itemType, String itemName) {
-        assertTrue(world.fileListPage().isItemOpened(itemType, itemName));
+        assertItemIsOpened(itemType, itemName);
     }
 
     public void assertBrowserIsDisplayed() {
@@ -170,6 +170,69 @@ public class FileListAssertions {
         Log.log(Level.FINE, "Comparing local and server files: "
                 + localFile.length + " vs " + serverFile.length);
         assertTrue(Arrays.equals(localFile, serverFile));
+    }
+
+    public void assertFileIsMarkedAsDownloaded(String path) {
+        Log.log(Level.FINE, "Assert file is marked as downloaded: " + path);
+        world.fileListPage().selectItemList(path);
+        assertFalse(world.fileListPage().isDownloadActionVisible());
+        assertTrue(world.fileListPage().isSyncActionVisible());
+    }
+
+    public void assertItemIsMarkedAsAvailableOffline(String path) {
+        Log.log(Level.FINE, "Assert item is marked as available offline: " + path);
+        world.fileListPage().refreshList();
+        world.fileListPage().selectItemList(path);
+        world.fileListPage().openMenuActions();
+        assertFalse(world.fileListPage().isAvailableOfflineActionVisible());
+    }
+
+    public void assertItemIsMarkedAsUnavailableOffline(String path) {
+        Log.log(Level.FINE, "Assert item is marked as unavailable offline: " + path);
+        world.fileListPage().refreshList();
+        world.fileListPage().selectItemList(path);
+        world.fileListPage().openMenuActions();
+        assertFalse(world.fileListPage().isUnavailableOfflineActionVisible());
+    }
+
+    public void assertDisplayedListMatchesServer(String path, ArrayList<OCFile> serverFiles) {
+        Log.log(Level.FINE, "Assert displayed list matches server. Path: " + path);
+        world.fileListPage().browseToFolder(path);
+        String userName1 = LocProperties.getProperties().getProperty("userName1");
+        boolean allVisibleItemsFound = serverFiles.stream()
+            .filter(ocfile -> !ocfile.getName().equalsIgnoreCase(userName1)
+                    && ocfile.getName().length() <= 15)
+            .allMatch(ocfile -> isServerItemDisplayed(
+                    ocfile.getName(),
+                    serverFiles.size()
+            ));
+        assertTrue(allVisibleItemsFound);
+    }
+
+    public void assertItemIsOpened(String itemType, String itemName) {
+        Log.log(Level.FINE, "Assert item is opened. Type: " + itemType
+                + " - Name: " + itemName);
+        switch (itemType) {
+            case "file" -> assertFileIsOpened(itemName);
+            case "folder" -> assertFolderIsOpened(itemName);
+            default -> throw new IllegalArgumentException("Unsupported item type: " + itemType);
+        }
+    }
+
+    private boolean isServerItemDisplayed(String itemName, int numberOfItems) {
+        while (!world.fileListPage().isItemInList(itemName) && !world.fileListPage().isEndOfListDisplayed(numberOfItems)) {
+            world.fileListPage().refreshList();
+        }
+        return world.fileListPage().isItemInList(itemName);
+    }
+
+    private void assertFileIsOpened(String itemName) {
+        world.fileListPage().dismissChooserIfDisplayed();
+        assertTrue(world.fileListPage().isFilePreviewOpened(itemName));
+    }
+
+    private void assertFolderIsOpened(String itemName) {
+        assertTrue(world.fileListPage().isFolderOpened(itemName));
     }
 
     private String getLastPathToken(String itemName) {

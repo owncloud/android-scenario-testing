@@ -8,11 +8,6 @@ package e2e.tasks;
 
 import org.xml.sax.SAXException;
 
-import e2e.LocProperties;
-import e2e.model.OCFile;
-import e2e.support.log.Log;
-import e2e.world.World;
-
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,9 +16,19 @@ import java.util.logging.Level;
 
 import javax.xml.parsers.ParserConfigurationException;
 
+import e2e.LocProperties;
+import e2e.model.OCFile;
+import e2e.support.log.Log;
+import e2e.world.World;
+
 public class FileListTasks {
 
-    private static final String DEFAULT_USER = "Alice";
+    private static final String LOCAL = "local";
+    private static final String REMOTE = "remote";
+    private static final String SERVER = "server";
+    private static final String KEEP_BOTH = "keep both";
+    private static final String REPLACE = "replace";
+    private static final String SKIP = "skip";
 
     private final World world;
 
@@ -43,23 +48,23 @@ public class FileListTasks {
 
     public void setItemAsAvailableOffline(String itemName) {
         Log.log(Level.FINE, "Set item as available offline: " + itemName);
-        world.fileListPage().executeOperation("Set as available offline", itemName);
+        executeOperation("Set as available offline", itemName);
         world.fileListPage().closeSelectionMode();
     }
 
     public void unsetItemAsAvailableOffline(String itemName) {
         Log.log(Level.FINE, "Unset item as available offline: " + itemName);
-        world.fileListPage().executeOperation("Unset as available offline", itemName);
+        executeOperation("Unset as available offline", itemName);
         world.fileListPage().closeSelectionMode();
     }
 
     public void selectOperationOnItem(String operation, String itemName) {
         Log.log(Level.FINE, "Select operation " + operation + " on item " + itemName);
         if ("Download".equals(operation) || "open".equals(operation)) {
-            world.fileListPage().downloadAction(itemName);
-        } else {
-            world.fileListPage().executeOperation(operation, itemName);
+            downloadAction(itemName);
+            return;
         }
+        executeOperation(operation, itemName);
     }
 
     public void selectOperation(String operation) {
@@ -93,18 +98,15 @@ public class FileListTasks {
 
     public void acceptDeletion(String deletionType) {
         Log.log(Level.FINE, "Accept deletion: " + deletionType);
-        if ("remote".equals(deletionType)) {
-            world.removeDialogPage().removeAll();
-        } else if ("local".equals(deletionType)) {
-            world.removeDialogPage().onlyLocal();
-        } else {
-            throw new IllegalArgumentException("Unsupported deletion type: " + deletionType);
+        switch (deletionType) {
+            case REMOTE -> world.removeDialogPage().removeAll();
+            case LOCAL -> world.removeDialogPage().onlyLocal();
         }
     }
 
     public void deleteItemRemotely(String fileName) throws IOException {
         Log.log(Level.FINE, "Delete item remotely: " + fileName);
-        world.filesAPI().removeItem(fileName, DEFAULT_USER);
+        world.filesAPI().removeItem(fileName, "Alice");
         world.fileListPage().refreshList();
     }
 
@@ -148,15 +150,15 @@ public class FileListTasks {
 
     public void fixNameConflict(String conflictFix) {
         Log.log(Level.FINE, "Fix name conflict with: " + conflictFix);
-        world.fileListPage().fixConflict(conflictFix);
+        fixConflict(conflictFix);
     }
 
     public void fixContentConflict(String conflictFix) {
         Log.log(Level.FINE, "Fix content conflict with: " + conflictFix);
         switch (conflictFix) {
-            case "local" -> world.conflictPage().selectLocalVersion();
-            case "server" -> world.conflictPage().selectServerVersion();
-            case "keep both" -> world.conflictPage().selectBothVersions();
+            case LOCAL -> world.conflictPage().selectLocalVersion();
+            case SERVER -> world.conflictPage().selectServerVersion();
+            case KEEP_BOTH -> world.conflictPage().selectBothVersions();
         }
     }
 
@@ -178,12 +180,8 @@ public class FileListTasks {
             throws IOException, ParserConfigurationException, SAXException {
         Log.log(Level.FINE, "Open private link pointing to: " + filePath
                 + " with scheme: " + scheme);
-        OCFile item = world.filesAPI().listItems(filePath, DEFAULT_USER).get(0);
-        String privateLink = world.fileListPage().getPrivateLink(
-                scheme,
-                item.getPrivateLink()
-        );
-        world.fileListPage().openPrivateLink(privateLink);
+        OCFile item = world.filesAPI().listItems(filePath, "Alice").get(0);
+        openPrivateLink(scheme, item.getPrivateLink());
     }
 
     public void openPrivateLinkPointingToSharedItem(String fileName, String scheme)
@@ -191,18 +189,17 @@ public class FileListTasks {
         Log.log(Level.FINE, "Open private link pointing to shared item: " + fileName
                 + " with scheme: " + scheme);
         OCFile item = findSharedItemByName(fileName);
-        String privateLink = world.fileListPage().getPrivateLink(scheme, item.getPrivateLink());
-        world.fileListPage().openPrivateLink(privateLink);
+        openPrivateLink(scheme, item.getPrivateLink());
     }
 
     public void openPrivateLinkPointingToNonExistingItem() {
         Log.log(Level.FINE, "Open private link pointing to non-existing item");
-        world.fileListPage().openFakePrivateLink();
+        openFakePrivateLink();
     }
 
     public void openShareShortcut() {
         Log.log(Level.FINE, "Open share shortcut");
-        world.fileListPage().openFakePrivateLink();
+        openFakePrivateLink();
     }
 
     public void takePicture() {
@@ -213,8 +210,8 @@ public class FileListTasks {
     }
 
     public void createWebShortcut(Map<String, String> fields) {
-        String name = fields.get("name");
-        String url = fields.get("url");
+        String name = getRequiredValue(fields, "name");
+        String url = getRequiredValue(fields, "url");
         Log.log(Level.FINE, "Create web shortcut. Name: " + name + " - URL: " + url);
         world.shortcutDialogPage().typeURLName(name, url);
         world.shortcutDialogPage().submitShortcut();
@@ -222,7 +219,7 @@ public class FileListTasks {
 
     public void openShortcut(String name) {
         Log.log(Level.FINE, "Open shortcut: " + name + ".url");
-        world.fileListPage().downloadAction(name + ".url");
+        downloadAction(name + ".url");
     }
 
     public void openLink() {
@@ -237,13 +234,63 @@ public class FileListTasks {
             modifyFileRemotely(itemName, text);
         } else if ("locally".equalsIgnoreCase(modificationType)) {
             modifyFileLocally(itemName);
-        } else {
-            throw new IllegalArgumentException("Unsupported modification type: " + modificationType);
         }
     }
 
+    public void executeOperation(String operation, String itemName) {
+        Log.log(Level.FINE, "Execute operation: " + operation + " on item: " + itemName);
+        world.fileListPage().refreshList();
+        world.fileListPage().selectItemList(itemName);
+        world.fileListPage().selectOperation(operation);
+    }
+
+    public void downloadAction(String itemName) {
+        Log.log(Level.FINE, "Download/open item action: " + itemName);
+        if (!world.fileListPage().isItemInList(itemName)) {
+            Log.log(Level.FINE, "Item not visible. Refreshing list: " + itemName);
+            world.fileListPage().refreshList();
+        }
+        world.fileListPage().selectItem(itemName);
+    }
+
+    public void fixConflict(String option) {
+        Log.log(Level.FINE, "Fix conflict using option: " + option);
+        switch (option) {
+            case REPLACE -> world.fileListPage().tapReplaceConflict();
+            case KEEP_BOTH -> world.fileListPage().tapKeepBothConflict();
+            case SKIP -> world.fileListPage().tapSkipConflict();
+        }
+    }
+
+    public void openPrivateLink(String scheme, String privateLink) {
+        String linkToOpen = buildPrivateLink(scheme, privateLink);
+        world.fileListPage().openUrl(linkToOpen);
+    }
+
+    public void openFakePrivateLink() {
+        final String fakeScheme = "owncloud";
+        final String fakeFilePath = "/f/11111111111";
+        String server = System.getProperty("server");
+        String originalScheme = getScheme(server);
+        String fakeUrl = server.replace(originalScheme, fakeScheme) + fakeFilePath;
+        Log.log(Level.FINE, "Open fake private link: " + fakeUrl);
+        world.fileListPage().openUrl(fakeUrl);
+    }
+
+    private String buildPrivateLink(String scheme, String privateLink) {
+        final String escapedDollar = "\\$";
+        String originalScheme = getScheme(privateLink);
+        return privateLink.replace(originalScheme, scheme)
+                .replace("$", escapedDollar);
+    }
+
+    private String getScheme(String url) {
+        final String schemeSeparator = "://";
+        return url.split(schemeSeparator)[0];
+    }
+
     private void modifyFileRemotely(String itemName, String text) throws IOException {
-        world.filesAPI().pushFile(itemName, text, DEFAULT_USER);
+        world.filesAPI().pushFile(itemName, text, "Alice");
     }
 
     private void modifyFileLocally(String itemName) throws IOException {
@@ -269,6 +316,14 @@ public class FileListTasks {
             }
         }
         return null;
+    }
+
+    private String getRequiredValue(Map<String, String> fields, String key) {
+        String value = fields.get(key);
+        if (value == null || value.trim().isEmpty()) {
+            throw new IllegalArgumentException("Missing required field: " + key);
+        }
+        return value.trim();
     }
 
     private boolean isOcisBackend() {

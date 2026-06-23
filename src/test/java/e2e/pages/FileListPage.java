@@ -23,78 +23,101 @@ import io.appium.java_client.pagefactory.AppiumFieldDecorator;
 
 public class FileListPage extends CommonPage {
 
-    @AndroidFindBy(uiAutomator = "new UiSelector().resourceId(\"com.owncloud.android:id/action_mode_close_button\")")
-    private WebElement closeSelectionMode;
+    @AndroidFindBy(uiAutomator = CLOSE_SELECTION_MODE_UI_SELECTOR)
+    private WebElement closeSelectionModeButton;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/fab_expand_menu_button")
+    @AndroidFindBy(id = FAB_EXPAND_MENU_BUTTON_ID)
     private WebElement fabButton;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/root_toolbar_left_icon")
+    @AndroidFindBy(id = ROOT_TOOLBAR_LEFT_ICON_ID)
     private List<WebElement> hamburgerButton;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/fab_mkdir")
-    private WebElement createFolder;
+    @AndroidFindBy(id = CREATE_FOLDER_FAB_ID)
+    private WebElement createFolderButton;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/fab_upload")
-    private WebElement uploadOption;
+    @AndroidFindBy(id = UPLOAD_FAB_ID)
+    private WebElement uploadButton;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/upload_from_files_item_view")
-    private WebElement uploadFiles;
+    @AndroidFindBy(id = UPLOAD_FROM_FILES_ID)
+    private WebElement uploadFilesButton;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/upload_from_camera_item_view")
-    private WebElement uploadPic;
+    @AndroidFindBy(id = UPLOAD_FROM_CAMERA_ID)
+    private WebElement uploadPictureButton;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/fab_newshortcut")
-    private WebElement createShortcut;
+    @AndroidFindBy(id = CREATE_SHORTCUT_FAB_ID)
+    private WebElement createShortcutButton;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/root_toolbar")
+    @AndroidFindBy(id = ROOT_TOOLBAR_ID)
     private List<WebElement> toolbar;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/bottom_nav_view")
+    @AndroidFindBy(id = BOTTOM_NAV_VIEW_ID)
     private WebElement bottomBar;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/file_list_constraint_layout")
+    @AndroidFindBy(id = FILE_CELL_ID)
     private WebElement fileCell;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/Filename")
+    @AndroidFindBy(id = FILE_NAME_ID)
     private WebElement fileName;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/dialog_file_already_exists_keep_both")
-    private WebElement keepBoth;
+    @AndroidFindBy(id = CONFLICT_KEEP_BOTH_ID)
+    private WebElement keepBothButton;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/dialog_file_already_exists_replace")
-    private WebElement replace;
+    @AndroidFindBy(id = CONFLICT_REPLACE_ID)
+    private WebElement replaceButton;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/dialog_file_already_exists_skip")
-    private WebElement skip;
+    @AndroidFindBy(id = CONFLICT_SKIP_ID)
+    private WebElement skipButton;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/nav_shared_by_link_files")
+    @AndroidFindBy(id = LINK_SHORTCUT_ID)
     private WebElement linksShortcut;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/nav_available_offline_files")
-    private WebElement avOffShortcut;
+    @AndroidFindBy(id = AVAILABLE_OFFLINE_SHORTCUT_ID)
+    private WebElement availableOfflineShortcut;
 
-    @AndroidFindBy(id = "nav_spaces")
+    @AndroidFindBy(id = SPACES_TAB_ID)
     private WebElement spacesTab;
 
-    @AndroidFindBy(id = "nav_uploads")
-    private WebElement uploads;
+    @AndroidFindBy(id = UPLOADS_TAB_ID)
+    private WebElement uploadsTab;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/list_empty_dataset_title")
+    @AndroidFindBy(id = EMPTY_MESSAGE_ID)
     private WebElement emptyMessage;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/dialog_file_already_exists_title")
+    @AndroidFindBy(id = CONFLICT_TITLE_ID)
     private WebElement conflictTitle;
 
-    @AndroidFindBy(id = "android:id/chooser_header")
+    @AndroidFindBy(id = CHOOSER_HEADER_ID)
     private List<WebElement> chooserHeader;
 
+    private static final String CLOSE_SELECTION_MODE_UI_SELECTOR = "new UiSelector().resourceId(\"com.owncloud.android:id/action_mode_close_button\")";
+    private static final String FAB_EXPAND_MENU_BUTTON_ID = "com.owncloud.android:id/fab_expand_menu_button";
+    private static final String ROOT_TOOLBAR_LEFT_ICON_ID = "com.owncloud.android:id/root_toolbar_left_icon";
+    private static final String CREATE_FOLDER_FAB_ID = "com.owncloud.android:id/fab_mkdir";
+    private static final String UPLOAD_FAB_ID = "com.owncloud.android:id/fab_upload";
+    private static final String UPLOAD_FROM_FILES_ID = "com.owncloud.android:id/upload_from_files_item_view";
+    private static final String UPLOAD_FROM_CAMERA_ID = "com.owncloud.android:id/upload_from_camera_item_view";
+    private static final String CREATE_SHORTCUT_FAB_ID = "com.owncloud.android:id/fab_newshortcut";
+    private static final String ROOT_TOOLBAR_ID = "com.owncloud.android:id/root_toolbar";
+    private static final String BOTTOM_NAV_VIEW_ID = "com.owncloud.android:id/bottom_nav_view";
+    private static final String FILE_CELL_ID = "com.owncloud.android:id/file_list_constraint_layout";
+    private static final String FILE_NAME_ID = "com.owncloud.android:id/Filename";
+    private static final String CONFLICT_KEEP_BOTH_ID = "com.owncloud.android:id/dialog_file_already_exists_keep_both";
+    private static final String CONFLICT_REPLACE_ID = "com.owncloud.android:id/dialog_file_already_exists_replace";
+    private static final String CONFLICT_SKIP_ID = "com.owncloud.android:id/dialog_file_already_exists_skip";
+    private static final String LINK_SHORTCUT_ID = "com.owncloud.android:id/nav_shared_by_link_files";
+    private static final String AVAILABLE_OFFLINE_SHORTCUT_ID = "com.owncloud.android:id/nav_available_offline_files";
+    private static final String SPACES_TAB_ID = "nav_spaces";
+    private static final String UPLOADS_TAB_ID = "nav_uploads";
+    private static final String EMPTY_MESSAGE_ID = "com.owncloud.android:id/list_empty_dataset_title";
+    private static final String CONFLICT_TITLE_ID = "com.owncloud.android:id/dialog_file_already_exists_title";
+    private static final String CHOOSER_HEADER_ID = "android:id/chooser_header";
     private static final String SHARE_OPTION_ID = "com.owncloud.android:id/action_share_file";
     private static final String AVAILABLE_OFFLINE_OPTION_ID = "com.owncloud.android:id/action_set_available_offline";
     private static final String UNAVAILABLE_OFFLINE_OPTION_ID = "com.owncloud.android:id/action_set_unavailable_offline";
     private static final String DOWNLOAD_OPTION_ID = "com.owncloud.android:id/action_download_file";
     private static final String SYNC_OPTION_ID = "com.owncloud.android:id/action_sync_file";
     private static final String DELETE_OPTION_ID = "com.owncloud.android:id/action_remove_file";
+    private static final String FILE_DETAIL_IMAGE_ID = "com.owncloud.android:id/fdImageDetailFile";
     private static final String MORE_OPTIONS_DESCRIPTION = "More options";
 
     public FileListPage(AndroidDriver driver) {
@@ -107,70 +130,54 @@ public class FileListPage extends CommonPage {
         final double startY = 0.30;
         final double endX = 0.50;
         final double endY = 0.80;
-        Log.log(Level.FINE, "Refresh list");
+        Log.log(Level.FINE, "Refresh file list");
         waitById(WAIT_TIME, bottomBar);
         swipe(startX, startY, endX, endY);
     }
 
     public void selectCreateFolder() {
-        Log.log(Level.FINE, "Starts: create folder");
-        fabButton.click();
-        createFolder.click();
+        Log.log(Level.FINE, "Select create folder");
+        openFabMenu();
+        createFolderButton.click();
     }
 
     public void selectUploadFiles() {
-        Log.log(Level.FINE, "Starts: upload file");
-        fabButton.click();
-        uploadOption.click();
-        uploadFiles.click();
+        Log.log(Level.FINE, "Select upload files");
+        openFabMenu();
+        uploadButton.click();
+        uploadFilesButton.click();
     }
 
     public void selectUploadPicture() {
-        Log.log(Level.FINE, "Starts: upload picture");
-        fabButton.click();
-        uploadOption.click();
-        uploadPic.click();
+        Log.log(Level.FINE, "Select upload picture");
+        openFabMenu();
+        uploadButton.click();
+        uploadPictureButton.click();
     }
 
     public void selectCreateShortcut() {
-        Log.log(Level.FINE, "Starts: create shortcut");
-        fabButton.click();
-        createShortcut.click();
-    }
-
-    public void executeOperation(String operation, String itemName) {
-        Log.log(Level.FINE, "Starts: execute operation: " + operation + " " + itemName);
-        refreshList();
-        selectItemList(itemName);
-        selectOperation(operation);
-    }
-
-    public void downloadAction(String itemName) {
-        Log.log(Level.FINE, "Starts: download action: " + itemName);
-        if (!isItemInList(itemName)) {
-            Log.log(Level.FINE, "Searching item... swiping: " + itemName);
-            refreshList();
-        }
-        findUIAutomatorText(itemName).click();
+        Log.log(Level.FINE, "Select create shortcut");
+        openFabMenu();
+        createShortcutButton.click();
     }
 
     public boolean isItemInList(String itemName) {
-        Log.log(Level.FINE, "Starts: Check if item is in list: " + itemName);
+        Log.log(Level.FINE, "Check if item is in list: " + itemName);
         return !findListUIAutomatorText(itemName).isEmpty();
     }
 
     public boolean isFileListVisible() {
-        Log.log(Level.FINE, "Starts: is File list Visible");
+        Log.log(Level.FINE, "Check if file list is visible");
         return !toolbar.isEmpty();
     }
 
     public boolean errorDisplayed(String error) {
-        Log.log(Level.FINE, "Starts: Error displayed: " + error);
+        Log.log(Level.FINE, "Check error displayed: " + error);
         return findUIAutomatorSubText(error).isDisplayed();
     }
 
     public void selectItemList(String path) {
-        Log.log(Level.FINE, "Starts: select item from list: " + path);
+        Log.log(Level.FINE, "Select item from list: " + path);
         String itemName = path.contains("/") ? browseToFile(path) : path;
         Log.log(Level.FINE, "Item name to select: " + itemName);
         refreshList();
@@ -180,188 +187,149 @@ public class FileListPage extends CommonPage {
 
     public void selectOperation(String operationName) {
         if ("share".equals(operationName)) {
-            findId(SHARE_OPTION_ID).click();
+            tapShareAction();
             return;
         }
         if ("Delete".equals(operationName)) {
-            findId(DELETE_OPTION_ID).click();
+            tapDeleteAction();
             return;
         }
-        Log.log(Level.FINE, "Operation: " + operationName + " placed in menu");
+        Log.log(Level.FINE, "Operation placed in menu: " + operationName);
         selectOperationMenu(operationName);
     }
 
     public void selectItem(String itemName) {
-        Log.log(Level.FINE, "Starts: select item: " + itemName);
+        Log.log(Level.FINE, "Select item: " + itemName);
         findUIAutomatorText(itemName).click();
     }
 
     public void openLinkShortcut() {
-        Log.log(Level.FINE, "Starts: open link shortcut");
+        Log.log(Level.FINE, "Open link shortcut");
         linksShortcut.click();
     }
 
     public void openAvOffShortcut() {
         final String downloadEnqueuedText = "Download enqueued";
-        Log.log(Level.FINE, "Starts: open av offline shortcut");
+        Log.log(Level.FINE, "Open available offline shortcut");
         waitByTextInvisible(WAIT_TIME, downloadEnqueuedText);
-        avOffShortcut.click();
+        availableOfflineShortcut.click();
     }
 
     public void openSpaces() {
+        Log.log(Level.FINE, "Open spaces view");
         waitById(WAIT_TIME, spacesTab);
         spacesTab.click();
     }
 
     public void openUploadsView() {
-        uploads.click();
+        Log.log(Level.FINE, "Open uploads view");
+        uploadsTab.click();
     }
 
     public void closeSelectionMode() {
-        Log.log(Level.FINE, "Starts: close selection mode");
-        closeSelectionMode.click();
+        Log.log(Level.FINE, "Close selection mode");
+        closeSelectionModeButton.click();
     }
 
-    public boolean isFileMarkedAsDownloaded(String path) {
-        Log.log(Level.FINE, "Starts: Check if file is downloaded: " + path);
-        selectItemList(path);
-        List<WebElement> downloadOptions = findListId(DOWNLOAD_OPTION_ID);
-        List<WebElement> syncOptions = findListId(SYNC_OPTION_ID);
-        return downloadOptions.isEmpty() && !syncOptions.isEmpty();
-    }
-
-    public boolean isItemMarkedAsAvOffline(String path) {
-        Log.log(Level.FINE, "Starts: Check is file is av. offline: " + path);
-        refreshList();
-        selectItemList(path);
-        openMenuActions();
-        return findListId(AVAILABLE_OFFLINE_OPTION_ID).isEmpty();
-    }
-
-    public boolean isItemMarkedAsUnAvOffline(String path) {
-        Log.log(Level.FINE, "Starts: Check is file is unav. offline: " + path);
-        refreshList();
-        selectItemList(path);
-        openMenuActions();
-        return findListId(UNAVAILABLE_OFFLINE_OPTION_ID).isEmpty();
-    }
-
-    private void openMenuActions() {
+    public void openMenuActions() {
+        Log.log(Level.FINE, "Open item actions menu");
         findUIAutomatorDescription(MORE_OPTIONS_DESCRIPTION).click();
     }
 
-    private void selectOperationMenu(String operationName) {
-        Log.log(Level.FINE, "Starts: Select operation from the menu: " + operationName);
-        openMenuActions();
-        findUIAutomatorText(operationName).click();
-    }
-
     public boolean isOperationAvailable(String operationName) {
-        Log.log(Level.FINE, "Starts: Check if operation is available: " + operationName);
+        Log.log(Level.FINE, "Check if operation is available: " + operationName);
         openMenuActions();
         return !findListUIAutomatorText(operationName).isEmpty();
     }
 
     public boolean isConflictDisplayed() {
-        Log.log(Level.FINE, "Starts: Conflict displayed");
+        Log.log(Level.FINE, "Check if conflict is displayed");
         return conflictTitle.isDisplayed();
     }
 
-    public void fixConflict(String option) {
-        final String replaceOption = "replace";
-        Log.log(Level.FINE, "Starts: Fix Conflict: " + option);
-        if (replaceOption.equals(option)) {
-            replace.click();
-        } else {
-            keepBoth.click();
-        }
+    public void tapReplaceConflict() {
+        Log.log(Level.FINE, "Tap replace conflict option");
+        replaceButton.click();
     }
 
-    public boolean isDisplayedListCorrect(String path, ArrayList<OCFile> listServer) {
-        final int maxVisibleNameLength = 15;
-        browseToFolder(path);
-        String userName1 = LocProperties.getProperties().getProperty("userName1");
-        return listServer.stream()
-            .filter(ocfile -> !ocfile.getName().equalsIgnoreCase(userName1)
-                    && ocfile.getName().length() <= maxVisibleNameLength)
-            .allMatch(ocfile -> {
-                while (!isItemInList(ocfile.getName()) && !endList(listServer.size())) {
-                    refreshList();
-                }
-                return isItemInList(ocfile.getName());
-            });
+    public void tapKeepBothConflict() {
+        Log.log(Level.FINE, "Tap keep both conflict option");
+        keepBothButton.click();
     }
 
-    private boolean endList(int numberItems) {
+    public void tapSkipConflict() {
+        Log.log(Level.FINE, "Tap skip conflict option");
+        skipButton.click();
+    }
+
+    public boolean isDownloadActionVisible() {
+        return !findListId(DOWNLOAD_OPTION_ID).isEmpty();
+    }
+
+    public boolean isSyncActionVisible() {
+        return !findListId(SYNC_OPTION_ID).isEmpty();
+    }
+
+    public boolean isAvailableOfflineActionVisible() {
+        return !findListId(AVAILABLE_OFFLINE_OPTION_ID).isEmpty();
+    }
+
+    public boolean isUnavailableOfflineActionVisible() {
+        return !findListId(UNAVAILABLE_OFFLINE_OPTION_ID).isEmpty();
+    }
+
+    public boolean isEndOfListDisplayed(int numberItems) {
         String endListText = Integer.toString(numberItems - 1) + " files";
         return !findListUIAutomatorText(endListText).isEmpty();
     }
 
-    private WebElement getElementFromFileList(String itemName) {
-        Log.log(Level.FINE, "Starts: searching item in list: " + itemName);
-        if (isItemInList(itemName)) {
-            Log.log(Level.FINE, "Item found: " + itemName);
-            return findUIAutomatorText(itemName);
-        }
-        Log.log(Level.FINE, "Item not found: " + itemName);
-        return null;
+    public void openUrl(String url) {
+        Log.log(Level.FINE, "Open URL: " + url);
+        waitUntilFileListIsReady();
+        driver.get(url);
     }
 
-    public String getPrivateLink(String scheme, String privateLink) {
-        final String escapedDollar = "\\$";
-        Log.log(Level.FINE, "Starts: Create private link: " + scheme + " " + privateLink);
-        String originalScheme = getScheme(privateLink);
-        String linkToOpen = privateLink.replace(originalScheme, scheme)
-                .replace("$", escapedDollar);
-        Log.log(Level.FINE, "Link to open: " + linkToOpen);
-        return linkToOpen;
+    public void waitUntilFileListIsReady() {
+        Log.log(Level.FINE, "Wait until file list is ready");
+        waitById(WAIT_TIME, FAB_EXPAND_MENU_BUTTON_ID);
     }
 
-    private String getScheme(String originalURL) {
-        final String schemeSeparator = "://";
-        return originalURL.split(schemeSeparator)[0];
-    }
-
-    public void openPrivateLink(String privateLink) {
-        final String fabExpandMenuButtonId = "com.owncloud.android:id/fab_expand_menu_button";
-        Log.log(Level.FINE, "Starts: Open private link: " + privateLink);
-        waitById(WAIT_TIME, fabExpandMenuButtonId);
-        driver.get(privateLink);
-    }
-
-    public void openFakePrivateLink() {
-        final String fakeScheme = "owncloud";
-        final String fakeFilePath = "/f/11111111111";
-        Log.log(Level.FINE, "Starts: Open fake private link");
-        String server = System.getProperty("server");
-        String originalScheme = getScheme(server);
-        String fakeURL = server.replace(originalScheme, fakeScheme) + fakeFilePath;
-        Log.log(Level.FINE, "Fake URL: " + fakeURL);
-        driver.get(fakeURL);
-    }
-
-    public boolean isItemOpened(String itemType, String itemName) {
-        final String fileType = "file";
-        final String folderType = "folder";
-        final String fileDetailImageId = "com.owncloud.android:id/fdImageDetailFile";
+    public void dismissChooserIfDisplayed() {
         final int chooserDismissX = 200;
         final int chooserDismissY = 300;
-        Log.log(Level.FINE, "Starts: checking if item is opened: " + itemType + " " + itemName);
-        if (fileType.equals(itemType)) {
-            Log.log(Level.FINE, "Opening file");
-            if (!chooserHeader.isEmpty()) {
-                tap(chooserDismissX, chooserDismissY);
-            }
-            boolean fileNameVisible = findUIAutomatorText(itemName).isDisplayed();
-            boolean fileTypeIconVisible = findId(fileDetailImageId).isDisplayed();
-            return fileNameVisible && fileTypeIconVisible;
+        if (!chooserHeader.isEmpty()) {
+            tap(chooserDismissX, chooserDismissY);
         }
-        if (folderType.equals(itemType)) {
-            Log.log(Level.FINE, "Opening folder");
-            boolean folderNameVisible = findUIAutomatorText(itemName).isDisplayed();
-            boolean hamburgerButtonVisible = !hamburgerButton.isEmpty();
-            return folderNameVisible && !hamburgerButtonVisible;
-        }
-        return false;
+    }
+
+    public boolean isFilePreviewOpened(String itemName) {
+        boolean fileNameVisible = findUIAutomatorText(itemName).isDisplayed();
+        boolean fileTypeIconVisible = findId(FILE_DETAIL_IMAGE_ID).isDisplayed();
+
+        return fileNameVisible && fileTypeIconVisible;
+    }
+
+    public boolean isFolderOpened(String itemName) {
+        boolean folderNameVisible = findUIAutomatorText(itemName).isDisplayed();
+        boolean hamburgerButtonVisible = !hamburgerButton.isEmpty();
+        return folderNameVisible && !hamburgerButtonVisible;
+    }
+
+    private void openFabMenu() {
+        fabButton.click();
+    }
+
+    private void tapShareAction() {
+        findId(SHARE_OPTION_ID).click();
+    }
+
+    private void tapDeleteAction() {
+        findId(DELETE_OPTION_ID).click();
+    }
+
+    private void selectOperationMenu(String operationName) {
+        Log.log(Level.FINE, "Select operation from menu: " + operationName);
+        openMenuActions();
+        findUIAutomatorText(operationName).click();
     }
 }
