@@ -12,6 +12,8 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
+import org.openqa.selenium.WebElement;
+
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -83,10 +85,12 @@ public class SpacesAssertions {
 
     public void assertQuotaIsCorrectlyDisplayed(Map<String, String> values) {
         String spaceName = getRequiredValue(values, "name");
-        String quota = getRequiredValue(values, "quota");
-        String unit = getRequiredValue(values, "unit");
+        String expectedQuota = getRequiredValue(values, "quota");
+        String expectedUnit = getRequiredValue(values, "unit");
+        Log.log(Level.FINE, "Assert quota is correctly displayed. Space: " + spaceName
+                + " - Expected quota: " + expectedQuota + " - Expected unit: " + expectedUnit);
         world.spacesPage().openEditSpace(spaceName);
-        assertTrue(world.spacesPage().isQuotaDisplayed(quota, unit));
+        assertQuotaDisplayed(expectedQuota, expectedUnit);
     }
 
     public void assertUserIsMemberOfSpace(String userName, String spaceName, Map<String, String> fields)
@@ -100,11 +104,11 @@ public class SpacesAssertions {
     }
 
     private void assertSpaceIsVisibleLocally(String name, String subtitle, String status) {
-        assertTrue(world.spacesPage().isSpaceDisplayed(name, subtitle, status));
+        assertTrue(isSpaceDisplayed(name, subtitle, status));
     }
 
     private void assertSpaceIsNotVisibleLocally(String name, String subtitle) {
-        assertFalse(world.spacesPage().isSpaceDisplayed(name, subtitle, ""));
+        assertFalse(isSpaceDisplayed(name, subtitle, ""));
     }
 
     private void assertSpaceExistsInServer(String expectedName, String expectedSubtitle, List<OCSpace> spaces) {
@@ -231,5 +235,39 @@ public class SpacesAssertions {
             String expectedLocalExpirationDate = DateUtils.formatDate(expectedExpirationDays, DateUtils.DateFormatType.NUMERIC);
             assertTrue(world.spacesMembersPage().isLinkDisplayedWithExpirationDate(linkName, expectedLocalExpirationDate));
         }
+    }
+
+    private boolean isSpaceDisplayed(String expectedName, String expectedSubtitle, String expectedStatus) {
+        Log.log(Level.FINE, "Check if space " + expectedName + " is displayed with status: " + expectedStatus);
+        for (WebElement spaceCard : world.spacesPage().getDisplayedSpaceCards()) {
+            String cardName = world.spacesPage().getSpaceName(spaceCard);
+            String cardSubtitle = world.spacesPage().getSpaceSubtitle(spaceCard);
+            boolean cardDisabled = world.spacesPage().isDisabledSpace(spaceCard);
+            if (!statusMatches(cardDisabled, expectedStatus)) {
+                continue;
+            }
+            Log.log(Level.FINE, "Card: " + cardName + " - " + (cardSubtitle.isEmpty() ? "empty" : cardSubtitle));
+            Log.log(Level.FINE, "Scenario: " + expectedName + " - " + (expectedSubtitle.isEmpty() ? "empty" : expectedSubtitle));
+            if (expectedName.equals(cardName) && expectedSubtitle.equals(cardSubtitle)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean statusMatches(boolean cardDisabled, String expectedStatus) {
+        return switch (expectedStatus) {
+            case "disabled" -> cardDisabled;
+            case "enabled", "" -> !cardDisabled || expectedStatus.isEmpty();
+            default -> throw new IllegalStateException("Unexpected value: " + expectedStatus);
+        };
+    }
+
+    private void assertQuotaDisplayed(String expectedQuota, String expectedUnit) {
+        String displayedQuota = world.spacesPage().getDisplayedQuotaValue();
+        String displayedUnit = world.spacesPage().getDisplayedQuotaUnit();
+        Log.log(Level.FINE, "Displayed quota: " + displayedQuota + " " + displayedUnit);
+        assertEquals(expectedQuota, displayedQuota);
+        assertEquals(expectedUnit, displayedUnit);
     }
 }

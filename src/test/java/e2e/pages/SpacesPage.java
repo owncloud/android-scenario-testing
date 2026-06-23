@@ -10,9 +10,7 @@ import org.openqa.selenium.By;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Objects;
 import java.util.logging.Level;
 
 import e2e.support.log.Log;
@@ -150,31 +148,21 @@ public class SpacesPage extends CommonPage {
         findSpaceCardByName(spaceName).click();
     }
 
-    public boolean isSpaceDisplayed(String spaceName, String spaceSubtitle, String status) {
-        Log.log(Level.FINE, "Check if space " + spaceName + " is displayed with status: " + status);
-        List<WebElement> cardsDisplayed = driver.findElements(By.id(SPACE_CARD_ID));
-        HashMap<String, String> spacesInDevice = new HashMap<>();
-        for (int i = 0; i < cardsDisplayed.size(); i++) {
-            WebElement spaceCard = driver.findElements(By.id(SPACE_CARD_ID)).get(i);
-            if ("disabled".equals(status) && !isDisabledSpace(spaceCard)) {
-                continue;
-            }
-            String spaceNameCard = getSpaceName(spaceCard);
-            String spaceSubtitleCard = getSpaceSubtitle(spaceCard);
-            Log.log(Level.FINE, "Card: " + spaceNameCard + " - " + (spaceSubtitleCard.isEmpty() ? "empty" : spaceSubtitleCard));
-            Log.log(Level.FINE, "Scenario: " + spaceNameCard + " - " + (spaceSubtitleCard.isEmpty() ? "empty" : spaceSubtitleCard));
-            spacesInDevice.put(spaceNameCard, spaceSubtitleCard);
-        }
-        return spacesInDevice.containsKey(spaceName)
-                && Objects.equals(spacesInDevice.get(spaceName), spaceSubtitle);
+    public String getDisplayedQuotaValue() {
+        String displayedQuota = quotaValueInput.getAttribute("text");
+        Log.log(Level.FINE, "Displayed quota value: " + displayedQuota);
+        return displayedQuota;
     }
 
-    public boolean isQuotaDisplayed(String value, String unit) {
-        Log.log(Level.FINE, "Check quota: " + value + " " + unit);
-        String displayedQuota = quotaValueInput.getAttribute("text");
+    public String getDisplayedQuotaUnit() {
         String displayedUnit = quotaUnit.getAttribute("text");
-        Log.log(Level.FINE, "Displayed quota: " + displayedQuota + " " + displayedUnit);
-        return value.equals(displayedQuota) && unit.equals(displayedUnit);
+        Log.log(Level.FINE, "Displayed quota unit: " + displayedUnit);
+        return displayedUnit;
+    }
+
+    public List<WebElement> getDisplayedSpaceCards() {
+        Log.log(Level.FINE, "Get displayed space cards");
+        return driver.findElements(By.id(SPACE_CARD_ID));
     }
 
     public void tapCreateSpace() {
@@ -262,11 +250,11 @@ public class SpacesPage extends CommonPage {
         return null;
     }
 
-    private String getSpaceName(WebElement spaceCard) {
+    public String getSpaceName(WebElement spaceCard) {
         return spaceCard.findElement(By.id(SPACE_NAME_ID)).getAttribute("text").trim();
     }
 
-    private String getSpaceSubtitle(WebElement spaceCard) {
+    public String getSpaceSubtitle(WebElement spaceCard) {
         List<WebElement> subtitles = spaceCard.findElements(By.id(SPACE_SUBTITLE_ID));
         if (subtitles.isEmpty()) {
             return "";
@@ -274,7 +262,7 @@ public class SpacesPage extends CommonPage {
         return subtitles.get(0).getAttribute("text").trim();
     }
 
-    private boolean isDisabledSpace(WebElement spaceCard) {
+    public boolean isDisabledSpace(WebElement spaceCard) {
         return !spaceCard.findElements(By.id(SPACE_DISABLED_LABEL_ID)).isEmpty();
     }
 }
