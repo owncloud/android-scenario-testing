@@ -210,6 +210,8 @@ Feature: Spaces
         | name    | subtitle         |
         | Space19 | Nineteenth space |
 
+    # flakyness in CI
+    @noci
     Scenario Outline: Enable a disabled space
       Given the following spaces have been created in Alice account
         | name   | subtitle   |

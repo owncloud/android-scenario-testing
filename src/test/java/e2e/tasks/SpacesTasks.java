@@ -65,6 +65,7 @@ public class SpacesTasks {
 
     public void openEnableSpace(String spaceName) {
         Log.log(Level.FINE, "Enable space: " + spaceName);
+        world.spacesPage().waitUntilDisabledLabelIsDisplayed();
         world.spacesPage().openEnableSpace(spaceName);
     }
 

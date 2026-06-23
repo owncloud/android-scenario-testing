@@ -206,6 +206,11 @@ public class SpacesPage extends CommonPage {
         waitByIdInvisible(WAIT_TIME, QUOTA_SWITCH_ID);
     }
 
+    public void waitUntilDisabledLabelIsDisplayed() {
+        Log.log(Level.FINE, "Wait until disabled space label is displayed");
+        waitById(WAIT_TIME, SPACE_DISABLED_LABEL_ID);
+    }
+
     public void openSpaceMenu(String spaceName) {
         Log.log(Level.FINE, "Open space menu: " + spaceName);
         findUIAutomatorDescription(spaceName + " space menu").click();
