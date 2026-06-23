@@ -60,15 +60,30 @@ apache-commons = [
     "commons-io"
 ]
 
-support-libs = [
-    "byte-buddy",
-    "guava",
-    "appium-java-client",
+appium = [
+    "appium-java-client"
+]
+
+http-client = [
     "okhttp",
     "okio",
-    "json",
-    "slf4j-api",
-    "slf4j-nop",
+]
+
+json = [
+    "json"
+]
+
+assertions = [
     "junit",
     "assertj-core"
+]
+
+logging = [
+    "slf4j-api",
+    "slf4j-nop"
+]
+
+utilities = [
+    "byte-buddy",
+    "guava"
 ]

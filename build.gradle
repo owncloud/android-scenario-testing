@@ -16,14 +16,14 @@ repositories {
 }
 
 dependencies {
-
     testImplementation libs.bundles.cucumber
     testImplementation libs.bundles.apache.commons
-    testImplementation libs.bundles.support.libs
-
-    testImplementation libs.slf4j.api
-    testImplementation libs.junit
-    testImplementation libs.assertj.core
+    testImplementation libs.bundles.appium
+    testImplementation libs.bundles.http.client
+    testImplementation libs.bundles.json
+    testImplementation libs.bundles.assertions
+    testImplementation libs.bundles.logging
+    testImplementation libs.bundles.utilities
 }
 
 /**
