@@ -11,11 +11,15 @@ on:
         required: false
         default: 'not @ignore and not @noocis and not @noci'
   schedule:
+    - cron: '30 2 * * 1'    # Monday at 02:30 UTC
     - cron: '30 2 * * 2-5'  # Tuesday to Friday at 2:30AM
 
 permissions:
   contents: read
 
+env:
+  SINCE_REF: ${{ github.event.schedule == '30 2 * * 1' && 'last friday' || 'yesterday' }}
+  UNTIL_REF: ${{ github.event.schedule == '30 2 * * 1' && 'last saturday' || 'today' }}
 
 jobs:
   # Firstly, check if there were changes the day before. If not, aborting
@@ -43,8 +47,9 @@ jobs:
           cd android-repo
 
           export TZ="Europe/Madrid"
-          SINCE=$(date -d "yesterday" +"%Y-%m-%d 00:00:00")
-          UNTIL=$(date -d "today" +"%Y-%m-%d 00:00:00")
+
+          SINCE=$(date -d "$SINCE_REF" +"%Y-%m-%d 00:00:00")
+          UNTIL=$(date -d "$UNTIL_REF" +"%Y-%m-%d 00:00:00")
 
           echo "Checking commits in external repo between:"
           echo "SINCE=$SINCE"
