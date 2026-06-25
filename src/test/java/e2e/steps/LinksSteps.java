@@ -41,20 +41,20 @@ public class LinksSteps {
     public void user_creates_link_with_fields(String type, String itemName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
         Map<String, String> fields = table.asMap(String.class, String.class);
-        world.linkTasks().createPublicLink(itemName, fields);
+        world.linksTasks().createPublicLink(itemName, fields);
     }
 
     @When("Alice edits the link on {word} with the following fields")
     public void user_edits_public_link_with_fields(String itemName, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
         Map<String, String> fields = table.asMap(String.class, String.class);
-        world.linkTasks().editPublicLink(itemName, fields);
+        world.linksTasks().editPublicLink(itemName, fields);
     }
 
     @When("Alice deletes the link on {word}")
     public void user_deletes_link(String itemName) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.linkTasks().deletePublicLink(itemName);
+        world.linksTasks().deletePublicLink(itemName);
     }
 
     @Then("link should be created/edited on {word} with the following fields")

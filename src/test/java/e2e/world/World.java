@@ -256,7 +256,7 @@ public class World {
         return deviceClient;
     }
 
-    public LinksTasks linkTasks() {
+    public LinksTasks linksTasks() {
         if (linksTasks == null) {
             linksTasks = new LinksTasks(this);
         }
