@@ -33,7 +33,7 @@ public class DevicePreconditions {
 
     public void deviceHasNoConnection() {
         Log.log(Level.FINE, "Setting device connection down");
-        world.fileListPage().setConnectionDown();
+        world.deviceClient().setConnectionDown();
     }
 
     public void settingsHaveBeenSet(List<Map<String, String>> rows)

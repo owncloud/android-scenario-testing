@@ -8,8 +8,14 @@ package e2e.support.device;
 
 import static e2e.support.log.Log.Log;
 
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
 import java.io.File;
 import java.io.IOException;
+import java.time.Duration;
+import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -18,9 +24,12 @@ import java.util.logging.Level;
 
 import e2e.LocProperties;
 import io.appium.java_client.android.AndroidDriver;
+import io.appium.java_client.android.connection.ConnectionState;
+import io.appium.java_client.android.connection.ConnectionStateBuilder;
 
 public class DeviceClient {
 
+    private static final long WAIT_TIME = 7;
     private final String downloadFolder = "/sdcard/Download";
     private final String owncloudFolder = downloadFolder + "/owncloud/";
     private final AndroidDriver driver;
@@ -32,20 +41,11 @@ public class DeviceClient {
     public void cleanUpDevice() {
         Log.log(Level.FINE, "Starts: Clean up device, owncloud folder");
         // Remove owncloud folder from device
-        /*Map<String, Object> args = new HashMap<>();
-        args.put("command", "rm");
-        args.put("args", Arrays.asList("-rf", downloadFolder + "/*"));
-        driver.executeScript("mobile: shell", args);*/
         executeShellCommand("rm", Arrays.asList("-rf", downloadFolder + "/*"));
     }
 
     public void cleanUpTemp() {
         Log.log(Level.FINE, "Starts: Clean up device, tmp folder");
-        // Remove owncloud folder from device
-        /*Map<String, Object> args = new HashMap<>();
-        args.put("command", "rm");
-        args.put("args", Arrays.asList("-rf", "/sdcard/tmp/*"));
-        driver.executeScript("mobile: shell", args);*/
         executeShellCommand("rm", Arrays.asList("-rf", "/sdcard/tmp/*"));
     }
 
@@ -65,10 +65,6 @@ public class DeviceClient {
         File file2push = new File(appDir, "io/cucumber/example-files/" + itemName);
         Log.log(Level.FINE, "File to push: " + owncloudFolder + path + itemName);
         driver.pushFile("/sdcard/tmp/" + itemName, file2push);
-        /*Map<String, Object> args = new HashMap<>();
-        args.put("command", "cp");
-        args.put("args", Arrays.asList("/sdcard/tmp/" + itemName, "'"+owncloudFolder + path + itemName+"'"));
-        driver.executeScript("mobile: shell", args);*/
         executeShellCommand("cp", Arrays.asList("/sdcard/tmp/" + itemName, "'"
                 + owncloudFolder + path + itemName+"'"));
         Log.log(Level.FINE, "File " + itemName + " pushed");
@@ -76,16 +72,12 @@ public class DeviceClient {
 
     public String pullList(String folderId) {
         Log.log(Level.FINE, "Starts: pull file from: " + folderId);
-        //Map<String, Object> args = new HashMap<>();
         String user = LocProperties.getProperties().getProperty("userName1").toLowerCase();
         String server = System.getProperty("server")
                 .replaceFirst("^https?://", "")
                 .replace(":", "%3A" );
         String target = owncloudFolder + user + "@" + server  + "/" + folderId;
         Log.log(Level.FINE, "Command args to execute: " + target);
-        //args.put("command", "ls");
-        //args.put("args", List.of(target));
-        //String output = (String) driver.executeScript("mobile: shell", args);ç
         String output = executeShellCommand("ls", List.of(target));
         Log.log(Level.FINE, "List of files in given folder: " + output);
         return output;
@@ -96,5 +88,24 @@ public class DeviceClient {
         args.put("command", command);
         args.put("args", commandArgs);
         return (String) driver.executeScript("mobile: shell", args);
+    }
+
+    public void setConnectionDown() {
+        Log.log(Level.FINE, "Starts: Set connection down");
+        driver.setConnection(new ConnectionStateBuilder().withWiFiDisabled().withDataDisabled().build());
+    }
+
+    public void setConnectionUp() {
+        Log.log(Level.FINE, "Starts: Set connection up");
+        driver.setConnection(new ConnectionStateBuilder().withWiFiEnabled().withDataEnabled().build());
+        WebDriverWait wait = new WebDriverWait(driver, Duration.of(WAIT_TIME, ChronoUnit.SECONDS));
+        wait.until(new ExpectedCondition<Boolean>() {
+            @Override
+            public Boolean apply(WebDriver input) {
+                AndroidDriver d = (AndroidDriver) input;
+                ConnectionState state = d.getConnection();
+                return state.isWiFiEnabled() || state.isDataEnabled();
+            }
+        });
     }
 }

@@ -16,7 +16,6 @@ import javax.xml.parsers.ParserConfigurationException;
 
 import e2e.LocProperties;
 import e2e.pages.AndroidManager;
-import e2e.pages.CommonPage;
 import e2e.support.log.Log;
 import e2e.world.World;
 import io.cucumber.java.After;
@@ -36,8 +35,8 @@ public class Hooks {
         Log.log(Level.FINE, "START SCENARIO EXECUTION: " + scenario.getName());
         AndroidManager.getDriver().activateApp(
                 LocProperties.getProperties().getProperty("appPackage"));
-        world.fileListPage().setConnectionUp();
-        CommonPage.startRecording();
+        world.deviceClient().setConnectionUp();
+        world.screenRecorder().startRecording();
     }
 
     @After
@@ -46,15 +45,18 @@ public class Hooks {
         AndroidManager.getDriver().terminateApp(
                 LocProperties.getProperties().getProperty("appPackage"));
         world.scenarioCleanup().cleanUp();
-        String featurePath = scenario.getUri().toString();
-        String featureName = Paths.get(featurePath).getFileName().toString()
-                .replace(".feature", "");
-        boolean saveVideo = scenario.isFailed();
-        CommonPage.stopRecording(scenario.getName(), featureName, saveVideo);
+        stopRecoding(scenario);
         resetSettingsIfNeeded(scenario);
         Log.log(Level.FINE, "END SCENARIO EXECUTION: " + scenario.getName() + "\n\n");
     }
 
+    private void stopRecoding(Scenario scenario) {
+        String featurePath = scenario.getUri().toString();
+        String featureName = Paths.get(featurePath).getFileName().toString()
+                .replace(".feature", "");
+        boolean saveVideo = scenario.isFailed();
+        world.screenRecorder().stopRecording(scenario.getName(), featureName, saveVideo);
+    }
     private void resetSettingsIfNeeded(Scenario scenario)
             throws IOException, InterruptedException {
         if (scenario.getSourceTagNames().contains("@hidden")

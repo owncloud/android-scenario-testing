@@ -8,12 +8,7 @@ package e2e.pages;
 
 import static e2e.support.log.Log.Log;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.io.FileUtils;
 import org.openqa.selenium.Dimension;
-import org.openqa.selenium.OutputType;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebDriverException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
@@ -22,15 +17,8 @@ import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
 
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.sql.Timestamp;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
-import java.time.temporal.ChronoUnit;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -39,9 +27,6 @@ import java.util.logging.Level;
 
 import io.appium.java_client.AppiumBy;
 import io.appium.java_client.android.AndroidDriver;
-import io.appium.java_client.android.AndroidStartScreenRecordingOptions;
-import io.appium.java_client.android.connection.ConnectionState;
-import io.appium.java_client.android.connection.ConnectionStateBuilder;
 import io.appium.java_client.pagefactory.AndroidFindBy;
 
 public class CommonPage {
@@ -274,92 +259,5 @@ public class CommonPage {
 
     protected boolean parseIntBool(String s) {
         return Boolean.parseBoolean(s);
-    }
-
-    public void setConnectionDown() {
-        Log.log(Level.FINE, "Starts: Set connection down");
-        driver.setConnection(new ConnectionStateBuilder().withWiFiDisabled().withDataDisabled().build());
-    }
-
-    public void setConnectionUp() {
-        Log.log(Level.FINE, "Starts: Set connection up");
-        driver.setConnection(new ConnectionStateBuilder().withWiFiEnabled().withDataEnabled().build());
-        WebDriverWait wait = new WebDriverWait(driver, Duration.of(WAIT_TIME, ChronoUnit.SECONDS));
-        wait.until(new ExpectedCondition<Boolean>() {
-            @Override
-            public Boolean apply(WebDriver input) {
-                AndroidDriver d = (AndroidDriver) input;
-                ConnectionState state = d.getConnection();
-                return state.isWiFiEnabled() || state.isDataEnabled();
-            }
-        });
-    }
-
-    /* Methods to help debugging */
-
-    public static void takeScreenshot(String name) throws IOException {
-        final String screenshotsFolder = "screenshots";
-        final String screenshotExtension = ".png";
-        String timestamp = SDF.format(new Timestamp(System.currentTimeMillis()).getTime());
-        File screenShotFile = driver.getScreenshotAs(OutputType.FILE);
-        File destinationFile = new File(screenshotsFolder + "/" + name + "_"
-                        + timestamp + screenshotExtension);
-        FileUtils.copyFile(screenShotFile, destinationFile);
-        Log.log(Level.FINE, "Take screenshot " + name + " at: " + timestamp);
-    }
-
-    public static void startRecording() {
-        final int bitRate = 2_000_000;
-        final String videoSize = "360x640";
-        try {
-            AndroidStartScreenRecordingOptions androidStartScreenRecordingOptions =
-                    new AndroidStartScreenRecordingOptions();
-            androidStartScreenRecordingOptions.withBitRate(bitRate);
-            androidStartScreenRecordingOptions.withVideoSize(videoSize);
-            driver.startRecordingScreen(androidStartScreenRecordingOptions);
-            recordingStarted = true;
-        } catch (Exception e) {
-            recordingStarted = false;
-            Log.log(Level.FINE, "Screen recording not initiated. Error:  "
-                    + e.getMessage());
-        }
-    }
-
-    public static void stopRecording(String filename, String featureName, boolean failed) {
-        final String videoFolder = "video";
-        final String videoExtension = ".mp4";
-        if (!recordingStarted) {
-            return;
-        }
-        try {
-            String base64String = driver.stopRecordingScreen();
-            byte[] data = Base64.decodeBase64(base64String);
-            if (failed) {
-                createFeatureFolder(featureName);
-                String timestamp = SDF.format(new Timestamp(System.currentTimeMillis()).getTime());
-                String destinationPath = videoFolder + "/" + featureName + "/" + filename + "_"
-                        + timestamp + videoExtension;
-                Path path = Paths.get(destinationPath);
-                try {
-                    Files.write(path, data);
-                } catch (IOException e) {
-                    Log.log(Level.FINE, e.getMessage());
-                }
-            }
-        } catch (WebDriverException wde) {
-            Log.log(Level.FINE, "Error when stopping screen recording: " + wde.getMessage());
-            recordingStarted = false;
-        } catch (Exception e) {
-            Log.log(Level.FINE, "Error saving video: " + e.getMessage());
-            recordingStarted = false;
-        }
-    }
-
-    private static void createFeatureFolder(String featureName) {
-        final String videoFolder = "video";
-        File folder = new File(videoFolder + "/" + featureName);
-        if (!folder.exists()) {
-            folder.mkdirs();
-        }
     }
 }

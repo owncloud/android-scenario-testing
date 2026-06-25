@@ -45,6 +45,7 @@ import e2e.preconditions.SpacesPreconditions;
 import e2e.support.cleanup.ScenarioCleanup;
 import e2e.support.device.DeviceClient;
 import e2e.support.preferences.AppPreferences;
+import e2e.support.video.ScreenRecorder;
 import e2e.tasks.DocumentProviderTasks;
 import e2e.tasks.FileListTasks;
 import e2e.tasks.LinksTasks;
@@ -102,6 +103,7 @@ public class World {
 
     private ScenarioCleanup scenarioCleanup;
     private AppPreferences appPreferences;
+    private ScreenRecorder screenRecorder;
 
     public World() {
         this.driver = AndroidManager.getDriver();
@@ -394,5 +396,13 @@ public class World {
         }
 
         return appPreferences;
+    }
+
+    public ScreenRecorder screenRecorder() {
+        if (screenRecorder == null) {
+            screenRecorder = new ScreenRecorder(driver);
+        }
+
+        return screenRecorder;
     }
 }
