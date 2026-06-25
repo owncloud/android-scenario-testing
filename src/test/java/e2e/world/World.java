@@ -42,7 +42,9 @@ import e2e.preconditions.LinksPreconditions;
 import e2e.preconditions.LoginPreconditions;
 import e2e.preconditions.SharesPreconditions;
 import e2e.preconditions.SpacesPreconditions;
+import e2e.support.cleanup.ScenarioCleanup;
 import e2e.support.device.DeviceClient;
+import e2e.support.preferences.AppPreferences;
 import e2e.tasks.DocumentProviderTasks;
 import e2e.tasks.FileListTasks;
 import e2e.tasks.LinksTasks;
@@ -97,6 +99,9 @@ public class World {
     private LoginPreconditions loginPreconditions;
     private SharesPreconditions sharesPreconditions;
     private SpacesPreconditions spacesPreconditions;
+
+    private ScenarioCleanup scenarioCleanup;
+    private AppPreferences appPreferences;
 
     public World() {
         this.driver = AndroidManager.getDriver();
@@ -373,5 +378,21 @@ public class World {
             spacesPreconditions = new SpacesPreconditions(this);
         }
         return spacesPreconditions;
+    }
+
+    public ScenarioCleanup scenarioCleanup() {
+        if (scenarioCleanup == null) {
+            scenarioCleanup = new ScenarioCleanup(this);
+        }
+
+        return scenarioCleanup;
+    }
+
+    public AppPreferences appPreferences() {
+        if (appPreferences == null) {
+            appPreferences = new AppPreferences();
+        }
+
+        return appPreferences;
     }
 }
