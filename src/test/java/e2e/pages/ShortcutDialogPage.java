@@ -31,7 +31,7 @@ public class ShortcutDialogPage extends CommonPage {
     @AndroidFindBy(id = "android:id/button1")
     private WebElement openShortcut;
 
-    @AndroidFindBy(id = "com.android.chrome:id/title")
+    @AndroidFindBy(id = "com.android.chrome:id/coordinator")
     private WebElement browser;
 
     public ShortcutDialogPage(AndroidDriver driver) {

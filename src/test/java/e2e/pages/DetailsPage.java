@@ -47,6 +47,9 @@ public class DetailsPage extends CommonPage {
     @AndroidFindBy(id = "android:id/ok")
     private List<WebElement> gotIt;
 
+    @AndroidFindBy(id = "com.android.systemui:id/ok")
+    private List<WebElement> gotItNew;
+
     @AndroidFindBy(id = "com.owncloud.android:id/video_player")
     private WebElement videoPreview;
 
@@ -118,6 +121,9 @@ public class DetailsPage extends CommonPage {
         if (!gotIt.isEmpty()) {
             Log.log(Level.FINE, "Accepting image preview dialog");
             gotIt.get(0).click();
+        } else if (!gotItNew.isEmpty()) {
+            Log.log(Level.FINE, "Accepting image preview dialog");
+            gotItNew.get(0).click();
         }
     }
 
