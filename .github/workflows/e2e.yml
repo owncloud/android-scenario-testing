@@ -6,6 +6,10 @@ on:
       ocis_version:
         type: string
         required: false
+      app_version:
+        type: string
+        required: false
+        default: 'master'
       tag:
         type: string
         required: false
@@ -20,6 +24,7 @@ permissions:
 env:
   SINCE_REF: ${{ github.event.schedule == '30 2 * * 1' && 'last friday' || 'yesterday' }}
   UNTIL_REF: ${{ github.event.schedule == '30 2 * * 1' && 'last saturday' || 'today' }}
+  APP_VERSION: ${{ inputs.app_version || 'master' }}
 
 jobs:
   # Firstly, check if there were changes the day before. If not, aborting
@@ -35,7 +40,7 @@ jobs:
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd #v6.0.2
         with:
           repository: owncloud/android
-          ref: master
+          ref: ${{ env.APP_VERSION }}
           fetch-depth: 0
           path: android-repo
 
@@ -48,6 +53,8 @@ jobs:
 
           export TZ="Europe/Madrid"
 
+          echo "APP_VERSION=$APP_VERSION"
+
           SINCE=$(date -d "$SINCE_REF" +"%Y-%m-%d 00:00:00")
           UNTIL=$(date -d "$UNTIL_REF" +"%Y-%m-%d 00:00:00")
 
@@ -55,7 +62,7 @@ jobs:
           echo "SINCE=$SINCE"
           echo "UNTIL=$UNTIL"
 
-          COMMITS=$(git rev-list --count --since="$SINCE" --until="$UNTIL" origin/master)
+          COMMITS=$(git rev-list --count --since="$SINCE" --until="$UNTIL" HEAD)
 
           echo "Commits found: $COMMITS"
 
@@ -73,7 +80,7 @@ jobs:
     uses: owncloud/android/.github/workflows/build-apk.yml@master
     with:
       build_variant: qaRelease
-      version: master
+      version: ${{ inputs.app_version || 'master' }}
 
   # Creates an oCIS server
   create_ocis:
@@ -82,7 +89,7 @@ jobs:
     if: github.event_name == 'workflow_dispatch' || needs.check_repo_changes.outputs.has_changes == 'true'
     uses: ./.github/workflows/ocisbackend.yml
     with:
-      ocis_version: ${{ (inputs.ocis_version != '' && inputs.ocis_version) || vars.OCIS_VERSION }}
+      ocis_version: ${{ inputs.ocis_version || vars.OCIS_VERSION }}
     secrets:
       ocis_url: ${{ secrets.OC_SERVER_URL }}
       ssh_host: ${{ secrets.SSH_HOST }}
