@@ -2,9 +2,6 @@
  * ownCloud Android Scenario Tests
  *
  * @author Jesús Recio Rincón (@jesmrec)
- * <p>
- * Last Appium review: v2.18.0
- * If posible, execute tests with such version
  */
 
 package e2e.pages;
@@ -23,51 +20,14 @@ import io.appium.java_client.android.AndroidDriver;
 
 public class AndroidManager {
 
-    private static final String driverDefault = LocProperties.getProperties().getProperty("appiumURL");
-    private static final String driverURL = System.getProperty("appium");
-    private static final String device = System.getProperty("device");
+    private static final int IMPLICIT_WAIT_SECONDS = 7;
+    private static final String APP_ACTIVITY = "com.owncloud.android.ui.activity.SplashActivity";
+
     private static AndroidDriver driver = null;
-    private static File app;
 
     private AndroidManager() {
     }
 
-    private static void init() {
-
-        File rootPath = new File(System.getProperty("user.dir"));
-        File appDir = new File(rootPath, "src/test/resources");
-        app = new File(appDir, LocProperties.getProperties().getProperty("apkName"));
-
-        DesiredCapabilities capabilities = new DesiredCapabilities();
-        setCapabilities(capabilities);
-
-        try {
-            if (!driverURL.isEmpty()) {
-                Log.log(Level.FINE, "Appium driver located in: " + driverURL);
-                driver = new AndroidDriver(new URL(driverURL), capabilities);
-            } else {
-                Log.log(Level.FINE, "Appium driver located in: " + driverDefault);
-                driver = new AndroidDriver(new URL(driverDefault), capabilities);
-            }
-        } catch (MalformedURLException e) {
-            Log.log(Level.SEVERE, "Driver could not be created: " + e.getMessage());
-            e.printStackTrace();
-        }
-        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(7));
-
-        Log.log(Level.FINE, "Device: " +
-                driver.getCapabilities().getCapability("deviceManufacturer") + " " +
-                driver.getCapabilities().getCapability("deviceModel"));
-        Log.log(Level.FINE, "Platform: " +
-                driver.getCapabilities().getCapability("platformName") + " " +
-                driver.getCapabilities().getCapability("platformVersion"));
-        Log.log(Level.FINE, "API Level: " +
-                driver.getCapabilities().getCapability("deviceApiLevel") + "\n");
-
-        Log.log(Level.FINE, "Device UDID: " + device);
-    }
-
-    // Singletonize
     public static synchronized AndroidDriver getDriver() {
         if (driver == null) {
             init();
@@ -75,7 +35,6 @@ public class AndroidManager {
         return driver;
     }
 
-    // Quit the driver and clean up resources
     public static void quitDriver() {
         if (driver != null) {
             driver.quit();
@@ -87,66 +46,86 @@ public class AndroidManager {
         return driver != null;
     }
 
-    //Check https://appium.io/docs/en/2.5/guides/caps/
-    private static void setCapabilities(DesiredCapabilities capabilities) {
+    private static void init() {
+        File app = resolveAppFile();
+        DesiredCapabilities capabilities = createCapabilities(app);
+        driver = createDriver(capabilities);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(IMPLICIT_WAIT_SECONDS));
+        logDeviceInfo();
+    }
 
-        // Name of the device or emulator (arbitrary for emulator)
+    private static File resolveAppFile() {
+        File rootPath = new File(System.getProperty("user.dir"));
+        File appDir = new File(rootPath, "src/test/resources");
+        return new File(appDir, LocProperties.getProperties().getProperty("apkName"));
+    }
+
+    private static AndroidDriver createDriver(DesiredCapabilities capabilities) {
+        String appiumUrl = getAppiumUrl();
+        try {
+            Log.log(Level.FINE, "Appium driver located in: " + appiumUrl);
+            return new AndroidDriver(new URL(appiumUrl), capabilities);
+        } catch (MalformedURLException e) {
+            Log.log(Level.SEVERE, "Driver could not be created: " + e.getMessage());
+            throw new IllegalStateException("Invalid Appium URL: " + appiumUrl, e);
+        }
+    }
+
+    private static DesiredCapabilities createCapabilities(File app) {
+        DesiredCapabilities capabilities = new DesiredCapabilities();
+
         capabilities.setCapability("appium:deviceName", "test");
-
-        // Absolute path to the APK to be installed on the emulator
         capabilities.setCapability("appium:app", app.getAbsolutePath());
-
-        // Target platform (Android in this case)
         capabilities.setCapability("appium:platformName", "Android");
-
-        // Automation engine to use (recommended for Android)
         capabilities.setCapability("appium:automationName", "UIAutomator2");
-
-        // Application package to launch
-        capabilities.setCapability("appium:appPackage",
-                LocProperties.getProperties().getProperty("appPackage"));
-
-        // Entry activity to start the app
-        capabilities.setCapability("appium:appActivity",
-                "com.owncloud.android.ui.activity.SplashActivity");
-
-        // Package to wait for after launching the app
-        capabilities.setCapability("appium:appWaitPackage",
-                LocProperties.getProperties().getProperty("appPackage"));
-
-        // Wait until the app is fully launched before proceeding
+        capabilities.setCapability("appium:appPackage", getAppPackage());
+        capabilities.setCapability("appium:appActivity", APP_ACTIVITY);
+        capabilities.setCapability("appium:appWaitPackage", getAppPackage());
         capabilities.setCapability("appium:appWaitForLaunch", "true");
-
-        // Automatically grant all runtime permissions at install time
         capabilities.setCapability("appium:autoGrantPermissions", true);
-
-        // Enable Unicode input for special characters (e.g., emojis, different scripts)
         capabilities.setCapability("appium:unicodeKeyboard", true);
-
-        // Restore the original keyboard after the test session
         capabilities.setCapability("appium:resetKeyboard", true);
-
-        // Disable window animations to reduce flakiness and improve speed
         capabilities.setCapability("appium:disableWindowAnimation", true);
-
-        // Avoid resetting app data between sessions; preserves login and preferences
         capabilities.setCapability("appium:noReset", true);
-
-        // Timeout in seconds for a new command to be sent before session is terminated
         capabilities.setCapability("appium:newCommandTimeout", 60);
-
-        // Optional: specify the unique device ID (only if targeting a specific emulator/device)
+        capabilities.setCapability("appium:uiautomator2ServerLaunchTimeout", 60000);
+        capabilities.setCapability("appium:adbExecTimeout", 60000);
+        capabilities.setCapability("appium:androidInstallTimeout", 90000);
+        String device = getDevice();
         if (device != null) {
             capabilities.setCapability("appium:udid", device);
         }
+        return capabilities;
+    }
 
-        // Maximum time (in ms) to wait for the UiAutomator2 server to start on the device
-        capabilities.setCapability("appium:uiautomator2ServerLaunchTimeout", 60000);
+    private static String getAppiumUrl() {
+        String appiumUrl = System.getProperty("appium");
+        if (appiumUrl != null && !appiumUrl.isEmpty()) {
+            return appiumUrl;
+        }
+        return LocProperties.getProperties().getProperty("appiumURL");
+    }
 
-        // Maximum time (in ms) Appium will wait for an ADB command to complete
-        capabilities.setCapability("appium:adbExecTimeout", 60000);
+    private static String getAppPackage() {
+        return LocProperties.getProperties().getProperty("appPackage");
+    }
 
-        // Max time (in ms) allowed for installing the APK on the emulator
-        capabilities.setCapability("appium:androidInstallTimeout", 90000);
+    private static String getDevice() {
+        return System.getProperty("device");
+    }
+
+    private static void logDeviceInfo() {
+        Log.log(Level.FINE, "Device: "
+                + driver.getCapabilities().getCapability("deviceManufacturer")
+                + " "
+                + driver.getCapabilities().getCapability("deviceModel"));
+        Log.log(Level.FINE, "Platform: "
+                + driver.getCapabilities().getCapability("platformName")
+                + " "
+                + driver.getCapabilities().getCapability("platformVersion"));
+        Log.log(Level.FINE, "API Level: "
+                + driver.getCapabilities().getCapability("deviceApiLevel")
+                + "\n");
+        Log.log(Level.FINE, "Device UDID: " + getDevice());
     }
 }
