@@ -86,6 +86,9 @@ public class FileListPage extends CommonPage {
     @AndroidFindBy(id = CHOOSER_HEADER_ID)
     private List<WebElement> chooserHeader;
 
+    @AndroidFindBy(id = SNACKBAR_ACTIONS)
+    private WebElement navigateToFolder;
+
     private static final String CLOSE_SELECTION_MODE_UI_SELECTOR = "new UiSelector().resourceId(\"com.owncloud.android:id/action_mode_close_button\")";
     private static final String FAB_EXPAND_MENU_BUTTON_ID = "com.owncloud.android:id/fab_expand_menu_button";
     private static final String ROOT_TOOLBAR_LEFT_ICON_ID = "com.owncloud.android:id/root_toolbar_left_icon";
@@ -116,6 +119,7 @@ public class FileListPage extends CommonPage {
     private static final String DELETE_OPTION_ID = "com.owncloud.android:id/action_remove_file";
     private static final String FILE_DETAIL_IMAGE_ID = "com.owncloud.android:id/fdImageDetailFile";
     private static final String MORE_OPTIONS_DESCRIPTION = "More options";
+    private static final String SNACKBAR_ACTIONS = "com.owncloud.android:id/snackbar_action";
 
     public FileListPage(AndroidDriver driver) {
         super(driver);
@@ -310,6 +314,11 @@ public class FileListPage extends CommonPage {
         boolean folderNameVisible = findUIAutomatorText(itemName).isDisplayed();
         boolean hamburgerButtonVisible = !hamburgerButton.isEmpty();
         return folderNameVisible && !hamburgerButtonVisible;
+    }
+
+    public void navigateToTargetFolder() {
+        Log.log(Level.FINE, "Starts: navigate to target folder");
+        navigateToFolder.click();
     }
 
     private void openFabMenu() {

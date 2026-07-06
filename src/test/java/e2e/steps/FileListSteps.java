@@ -264,6 +264,12 @@ public class FileListSteps {
         world.fileListTasks().openLink();
     }
 
+    @When("Alice navigates to the target folder")
+    public void navigation_target_folder() {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.fileListTasks().navigateTargetFolder();
+    }
+
     @Then("Alice should see {string} in the (file)list")
     public void user_should_see_item_in_filelist(String itemName) throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);

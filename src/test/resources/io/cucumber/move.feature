@@ -59,6 +59,20 @@ Feature: Move item
         | type | name      | target |
         | file | move4.txt | move5  |
 
+    Scenario Outline: Move and jumping to target folder
+      Given the following items have been created in Alice account
+        | type    | name       |
+        | <type>  | <name>     |
+        | folder  | <target>   |
+      When Alice selects to Move the <type> <name>
+      And Alice selects <target> as target folder
+      And Alice navigates to the target folder
+      Then Alice should see '<name>' inside the folder <target>
+
+      Examples:
+        | type | name      | target         |
+        | file | move6.txt | targetFolder  |
+
   @moveconflicts
   Rule: Move with conflicts
 
@@ -75,7 +89,7 @@ Feature: Move item
 
       Examples:
         | type   | name  | target |
-        | folder | move6 | move7  |
+        | folder | move7 | move8  |
 
     Scenario Outline: Move a folder to another place with same item name, replacing
       Given the following items have been created in Alice account
@@ -90,7 +104,7 @@ Feature: Move item
 
       Examples:
         | type   | name  | target |
-        | folder | move8 | move9  |
+        | folder | move9 | move10  |
 
   Rule: Move negative cases
 
@@ -105,7 +119,7 @@ Feature: Move item
 
       Examples:
         | type   | name   | target |
-        | folder | move10 | move10 |
+        | folder | move11 | move11 |
 
     Scenario Outline: Move a folder to same location
       Given the following items have been created in Alice account
@@ -118,7 +132,7 @@ Feature: Move item
 
       Examples:
         | type | name       |
-        | file | move11.txt |
+        | file | move12.txt |
 
     Scenario Outline: Move a folder to descendant
       Given the following items have been created in Alice account
@@ -132,4 +146,4 @@ Feature: Move item
 
       Examples:
         | type   | name   | target |
-        | folder | move12 | move13 |
+        | folder | move13 | move14 |

@@ -289,6 +289,11 @@ public class FileListTasks {
         return url.split(schemeSeparator)[0];
     }
 
+    public void navigateTargetFolder() {
+        Log.log(Level.FINE, "Navigate to target folder");
+        world.fileListPage().navigateToTargetFolder();
+    }
+
     private void modifyFileRemotely(String itemName, String text) throws IOException {
         world.filesAPI().pushFile(itemName, text, "Alice");
     }
