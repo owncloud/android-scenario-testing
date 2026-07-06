@@ -392,7 +392,7 @@ public class World {
 
     public AppPreferences appPreferences() {
         if (appPreferences == null) {
-            appPreferences = new AppPreferences();
+            appPreferences = new AppPreferences(deviceClient());
         }
 
         return appPreferences;

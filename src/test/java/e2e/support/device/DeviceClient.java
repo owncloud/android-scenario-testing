@@ -83,7 +83,7 @@ public class DeviceClient {
         return output;
     }
 
-    private String executeShellCommand(String command, List<String> commandArgs) {
+    public String executeShellCommand(String command, List<String> commandArgs) {
         Map<String, Object> args = new HashMap<>();
         args.put("command", command);
         args.put("args", commandArgs);

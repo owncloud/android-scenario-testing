@@ -42,15 +42,17 @@ public class Hooks {
     @After
     public void tearDown(Scenario scenario)
             throws IOException, ParserConfigurationException, SAXException, InterruptedException {
-        AndroidManager.getDriver().terminateApp(
-                LocProperties.getProperties().getProperty("appPackage"));
-        world.scenarioCleanup().cleanUp();
-        stopRecoding(scenario);
-        resetSettingsIfNeeded(scenario);
-        Log.log(Level.FINE, "END SCENARIO EXECUTION: " + scenario.getName() + "\n\n");
+        try {
+            AndroidManager.getDriver().terminateApp(LocProperties.getProperties().getProperty("appPackage"));
+            world.scenarioCleanup().cleanUp();
+        } finally {
+            stopRecording(scenario);
+            resetSettingsIfNeeded(scenario);
+            Log.log(Level.FINE, "END SCENARIO EXECUTION: " + scenario.getName() + "\n\n");
+        }
     }
 
-    private void stopRecoding(Scenario scenario) {
+    private void stopRecording(Scenario scenario) {
         String featurePath = scenario.getUri().toString();
         String featureName = Paths.get(featurePath).getFileName().toString()
                 .replace(".feature", "");

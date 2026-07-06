@@ -67,6 +67,8 @@ public class ScreenRecorder {
         } catch (Exception e) {
             recordingStarted = false;
             Log.log(Level.FINE, "Error saving video: " + e.getMessage());
+        } finally {
+            recordingStarted = false;
         }
     }
 

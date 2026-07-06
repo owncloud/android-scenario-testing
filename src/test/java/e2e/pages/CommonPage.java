@@ -39,9 +39,7 @@ public class CommonPage {
     private static final String UI_AUTOMATOR_TEXT_CONTAINS_TEMPLATE = "new UiSelector().textContains(\"%s\")";
     private static final String UI_AUTOMATOR_DESCRIPTION_TEMPLATE = "new UiSelector().description(\"%s\")";
     private static final String ROOT_PATH = "/";
-    private static final SimpleDateFormat SDF = new SimpleDateFormat("yyyyMMdd_HHmmss");
     protected static AndroidDriver driver;
-    private static boolean recordingStarted = false;
 
     public CommonPage(AndroidDriver driver) {
         this.driver = driver;
