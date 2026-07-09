@@ -8,9 +8,12 @@ package e2e.pages;
 
 import static e2e.support.log.Log.Log;
 
+import org.openqa.selenium.TimeoutException;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.PageFactory;
+import org.openqa.selenium.support.ui.WebDriverWait;
 
+import java.time.Duration;
 import java.util.logging.Level;
 
 import io.appium.java_client.android.AndroidDriver;
@@ -54,8 +57,17 @@ public class ShortcutDialogPage extends CommonPage {
 
     public boolean isBrowserOpen() {
         Log.log(Level.FINE, "Starts: check if browser is open");
-        String currentPackage = driver.getCurrentPackage();
-        return currentPackage.equals("com.android.chrome") || currentPackage.equals("org.mozilla.firefox")
-                || currentPackage.equals("com.microsoft.emmx") || currentPackage.equals("com.android.browser");
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(WAIT_TIME));
+        try {
+            return wait.until(d -> {
+                String currentPackage = ((AndroidDriver) d).getCurrentPackage();
+                Log.log(Level.FINE, "Current package while waiting browser: " + currentPackage);
+                return currentPackage.equals("com.android.chrome") || currentPackage.equals("org.mozilla.firefox")
+                        || currentPackage.equals("com.microsoft.emmx") || currentPackage.equals("com.android.browser");
+            });
+        } catch (TimeoutException e) {
+            Log.log(Level.WARNING, "Browser was not opened. Last current package: " + driver.getCurrentPackage());
+            return false;
+        }
     }
 }
