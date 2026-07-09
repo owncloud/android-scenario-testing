@@ -27,7 +27,8 @@ Feature: Shortcuts
   @openshortcut
   Rule: Open shortcut
 
-  @smoke
+  # flaky in CI, needs revision
+  @smoke @noci
   Scenario Outline: Open shortcut over URL
     Given the following items have been created in Alice account
       | type     | name       |

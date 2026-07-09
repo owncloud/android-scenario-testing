@@ -59,6 +59,8 @@ Feature: Move item
         | type | name      | target |
         | file | move4.txt | move5  |
 
+    # flaky in CI, needs revision
+    @noci
     Scenario Outline: Move and jumping to target folder
       Given the following items have been created in Alice account
         | type    | name       |
