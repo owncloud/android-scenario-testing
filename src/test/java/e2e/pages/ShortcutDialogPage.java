@@ -31,9 +31,6 @@ public class ShortcutDialogPage extends CommonPage {
     @AndroidFindBy(id = "android:id/button1")
     private WebElement openShortcut;
 
-    @AndroidFindBy(id = "com.android.chrome:id/coordinator")
-    private WebElement browser;
-
     public ShortcutDialogPage(AndroidDriver driver) {
         super(driver);
         PageFactory.initElements(new AppiumFieldDecorator(driver), this);
@@ -57,6 +54,8 @@ public class ShortcutDialogPage extends CommonPage {
 
     public boolean isBrowserOpen() {
         Log.log(Level.FINE, "Starts: check if browser is open");
-        return browser.isDisplayed();
+        String currentPackage = driver.getCurrentPackage();
+        return currentPackage.equals("com.android.chrome") || currentPackage.equals("org.mozilla.firefox")
+                || currentPackage.equals("com.microsoft.emmx") || currentPackage.equals("com.android.browser");
     }
 }
