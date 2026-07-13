@@ -1,19 +1,19 @@
 [versions]
-apache-commons-exec = "1.3"
-apache-commons-lang = "3.9"
-apache-commons-text = "1.9"
+apache-commons-exec = "1.6.0"
+apache-commons-lang = "3.20.0"
+apache-commons-text = "1.15.0"
 apache-commons-codec = "1.22.0"
-apache-commons-io = "2.6"
+apache-commons-io = "2.22.0"
 appium-java-client = "10.1.1"
 assertj-core = "3.27.7"
-byte-buddy = "1.18.8"
-cucumber = "7.34.3"
+byte-buddy = "1.18.11"
+cucumber = "7.34.4"
 guava = "33.6.0-jre"
 json = "20260522"
-junit = "4.13.1"
-okhttp = "5.3.2"
+junit = "4.13.2"
+okhttp = "5.4.0"
 okio = "3.17.0"
-slf4j = "2.0.17"
+slf4j = "2.0.18"
 
 [libraries]
 cucumber-java = { module = "io.cucumber:cucumber-java", version.ref = "cucumber" }
