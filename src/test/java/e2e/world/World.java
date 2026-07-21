@@ -16,6 +16,7 @@ import e2e.assertions.DeviceAssertions;
 import e2e.assertions.FileListAssertions;
 import e2e.assertions.LinksAssertions;
 import e2e.assertions.SharesAssertions;
+import e2e.assertions.SidebarAssertions;
 import e2e.assertions.SpacesAssertions;
 import e2e.assertions.UploadAssertions;
 import e2e.pages.AndroidManager;
@@ -33,6 +34,7 @@ import e2e.pages.RemoveDialogPage;
 import e2e.pages.SearchShareePage;
 import e2e.pages.SharePage;
 import e2e.pages.ShortcutDialogPage;
+import e2e.pages.SidebarPage;
 import e2e.pages.SpaceMembersPage;
 import e2e.pages.SpacesPage;
 import e2e.pages.UploadsPage;
@@ -50,6 +52,7 @@ import e2e.tasks.DocumentProviderTasks;
 import e2e.tasks.FileListTasks;
 import e2e.tasks.LinksTasks;
 import e2e.tasks.SharesTasks;
+import e2e.tasks.SidebarTasks;
 import e2e.tasks.SpacesTasks;
 import io.appium.java_client.android.AndroidDriver;
 
@@ -75,6 +78,7 @@ public class World {
     private DeviceClient deviceClient;
     private ConflictPage conflictPage;
     private SpaceMembersPage spacesMembersPage;
+    private SidebarPage sidebarPage;
 
     private ShareAPI shareAPI;
     private FilesAPI filesAPI;
@@ -86,6 +90,7 @@ public class World {
     private FileListTasks fileListTasks;
     private SpacesTasks spacesTasks;
     private DocumentProviderTasks documentProviderTasks;
+    private SidebarTasks sidebarTasks;
 
     private LinksAssertions linksAssertions;
     private SharesAssertions sharesAssertions;
@@ -93,6 +98,7 @@ public class World {
     private SpacesAssertions spacesAssertions;
     private UploadAssertions uploadAssertions;
     private DeviceAssertions deviceAssertions;
+    private SidebarAssertions sidebarAssertions;
 
     private FileListPreconditions fileListPreconditions;
     private DevicePreconditions devicePreconditions;
@@ -228,6 +234,13 @@ public class World {
         return spacesMembersPage;
     }
 
+    public SidebarPage sidebarPage() {
+        if (sidebarPage == null) {
+            sidebarPage = new SidebarPage(driver);
+        }
+        return sidebarPage;
+    }
+
     public ShareAPI shareAPI() throws IOException {
         if (shareAPI == null) {
             shareAPI = new ShareAPI();
@@ -298,6 +311,13 @@ public class World {
         return documentProviderTasks;
     }
 
+    public SidebarTasks sidebarTasks() {
+        if (sidebarTasks == null) {
+            sidebarTasks = new SidebarTasks(this);
+        }
+        return sidebarTasks;
+    }
+
     public LinksAssertions linksAssertions() {
         if (linksAssertions == null) {
             linksAssertions = new LinksAssertions(this);
@@ -338,6 +358,13 @@ public class World {
             deviceAssertions = new DeviceAssertions(this);
         }
         return deviceAssertions;
+    }
+
+    public SidebarAssertions sidebarAssertions() {
+        if (sidebarAssertions == null) {
+            sidebarAssertions = new SidebarAssertions(this);
+        }
+        return sidebarAssertions;
     }
 
     public FileListPreconditions fileListPreconditions() {

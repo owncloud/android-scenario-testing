@@ -36,6 +36,12 @@ public class FileListTasks {
         this.world = world;
     }
 
+
+    public void openHamburgerMenu() {
+        Log.log(Level.FINE, "Open hamburger menu");
+        world.fileListPage().openHamburgerMenu();
+    }
+
     public void selectFabOption(String operation) {
         Log.log(Level.FINE, "Select FAB option: " + operation);
         switch (operation) {

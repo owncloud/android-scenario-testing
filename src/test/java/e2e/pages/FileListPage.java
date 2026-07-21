@@ -136,6 +136,11 @@ public class FileListPage extends CommonPage {
         swipe(startX, startY, endX, endY);
     }
 
+    public void openHamburgerMenu() {
+        Log.log(Level.FINE, "Open hamburger menu");
+        hamburgerButton.get(0).click();
+    }
+
     public void selectCreateFolder() {
         Log.log(Level.FINE, "Select create folder");
         openFabMenu();
