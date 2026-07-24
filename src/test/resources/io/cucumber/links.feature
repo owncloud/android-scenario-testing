@@ -1,4 +1,4 @@
-@links
+@links @noocis
 Feature: Links
 
   As an user
