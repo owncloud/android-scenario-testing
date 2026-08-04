@@ -39,16 +39,21 @@ public class DateUtils {
     }
 
     // Returns date after adding the number of days
-    // Input: 12. Output: 2026-02-12 23:59:59
+    // Input: 12. Output: 2026-02-12 23:59:59 (oCIS) or 2026-02-12 00:00:00 (oC10)
     // Used to assert expiration dates in the server
     public static String dateInDaysWithServerFormat(String days) {
+        boolean isOC10 = "oC10".equals(System.getProperty("backend"));
+        return dateInDaysWithServerFormat(days, isOC10);
+    }
+
+    public static String dateInDaysWithServerFormat(String days, boolean isOC10) {
         Log.log(Level.FINE, "Starts: Turns days in date with server response format");
         int d = Integer.parseInt(days.trim());
         LocalDate date = LocalDate.now().plusMonths(1).withDayOfMonth(d);
         Log.log(Level.FINE, "Date to format: " + date);
-        LocalDateTime endOfDay = date.atTime(23, 59, 59);
+        LocalDateTime targetTime = isOC10 ? date.atTime(0, 0, 0) : date.atTime(23, 59, 59);
         DateTimeFormatter fmt = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-        String dateAfterDays = endOfDay.format(fmt);
+        String dateAfterDays = targetTime.format(fmt);
         Log.log(Level.FINE, "Date formatted: " + dateAfterDays);
         return dateAfterDays;
     }

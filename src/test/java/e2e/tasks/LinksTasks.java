@@ -49,7 +49,6 @@ public class LinksTasks {
         switch (key) {
             case "name" -> world.linksPage().addLinkName(value);
             case "password" -> world.linksPage().typePassword(value);
-            case "password-auto" -> world.linksPage().generatePassword();
             case "permission", "permissions" -> selectPermissions(value);
             case "expiration days" -> setExpiration(value);
             default -> Log.log(Level.FINE, "Ignoring unsupported public link creation field: " + key);

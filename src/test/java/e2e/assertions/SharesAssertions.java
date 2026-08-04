@@ -95,10 +95,10 @@ public class SharesAssertions {
         world.sharePage().editPrivateShare(itemName);
         try {
             switch (expectedPermissions) {
-                case "1" -> assertOnlyReadPermission();
-                case "3" -> assertEditPermission();
-                case "9" -> assertDeletePermission();
-                case "13" -> assertDeleteAndCreatePermission();
+                case "17" -> assertOnlyReadPermission();
+                case "19" -> assertEditPermission();
+                case "25" -> assertDeletePermission();
+                case "29" -> assertDeleteAndCreatePermission();
                 default -> throw new IllegalArgumentException(
                         "Unsupported private share permissions: " + expectedPermissions
                 );
@@ -140,6 +140,7 @@ public class SharesAssertions {
     }
 
     private static void assertShareFieldMatches(OCShare remoteShare, String key, String expectedValue) {
+        Log.log(Level.FINE, "Checking share field: " + key + " with expected value: " + expectedValue);
         switch (key) {
             case "id" -> assertEquals(expectedValue, remoteShare.getId());
             case "sharee", "user" -> {
@@ -158,8 +159,10 @@ public class SharesAssertions {
             case "path" -> assertEquals(expectedValue, remoteShare.getItemName());
             case "uid_owner" ->
                     assertEquals(expectedValue.toLowerCase(), remoteShare.getOwner().toLowerCase());
-            case "permission", "permissions" ->
+            case "permission", "permissions" -> {
+                    Log.log(Level.FINE, "Checking share permissions: " + expectedValue + " against remote share permissions: " + remoteShare.getPermissions());
                     assertEquals(expectedValue, remoteShare.getPermissions());
+            }
             case "expiration days" -> {
                 String expectedDate = DateUtils.dateInDaysWithServerFormat(expectedValue);
                 assertEquals(expectedDate, remoteShare.getExpiration());

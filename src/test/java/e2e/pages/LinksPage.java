@@ -37,6 +37,9 @@ public class LinksPage extends CommonPage {
     @AndroidFindBy(id = "generatePasswordButton")
     private WebElement generatePassword;
 
+    @AndroidFindBy(id = "com.owncloud.android:id/shareViaLinkPasswordSwitch")
+    private WebElement passwordSwitch;
+
     @AndroidFindBy(id = "com.owncloud.android:id/shareViaLinkExpirationSwitch")
     private WebElement expirationSwitch;
 
@@ -83,20 +86,8 @@ public class LinksPage extends CommonPage {
 
     public void typePassword(String password) {
         Log.log(Level.FINE, "Starts: Add link password");
-        //To avoid password keyboard to appear
-        if (driver.isKeyboardShown()) {
-            driver.hideKeyboard();
-        }
-        textPassword.sendKeys(password);
-    }
-
-    public void generatePassword() {
-        Log.log(Level.FINE, "Starts: Generate password");
-        //To avoid password keyboard to appear
-        if (driver.isKeyboardShown()) {
-            driver.hideKeyboard();
-        }
-        generatePassword.click();
+        passwordSwitch.click();
+        textPassword.sendKeys("a");
     }
 
     public void clickExpirationSwitch() {

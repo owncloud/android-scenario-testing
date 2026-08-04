@@ -287,7 +287,7 @@ Feature: Spaces
       Examples:
         | name    | subtitle          | permissions | expirationDate |
         | Space25 | Twentyfifth space | Can view    | 25             |
-
+    @expiration
     Scenario Outline: Edit a member from a space
       Given the following spaces have been created in Alice account
         | name   | subtitle   |

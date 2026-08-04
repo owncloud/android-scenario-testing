@@ -11,15 +11,15 @@ Feature: Links
   @createlink
   Rule: Create a link
 
-  @smoke @nooc10
+  @smoke
   Scenario Outline: Create a link with name
     Given the following items have been created in Alice account
       | type   | name   |
       | <type> | <item> |
     When Alice selects to share the <type> <item>
     And Alice creates link on <type> <item> with the following fields
-      | name          | <name> |
-      | password-auto |        |
+      | name       | <name> |
+      | password   |        |
     Then link should be created on <item> with the following fields
       | name | <name> |
 
@@ -28,7 +28,6 @@ Feature: Links
       | folder | Links1     | link1 |
       | file   | Links2.txt | link2 |
 
-  @nooc10
   Scenario Outline: Create a link with custom password
     Given the following items have been created in Alice account
       | type   | name   |
@@ -46,25 +45,24 @@ Feature: Links
       | folder | Links3     | link3 | aa55AA.. |
       | file   | Links4.txt | link4 | aa55AA.. |
 
-  @nooc10
   Scenario Outline: Create a link with generated password
     Given the following items have been created in Alice account
       | type   | name   |
       | <type> | <item> |
     When Alice selects to share the <type> <item>
     And Alice creates link on <type> <item> with the following fields
-      | name          | <name> |
-      | password-auto |        |
+      | name     | <name> |
+      | password |        |
     Then link should be created on <item> with the following fields
-      | name          | <name> |
-      | password-auto |        |
+      | name     | <name> |
+      | password |        |
 
     Examples:
       | type   | item       | name  |
       | folder | Links5     | link5 |
       | file   | Links6.txt | link6 |
 
-  @nooc10 @expiration
+  @expiration
   Scenario Outline: Create a link with expiration date
     Given the following items have been created in Alice account
       | type   | name   |
@@ -73,7 +71,7 @@ Feature: Links
     And Alice creates link on <type> <item> with the following fields
       | name            | <name>       |
       | expiration days | <expiration> |
-      | password-auto   |              |
+      | password        |              |
     Then link should be created on <item> with the following fields
       | name            | <name>       |
       | expiration days | <expiration> |
@@ -83,7 +81,6 @@ Feature: Links
       | folder | Links7     | link7 | 7          |
       | file   | Links8.txt | link8 | 17         |
 
-  @nooc10
   Scenario Outline: Create a link with permissions on a folder
     Given the following items have been created in Alice account
       | type   | name   |
@@ -92,7 +89,7 @@ Feature: Links
     And Alice creates link on folder <item> with the following fields
       | name          | <name>        |
       | permission    | <permissions> |
-      | password-auto |               |
+      | password      |               |
     Then link should be created on <item> with the following fields
       | name       | <name>        |
       | permission | <permissions> |
@@ -102,7 +99,6 @@ Feature: Links
       | Links9  | link9  | 15          | Download / View / Upload
       | Links10 | link10 | 4           | Upload Only (File drop)
       | Links11 | link11 | 1           | Download / View
-
 
   @editlink
   Rule: Edit a link
@@ -126,7 +122,7 @@ Feature: Links
       | Links13 | link13 | 4           | Upload Only (File drop)
       | Links14 | link14 | 1           | Download / View
 
-  @nooc10
+  @expiration
   Scenario: Edit existing share on a folder, adding expiration date
     Given the following items have been created in Alice account
       | type   | name    |

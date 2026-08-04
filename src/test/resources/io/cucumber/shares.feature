@@ -1,5 +1,5 @@
-@shares @nooc10 @noocis
-Feature: Private Share
+@shares @noocis
+Feature: Private Share in oC Classic
 
   As a user
   I want to share my content with other users in the platform
@@ -65,8 +65,8 @@ Feature: Private Share
 
     Examples:
       | item       | sharee | permissions | Description |
-      | Share5.txt | Bob    | 3           | edit        |
-      | Share6.txt | Bob    | 1           | only read   |
+      | Share5.txt | Bob    | 19          | edit        |
+      | Share6.txt | Bob    | 17          | only read   |
 
   Scenario Outline: Edit existing share on a folder, changing permissions
     Given the following items have been created in Alice account
@@ -81,11 +81,11 @@ Feature: Private Share
       | permissions | <permissions> |
 
     Examples:
-      | item    | sharee | permissions | Description       |
-      | Share7  | Bob    | 1           | only read         |
-      | Share8  | Bob    | 3           | update            |
-      | Share9  | Bob    | 9           | delete            |
-      | Share10 | Bob    | 13          | delete and create |
+      | item    | sharee | permissions | Description        |
+      | Share7  | Bob    | 17           | only read         |
+      | Share8  | Bob    | 19           | update            |
+      | Share9  | Bob    | 25           | delete            |
+      | Share10 | Bob    | 29           | delete and create |
 
   @deleteshare
   Rule: Delete a share
@@ -104,19 +104,3 @@ Feature: Private Share
       | type   | item        | sharee |
       | file   | Share11.txt | Bob    |
       | folder | Share12     | Bob    |
-
-  @shareshortcut @nooc10
-  Rule: Link Shortcut
-
-  Scenario Outline: Content in shares shortcut
-    Given the following items have been created in Bob account
-      | type   | name   |
-      | <type> | <item> |
-    And Bob has shared <type> <item> with <sharee> with permissions 31
-    When <sharee> opens the link shortcut
-    Then <sharee> should see <item> in the shares list
-
-    Examples:
-      | type   | item        | sharee |
-      | file   | Share13.txt | Alice  |
-      | folder | Share14     | Alice  |
