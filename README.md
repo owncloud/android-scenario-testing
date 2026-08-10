@@ -88,14 +88,6 @@ More info in [Cucumber reference](https://cucumber.io/docs/cucumber/api/)
 - [Appium documentation](https://appium.io/docs/en/about-appium/getting-started/)
 - [Cucumber documentation](https://cucumber.io/docs/gherkin/)
 
-## Version Matrix
-
-| Component | Version |
-|---|---|
-| Cucumber | 7.31.0 |
-| Appium | 3.1.0 |
-| Appium UIAutomator2 Driver | 4.2.3 |
-| Java Client | 9.4.0 |
 
 ## Community & Support
 
