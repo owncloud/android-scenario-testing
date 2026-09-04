@@ -85,7 +85,7 @@ public class SharesSteps {
     }
 
     @Then("{usertype} {word} should have access to {word}")
-    public void sharee_should_not_have_access_the_item(String type, String shareeName, String itemName)
+    public void sharee_should_have_access_the_item(String type, String shareeName, String itemName)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
         world.sharesAssertions().assertShareeHasAccessToItem(type, shareeName, itemName);
