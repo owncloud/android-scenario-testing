@@ -27,4 +27,4 @@ Feature: Sharing NG
         | type   | item          | permission             | sharee  |
         | file   | ShareNG1.txt  | Can view               | Bob     |
         | file   | ShareNG2.txt  | Can edit               | Bob     |
-        | folder | ShareNG3.txt  | Can edit with trashbin | Charles |
+        | folder | ShareNG3      | Can edit with trashbin | Charles |
