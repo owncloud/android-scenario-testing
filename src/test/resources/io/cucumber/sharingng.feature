@@ -17,14 +17,17 @@ Feature: Sharing NG
         | type | name   |
         | <type> | <item> |
       When Alice selects to share the file <item>
-      And Alice adds <sharee> via Sharing NG with
-        | permission | <permission> |
-      Then user <sharee> should have access to <item>
+      And Alice adds <shareeType> <sharee> via Sharing NG with
+        | permission      | <permission>     |
+        | expirationDate  | <expirationDate> |
+      Then <shareeType> <sharee> should have access to <item>
       Then <sharee> should be visible in Sharing NG with
-        | permission | <permission> |
+        | permission      | <permission>     |
+        | expirationDate  | <expirationDate> |
 
       Examples:
-        | type   | item          | permission             | sharee  |
-        | file   | ShareNG1.txt  | Can view               | Bob     |
-        | file   | ShareNG2.txt  | Can edit               | Bob     |
-        | folder | ShareNG3      | Can edit with trashbin | Charles |
+        | type   | item          | permission             | expirationDate  | sharee  | shareeType |
+        | file   | ShareNG1.txt  | Can view               |                 | Bob     | user       |
+        | file   | ShareNG2.txt  | Can edit               |  5              | Bob     | user       |
+        | folder | ShareNG3      | Can edit with trashbin |  10             | Charles | user       |
+        | folder | ShareNG4      | Can edit               |                 | test    | group      |

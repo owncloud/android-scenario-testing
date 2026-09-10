@@ -28,6 +28,15 @@ public class ShareNGCreatePage extends CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/permissions_title")
     private WebElement permissionsTitle;
 
+    @AndroidFindBy(id = "com.owncloud.android:id/expiration_date_switch")
+    private WebElement expirationDateSwitch;
+
+    @AndroidFindBy(id = "android:id/next")
+    private WebElement nextButton;
+
+    @AndroidFindBy(id = "android:id/button1")
+    private WebElement okButton;
+
     @AndroidFindBy(id = "com.owncloud.android:id/invite_member_button")
     private WebElement inviteButton;
 
@@ -46,6 +55,34 @@ public class ShareNGCreatePage extends CommonPage {
         Log.log(Level.FINE, "Set permission: " + permission);
         waitById(WAIT_TIME, permissionsTitle);
         findUIAutomatorSubText(permission).click();
+    }
+
+    public boolean isExpirationDateEnabled() {
+        return "true".equals(expirationDateSwitch.getAttribute("checked"));
+    }
+
+    public void toggleExpirationDate() {
+        Log.log(Level.FINE, "Toggle expiration date");
+        expirationDateSwitch.click();
+    }
+
+    public boolean isCalendarDateVisible(String date) {
+        return !findListAccesibility(date).isEmpty();
+    }
+
+    public void tapNextCalendarPage() {
+        Log.log(Level.FINE, "Tap next calendar page");
+        nextButton.click();
+    }
+
+    public void selectCalendarDate(String date) {
+        Log.log(Level.FINE, "Select calendar date: " + date);
+        findAccesibility(date).click();
+    }
+
+    public void tapOk() {
+        Log.log(Level.FINE, "Tap OK");
+        okButton.click();
     }
 
     public void invite() {

@@ -22,10 +22,10 @@ public class ShareNGSteps {
         this.world = world;
     }
 
-    @When("Alice adds {word} via Sharing NG with")
-    public void add_sharee(String sharee, DataTable table) {
+    @When("Alice adds {usertype} {word} via Sharing NG with")
+    public void add_sharee(String shareeType, String sharee, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.shareNGTasks().addSharee(sharee, table.asMap(String.class, String.class));
+        world.shareNGTasks().addSharee(shareeType, sharee, table.asMap(String.class, String.class));
     }
 
     @Then("{word} should be visible in Sharing NG with")

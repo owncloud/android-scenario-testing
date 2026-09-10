@@ -27,6 +27,7 @@ public class ShareNGPage extends CommonPage {
     private List<WebElement> shareList;
 
     private static final String SHAREE_NAME_ID = "com.owncloud.android:id/member_name";
+    private static final String EXPIRATION_DATE_ID = "com.owncloud.android:id/expiration_date";
 
     public ShareNGPage(AndroidDriver driver) {
         super(driver);
@@ -35,6 +36,7 @@ public class ShareNGPage extends CommonPage {
 
     public void addShare() {
         Log.log(Level.FINE, "Tap add share");
+        waitByTextVisible(WAIT_TIME, "No data shared with users yet");
         addShareButton.click();
     }
 
@@ -45,6 +47,18 @@ public class ShareNGPage extends CommonPage {
         }
         return !item.findElements(AppiumBy.androidUIAutomator(
                 "new UiSelector().textContains(\"" + permission + "\")")).isEmpty();
+    }
+
+    public boolean isShareeDisplayedWithExpirationDate(String sharee, String expirationDate) {
+        WebElement item = findShareByNameOrNull(sharee);
+        if (item == null) {
+            return false;
+        }
+        if (expirationDate == null) {
+            return item.findElements(AppiumBy.id(EXPIRATION_DATE_ID)).isEmpty();
+        }
+        return !item.findElements(AppiumBy.androidUIAutomator(
+                "new UiSelector().textContains(\"" + expirationDate + "\")")).isEmpty();
     }
 
     private WebElement findShareByNameOrNull(String sharee) {
