@@ -6,8 +6,10 @@
 
 package e2e.assertions;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+import java.io.IOException;
 import java.util.Map;
 import java.util.logging.Level;
 
@@ -47,5 +49,24 @@ public class ShareNGAssertions {
                 : DateUtils.formatDate(expectedExpirationDays.trim(), DateUtils.DateFormatType.NUMERIC);
         Log.log(Level.FINE, "Assert " + sharee + " has expiration date: " + expectedLocalDate);
         assertTrue(world.shareNGPage().isShareeDisplayedWithExpirationDate(sharee, expectedLocalDate));
+    }
+
+    public void assertUserHasAccess(String userType, String sharee, String itemName) throws IOException {
+        Log.log(Level.FINE, "Assert " + sharee + " has access to item: " + itemName);
+        assertTrue(isAccessible(userType, sharee, itemName));
+    }
+
+    public void assertUserHasNoAccess(String userType, String sharee, String itemName) throws IOException {
+        Log.log(Level.FINE, "Assert " + sharee + " has no access to item: " + itemName);
+        assertFalse(isAccessible(userType, sharee, itemName));
+    }
+
+    private boolean isAccessible(String userType, String sharee, String itemName) throws IOException {
+        if ("user".equalsIgnoreCase(userType)) {
+            return world.graphAPI().isSharedWithMe(itemName, sharee);
+        } else if ("group".equalsIgnoreCase(userType)) {
+            return world.graphAPI().isSharedWithMe(itemName, "Bob");
+        }
+        return false;
     }
 }

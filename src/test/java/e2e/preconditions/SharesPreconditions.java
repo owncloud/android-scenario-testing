@@ -29,6 +29,22 @@ public class SharesPreconditions {
         this.world = world;
     }
 
+    public void shareNGShareExists(String sharingUser, String itemName, String recipientUser, String permission)
+            throws IOException, ParserConfigurationException, SAXException {
+        Log.log(Level.FINE, "Preparing ShareNG share. Sharing user: " + sharingUser
+                + " - Item: " + itemName + " - Recipient: " + recipientUser + " - Permission: " + permission);
+        world.shareAPI().createShare(sharingUser, itemName, recipientUser, USER_SHARE_TYPE,
+                mapPermissionToOcs(permission), EMPTY_SHARE_NAME, EMPTY_PASSWORD, 0);
+        world.shareAPI().acceptAllShares(USER_RECIPIENT_TYPE, recipientUser);
+    }
+
+    private String mapPermissionToOcs(String permission) {
+        return switch (permission) {
+            case "Can edit" -> "3";
+            default -> "1";
+        };
+    }
+
     public void privateShareExists(String sharingUser, int shareLevel, String itemName,
                    String recipientUser, String permissions) throws IOException, ParserConfigurationException, SAXException {
         Log.log(Level.FINE, "Preparing private share. Sharing user: " + sharingUser

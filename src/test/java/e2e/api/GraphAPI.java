@@ -8,11 +8,14 @@ package e2e.api;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.xml.sax.SAXException;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import e2e.model.OCSpace;
 import e2e.model.OCSpaceLink;
@@ -89,6 +92,15 @@ public class GraphAPI extends CommonAPI {
         return getSpacesFromResponse(response);
     }
 
+    public List<OCSpace> getSpacesFromUser(String userName) throws IOException {
+        Log.log(Level.FINE, "GET SPACES of user: " + userName);
+        String url = urlServer + graphPath + myDrives;
+        Log.log(Level.FINE, "URL: " + url);
+        Request request = getRequest(url, userName);
+        Response response = httpClient.newCall(request).execute();
+        return getShareSpaceFromResponse(response);
+    }
+
     //User "alice" by default
     public void removeSpacesOfUser() throws IOException {
         Log.log(Level.FINE, "REMOVE custom SPACES of: " + user);
@@ -150,6 +162,22 @@ public class GraphAPI extends CommonAPI {
             if (space.getName().trim().equals(name)) {
                 Log.log(Level.FINE, "FOUND: ID of space: " + space.getId() + " " + space.getName());
                 return space.getId();
+            }
+        }
+        return null;
+    }
+
+    public String getSpaceIdFromName(String name, String userName) throws IOException {
+        Log.log(Level.FINE, "Look for space ID or null: " + name);
+        List<OCSpace> mySpaces = getSpacesFromUser(userName);
+        Log.log(Level.FINE, "Spaces found for user " + userName + ": " + mySpaces.size());
+        for (OCSpace space : mySpaces) {
+            Log.log(Level.FINE, "Checking space: " + space.getName() + " ID: " + space.getId());
+            if (space.getName().trim().equals(name)) {
+                Log.log(Level.FINE, "FOUND: ID of space: " + space.getId() + " " + space.getName());
+                return space.getId();
+            } else {
+                Log.log(Level.FINE, "NOT FOUND: ID of space: " + space.getId() + " " + space.getName());
             }
         }
         return null;
@@ -315,12 +343,7 @@ public class GraphAPI extends CommonAPI {
             JSONObject jsonObject = value.getJSONObject(i);
             String type = jsonObject.getString("driveType");
             if (type.equals("project")) { //Just for user created spaces
-                OCSpace space = new OCSpace();
-                space.setType(jsonObject.getString("driveType"));
-                space.setId(jsonObject.getString("id"));
-                space.setName(jsonObject.getString("name"));
-                // Description can be null
-                space.setDescription(jsonObject.optString("description", ""));
+                OCSpace space = parseBaseSpace(jsonObject);
                 JSONObject owner = jsonObject.getJSONObject("owner");
                 JSONObject user = owner.getJSONObject("user");
                 space.setOwner(user.getString("id"));
@@ -331,5 +354,42 @@ public class GraphAPI extends CommonAPI {
             }
         }
         return spaces;
+    }
+
+    private List<OCSpace> getShareSpaceFromResponse(Response httpResponse) throws IOException {
+        String json = httpResponse.body().string();
+        ArrayList<OCSpace> spaces = new ArrayList<>();
+        JSONObject obj = new JSONObject(json);
+        JSONArray value = obj.getJSONArray("value");
+        for (int i = 0; i < value.length(); i++) {
+            JSONObject jsonObject = value.getJSONObject(i);
+            String type = jsonObject.getString("driveType");
+            Log.log(Level.FINE, "type: " + type);
+            if (type.equals("mountpoint")) { //Just for mountpoints
+                spaces.add(parseBaseSpace(jsonObject));
+                Log.log(Level.FINE, "Space id returned: " + spaces.get(spaces.size() - 1).getId());
+            }
+        }
+        Log.log(Level.FINE, "Spaces returned: " + spaces.size());
+        return spaces;
+    }
+
+    private OCSpace parseBaseSpace(JSONObject jsonObject) {
+        OCSpace space = new OCSpace();
+        space.setType(jsonObject.getString("driveType"));
+        space.setId(jsonObject.getString("id"));
+        space.setName(jsonObject.getString("name"));
+        space.setDescription(jsonObject.optString("description", ""));
+        return space;
+    }
+
+    public boolean isSharedWithMe(String itemName, String userName) throws IOException {
+        Log.log(Level.FINE, "Check if item " + itemName + " is shared with user: " + userName);
+        String sharedSpaceId = getSpaceIdFromName(itemName, userName);
+        if (sharedSpaceId == null) {
+            return false;
+        }
+        Log.log(Level.FINE, "Space shared with user: " + userName + "ID: " + sharedSpaceId);
+        return true;
     }
 }

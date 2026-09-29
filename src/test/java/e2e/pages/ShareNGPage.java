@@ -23,11 +23,13 @@ public class ShareNGPage extends CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/add_member_button")
     private WebElement addShareButton;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/member_item_layout")
-    private List<WebElement> shareList;
+    @AndroidFindBy(id = "android:id/button1")
+    private WebElement confirmButton;
 
+    private static final String MEMBER_ITEM_LAYOUT_ID = "com.owncloud.android:id/member_item_layout";
     private static final String SHAREE_NAME_ID = "com.owncloud.android:id/member_name";
     private static final String EXPIRATION_DATE_ID = "com.owncloud.android:id/expiration_date";
+    private static final String REMOVE_MEMBER_BUTTON_ID = "com.owncloud.android:id/remove_member_button";
 
     public ShareNGPage(AndroidDriver driver) {
         super(driver);
@@ -61,10 +63,18 @@ public class ShareNGPage extends CommonPage {
                 "new UiSelector().textContains(\"" + expirationDate + "\")")).isEmpty();
     }
 
+    public void removeShare(String sharee) {
+        Log.log(Level.FINE, "Remove share for: " + sharee);
+        WebElement item = findShareByNameOrNull(sharee);
+        item.findElement(AppiumBy.id(REMOVE_MEMBER_BUTTON_ID)).click();
+        confirmButton.click();
+    }
+
     private WebElement findShareByNameOrNull(String sharee) {
-        for (WebElement item : shareList) {
-            WebElement nameElement = item.findElement(AppiumBy.id(SHAREE_NAME_ID));
-            if (nameElement.getText().contains(sharee)) {
+        waitById(WAIT_TIME, MEMBER_ITEM_LAYOUT_ID);
+        for (WebElement item : findListId(MEMBER_ITEM_LAYOUT_ID)) {
+            List<WebElement> nameElements = item.findElements(AppiumBy.id(SHAREE_NAME_ID));
+            if (!nameElements.isEmpty() && nameElements.get(0).getText().contains(sharee)) {
                 return item;
             }
         }

@@ -73,6 +73,11 @@ public class ShareNGTasks {
         world.shareNGCreatePage().tapOk();
     }
 
+    public void removeShare(String sharee) {
+        Log.log(Level.FINE, "Remove share for: " + sharee);
+        world.shareNGPage().removeShare(sharee);
+    }
+
     private String normalizeOptional(String value) {
         if (value == null) {
             return null;
