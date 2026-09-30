@@ -78,6 +78,13 @@ public class ShareNGTasks {
         world.shareNGPage().removeShare(sharee);
     }
 
+    public void editShare(String sharee, Map<String, String> fields) {
+        Log.log(Level.FINE, "Edit share for: " + sharee);
+        world.shareNGPage().editShare(sharee);
+        applyFields(fields);
+        world.shareNGCreatePage().invite();
+    }
+
     private String normalizeOptional(String value) {
         if (value == null) {
             return null;

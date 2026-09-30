@@ -23,17 +23,26 @@ public class ShareNGSteps {
         this.world = world;
     }
 
-    @Given("{word} has shared {itemtype} {word} with {word} with permissions {permissionType}")
+    @Given("{word} has shared {itemtype} {word} with {word} with")
     public void user_has_shared_item_via_shareng(String actor, String itemType, String itemName,
-            String sharee, String permission) throws Throwable {
+            String sharee, DataTable table) throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
-        world.sharesPreconditions().shareNGShareExists(actor, itemName, sharee, permission);
+        var fields = table.asMap(String.class, String.class);
+        world.sharesPreconditions().shareNGShareExists(actor, itemName, sharee,
+                fields.get("permission"), fields.get("expirationDate"),
+                fields.getOrDefault("shareeType", "user"));
     }
 
     @When("Alice adds {usertype} {word} via Sharing NG with")
     public void add_sharee(String shareeType, String sharee, DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
         world.shareNGTasks().addSharee(shareeType, sharee, table.asMap(String.class, String.class));
+    }
+
+    @When("{word} edits the share on {itemtype} {word} for user {word} with")
+    public void edit_share(String actor, String itemType, String itemName, String sharee, DataTable table) {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.shareNGTasks().editShare(sharee, table.asMap(String.class, String.class));
     }
 
     @When("{word} removes the share on {itemtype} {word} for user {word}")

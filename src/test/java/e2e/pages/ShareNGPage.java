@@ -30,6 +30,7 @@ public class ShareNGPage extends CommonPage {
     private static final String SHAREE_NAME_ID = "com.owncloud.android:id/member_name";
     private static final String EXPIRATION_DATE_ID = "com.owncloud.android:id/expiration_date";
     private static final String REMOVE_MEMBER_BUTTON_ID = "com.owncloud.android:id/remove_member_button";
+    private static final String EDIT_MEMBER_BUTTON_ID = "com.owncloud.android:id/edit_member_button";
 
     public ShareNGPage(AndroidDriver driver) {
         super(driver);
@@ -68,6 +69,12 @@ public class ShareNGPage extends CommonPage {
         WebElement item = findShareByNameOrNull(sharee);
         item.findElement(AppiumBy.id(REMOVE_MEMBER_BUTTON_ID)).click();
         confirmButton.click();
+    }
+
+    public void editShare(String sharee) {
+        Log.log(Level.FINE, "Edit share for: " + sharee);
+        WebElement item = findShareByNameOrNull(sharee);
+        item.findElement(AppiumBy.id(EDIT_MEMBER_BUTTON_ID)).click();
     }
 
     private WebElement findShareByNameOrNull(String sharee) {

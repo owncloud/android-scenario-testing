@@ -39,7 +39,9 @@ Feature: Sharing NG
       Given the following items have been created in Alice account
         | type   | name   |
         | <type> | <item> |
-      And Alice has shared <type> <item> with <sharee> with permissions <permission>
+      And Alice has shared <type> <item> with <sharee> with
+        | permission      | <permission>   |
+        | expirationDate  |                |
       When Alice selects to share the <type> <item>
       And Alice removes the share on <type> <item> for user <sharee>
       Then user <sharee> should not have access via NG to <item>
@@ -47,3 +49,31 @@ Feature: Sharing NG
       Examples:
         | type | item          | permission | sharee |
         | file | ShareNG5.txt  | Can view   | Bob    |
+
+  @editshareng
+  Rule: Edit a share
+
+    Scenario Outline: Edit an existing share
+      Given the following items have been created in Alice account
+        | type   | name   |
+        | <type> | <item> |
+      And Alice has shared <type> <item> with <sharee> with
+        | permission      | <permission>     |
+        | expirationDate  | <expirationDate> |
+        | shareeType      | <shareeType>     |
+      When Alice selects to share the <type> <item>
+      And Alice edits the share on <type> <item> for user <sharee> with
+        | permission      | <newPermission>     |
+        | expirationDate  | <newExpirationDate> |
+      Then <sharee> should be visible in Sharing NG with
+        | permission      | <newPermission>     |
+        | expirationDate  | <newExpirationDate> |
+      And <shareeType> <sharee> should have access via NG to <item>
+
+      Examples:
+        | type   | item          | sharee | shareeType | permission             | expirationDate | newPermission          | newExpirationDate |
+        | file   | ShareNG6.txt  | Bob    | user       | Can view               |                | Can edit               | 10                |
+        | folder | ShareNG7      | Bob    | user       | Can edit               | 10             | Can edit with trashbin | 20                |
+        | folder | ShareNG8      | test   | group      | Can edit with trashbin | 10             | Can view               |                   |
+        | file   | ShareNG9.txt  | Bob    | user       | Can view               | 10             | Can edit               | 10                |
+        | folder | ShareNG10     | Bob    | user       | Can edit               | 10             | Can edit               | 20                |
