@@ -35,11 +35,15 @@ Feature: Sharing NG
   @removeshareng
   Rule: Remove a share
 
-    Scenario: Remove an existing share
+    Scenario Outline: Remove an existing share
       Given the following items have been created in Alice account
-        | type   | name          |
-        | file   | ShareNG5.txt  |
-      And Alice has shared file ShareNG5.txt with Bob with permissions Can view
-      When Alice selects to share the file ShareNG5.txt
-      And Alice removes the share on file ShareNG5.txt for user Bob
-      Then user Bob should not have access via NG to ShareNG5.txt
+        | type   | name   |
+        | <type> | <item> |
+      And Alice has shared <type> <item> with <sharee> with permissions <permission>
+      When Alice selects to share the <type> <item>
+      And Alice removes the share on <type> <item> for user <sharee>
+      Then user <sharee> should not have access via NG to <item>
+
+      Examples:
+        | type | item          | permission | sharee |
+        | file | ShareNG5.txt  | Can view   | Bob    |
