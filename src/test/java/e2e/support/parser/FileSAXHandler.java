@@ -51,6 +51,10 @@ public class FileSAXHandler extends DefaultHandler {
                 file.setPrivateLink(text);
                 break;
             }
+            case "oc:id": {
+                file.setOcId(text);
+                break;
+            }
             case "d:getlastmodified": {
                 file.setLastModified(text);
                 break;

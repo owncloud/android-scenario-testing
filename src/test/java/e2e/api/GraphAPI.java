@@ -8,21 +8,27 @@ package e2e.api;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
 
 import java.io.IOException;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 
+import e2e.model.OCFile;
 import e2e.model.OCSpace;
 import e2e.model.OCSpaceLink;
 import e2e.model.OCSpaceMember;
 import e2e.model.OCSpacePermission;
 import e2e.support.date.DateUtils;
 import e2e.support.log.Log;
+import e2e.support.parser.FileSAXHandler;
 import e2e.support.parser.OCMemberJSONHandler;
 import e2e.support.parser.OCUserJSONHandler;
 import okhttp3.MediaType;
@@ -391,5 +397,87 @@ public class GraphAPI extends CommonAPI {
         }
         Log.log(Level.FINE, "Space shared with user: " + userName + "ID: " + sharedSpaceId);
         return true;
+    }
+
+    public void createShare(String itemName, String sharee, String shareeType,
+            String permission, String expirationDate) throws IOException, SAXException, ParserConfigurationException {
+        Log.log(Level.FINE, "Create NG share. Item: " + itemName + " - Sharee: " + sharee
+                + " (" + shareeType + ") - Permission: " + permission + " - Expiration: " + expirationDate);
+        String driveId = personalSpaces.get("Alice");
+        String itemId = getItemId(driveId, itemName);
+        String shareeId = "group".equalsIgnoreCase(shareeType) ? getGroupId(sharee) : getUserIdFromName(sharee).getId();
+        String roleId = mapPermissionToRoleId(permission);
+        boolean hasExpiration = expirationDate != null && !expirationDate.trim().isEmpty();
+        String url = urlServer + members + driveId + "/items/" + itemId + "/invite";
+        Log.log(Level.FINE, "URL: " + url);
+        StringBuilder jsonBuilder = new StringBuilder("{");
+        if (hasExpiration) {
+            String expFormatted = DateUtils.daysToUTCForExpiration(expirationDate);
+            Log.log(Level.FINE, "Formatted expiration: " + expFormatted);
+            jsonBuilder.append("\"expirationDateTime\": \"").append(expFormatted).append("\",");
+        }
+        jsonBuilder.append("\"recipients\": [{")
+                   .append("\"@libre.graph.recipient.type\": \"").append(shareeType.toLowerCase()).append("\",")
+                   .append("\"objectId\": \"").append(shareeId).append("\"")
+                   .append("}],")
+                   .append("\"roles\": [\"").append(roleId).append("\"]")
+                   .append("}");
+        String json = jsonBuilder.toString();
+        Log.log(Level.FINE, "Body: " + json);
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = postRequest(url, body, "Alice");
+        Response response = httpClient.newCall(request).execute();
+        int code = response.code();
+        String responseBody = response.body() != null ? response.body().string() : "";
+        response.close();
+        Log.log(Level.FINE, "Response Code: " + code);
+        Log.log(Level.FINE, "Response Body: " + responseBody);
+        if (!response.isSuccessful()) {
+            throw new IOException("createShare failed (HTTP " + code + "): " + responseBody);
+        }
+    }
+
+    private String getItemId(String driveId, String itemName) throws IOException, SAXException, ParserConfigurationException {
+        Log.log(Level.FINE, "Get item ID for: " + itemName + " in drive: " + driveId);
+        String url = urlServer + spacesEndpoint + driveId + "/" + itemName;
+        Log.log(Level.FINE, "URL: " + url);
+        RequestBody body = RequestBody.create(MediaType.parse("application/xml; charset=utf-8"), basicPropfindBody);
+        Request request = davRequest(url, "PROPFIND", body, "Alice");
+        Response response = httpClient.newCall(request).execute();
+        String xml = response.body() != null ? response.body().string() : "";
+        response.close();
+        SAXParserFactory factory = SAXParserFactory.newInstance();
+        SAXParser parser = factory.newSAXParser();
+        FileSAXHandler handler = new FileSAXHandler();
+        parser.parse(new InputSource(new StringReader(xml)), handler);
+        return handler.getListFiles().stream()
+                .filter(f -> itemName.equals(f.getName()))
+                .map(OCFile::getOcId)
+                .filter(id -> id != null && !id.isEmpty())
+                .findFirst()
+                .orElseThrow(() -> new IOException("Item not found or missing oc:id: " + itemName));
+    }
+
+    private String getGroupId(String groupName) throws IOException {
+        Log.log(Level.FINE, "Get group ID for: " + groupName);
+        String url = urlServer + graphPath + "groups?%24search=%22" + groupName + "%22&%24orderby=displayName";
+        Log.log(Level.FINE, "URL: " + url);
+        Request request = getRequest(url, "Alice");
+        Response response = httpClient.newCall(request).execute();
+        int code = response.code();
+        String json = response.body() != null ? response.body().string() : "";
+        response.close();
+        Log.log(Level.FINE, "Response Code: " + code);
+        Log.log(Level.FINE, "Response Body: " + json);
+        JSONArray value = new JSONObject(json).getJSONArray("value");
+        return value.getJSONObject(0).getString("id");
+    }
+
+    private String mapPermissionToRoleId(String permission) {
+        return switch (permission) {
+            case "Can edit" -> "1c996275-f1c9-4e71-abdf-a42f6495e960";
+            case "Can edit with trashbin" -> "fb6c3e19-e378-47e5-b277-9732f9de6e21";
+            default -> "b1e2218d-eef8-4d4c-b82d-0f1a1b48f3b5"; // Can view
+        };
     }
 }

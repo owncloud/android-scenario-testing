@@ -19,7 +19,6 @@ import javax.xml.parsers.ParserConfigurationException;
 public class SharesPreconditions {
 
     private static final String USER_SHARE_TYPE = "0";
-    private static final String GROUP_SHARE_TYPE = "1";
     private static final String EMPTY_SHARE_NAME = "";
     private static final String EMPTY_PASSWORD = "";
     private static final String USER_RECIPIENT_TYPE = "user";
@@ -40,17 +39,7 @@ public class SharesPreconditions {
             throws IOException, ParserConfigurationException, SAXException {
         Log.log(Level.FINE, "Preparing ShareNG share. Sharing user: " + sharingUser
                 + " - Item: " + itemName + " - Recipient: " + recipientUser + " - Permission: " + permission);
-        String shareType = "group".equalsIgnoreCase(shareeType) ? GROUP_SHARE_TYPE : USER_SHARE_TYPE;
-        world.shareAPI().createShare(sharingUser, itemName, recipientUser, shareType,
-                mapPermissionToOcs(permission), EMPTY_SHARE_NAME, EMPTY_PASSWORD, 0);
-        world.shareAPI().acceptAllShares(shareeType, recipientUser);
-    }
-
-    private String mapPermissionToOcs(String permission) {
-        return switch (permission) {
-            case "Can edit" -> "3";
-            default -> "1";
-        };
+        world.graphAPI().createShare(itemName, recipientUser, shareeType, permission, expirationDate);
     }
 
     public void privateShareExists(String sharingUser, int shareLevel, String itemName,

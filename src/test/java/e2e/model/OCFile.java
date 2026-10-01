@@ -16,6 +16,7 @@ public class OCFile {
     private String lastModified;
 
     private String type;
+    private String ocId;
 
     public OCFile() {
 
@@ -75,6 +76,14 @@ public class OCFile {
 
     public void setType(String type) {
         this.type = type;
+    }
+
+    public String getOcId() {
+        return ocId;
+    }
+
+    public void setOcId(String ocId) {
+        this.ocId = ocId;
     }
 
 }
