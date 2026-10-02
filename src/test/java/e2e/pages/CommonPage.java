@@ -107,6 +107,14 @@ public class CommonPage {
                 AppiumBy.id(resourceId)));
     }
 
+    public List<WebElement> waitForListById(int timeToWait, String resourceId) {
+        long deadline = System.currentTimeMillis() + Duration.ofSeconds(timeToWait).toMillis();
+        do {
+            if (!driver.findElements(AppiumBy.id(resourceId)).isEmpty()) break;
+        } while (System.currentTimeMillis() < deadline);
+        return driver.findElements(AppiumBy.id(resourceId));
+    }
+
     public static void waitById(int timeToWait, WebElement mobileElement) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeToWait));
 

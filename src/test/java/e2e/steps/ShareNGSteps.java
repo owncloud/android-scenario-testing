@@ -68,4 +68,10 @@ public class ShareNGSteps {
         StepLogger.logCurrentStep(Level.FINE);
         world.shareNGAssertions().assertShareeIsVisible(sharee, table.asMap(String.class, String.class));
     }
+
+    @Then("{word} should not be visible in Sharing NG")
+    public void sharee_should_not_be_visible(String sharee) {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.shareNGAssertions().assertShareeIsNotVisible(sharee);
+    }
 }

@@ -25,6 +25,11 @@ public class ShareNGAssertions {
         this.world = world;
     }
 
+    public void assertShareeIsNotVisible(String sharee) {
+        Log.log(Level.FINE, "Assert sharee is not visible: " + sharee);
+        assertFalse(world.shareNGPage().isShareeDisplayed(sharee));
+    }
+
     public void assertShareeIsVisible(String sharee, Map<String, String> fields) {
         Log.log(Level.FINE, "Assert sharee is visible: " + sharee);
         for (Map.Entry<String, String> entry : fields.entrySet()) {

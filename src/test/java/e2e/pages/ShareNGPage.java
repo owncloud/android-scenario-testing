@@ -43,6 +43,14 @@ public class ShareNGPage extends CommonPage {
         addShareButton.click();
     }
 
+    public boolean isShareeDisplayed(String sharee) {
+        WebElement item = findShareByNameOrNull(sharee);
+        if (item == null) {
+            return false;
+        }
+        return true;
+    }
+
     public boolean isShareeDisplayedWithPermission(String sharee, String permission) {
         WebElement item = findShareByNameOrNull(sharee);
         if (item == null) {
@@ -78,8 +86,7 @@ public class ShareNGPage extends CommonPage {
     }
 
     private WebElement findShareByNameOrNull(String sharee) {
-        waitById(WAIT_TIME, MEMBER_ITEM_LAYOUT_ID);
-        for (WebElement item : findListId(MEMBER_ITEM_LAYOUT_ID)) {
+        for (WebElement item : waitForListById(WAIT_TIME, MEMBER_ITEM_LAYOUT_ID)) {
             List<WebElement> nameElements = item.findElements(AppiumBy.id(SHAREE_NAME_ID));
             if (!nameElements.isEmpty() && nameElements.get(0).getText().contains(sharee)) {
                 return item;

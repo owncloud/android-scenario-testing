@@ -44,7 +44,8 @@ Feature: Sharing NG
         | expirationDate  |                |
       When Alice selects to share the <type> <item>
       And Alice removes the share on <type> <item> for user <sharee>
-      Then user <sharee> should not have access via NG to <item>
+      Then <sharee> should not be visible in Sharing NG
+      And user <sharee> should not have access via NG to <item>
 
       Examples:
         | type | item          | permission | sharee |
