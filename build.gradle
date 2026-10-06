@@ -6,6 +6,9 @@ buildscript {
         gradlePluginPortal()
         mavenCentral()
     }
+    dependencies {
+        classpath 'net.masterthought:cucumber-reporting:5.7.7'
+    }
 }
 
 apply plugin: 'java'
@@ -265,3 +268,38 @@ cucumberRerun1.finalizedBy cucumberRerun2
 
 cucumberRerun1.mustRunAfter test
 cucumberRerun2.mustRunAfter cucumberRerun1
+
+/**
+ * HTML report.
+ *
+ * Reads all Cucumber JSON files produced by test + reruns and generates
+ * an interactive HTML report under target/cucumber-html-report/.
+ *
+ * Entry point: target/cucumber-html-report/overview-features.html
+ */
+tasks.register('cucumberReport') {
+    mustRunAfter cucumberRerun2
+
+    doLast {
+        def jsonFiles = fileTree(cucumberJsonDir)
+                .matching { include '*.json' }
+                .files
+                .collect { it.absolutePath }
+
+        if (jsonFiles.isEmpty()) {
+            logger.warn('No Cucumber JSON files found — skipping HTML report generation.')
+            return
+        }
+
+        def reportDir = file('target/cucumber-html-report')
+        reportDir.mkdirs()
+
+        def config = new net.masterthought.cucumber.Configuration(reportDir, 'ownCloud Android E2E')
+        config.addClassifications('Platform', 'Android')
+        new net.masterthought.cucumber.ReportBuilder(jsonFiles, config).generateReports()
+
+        logger.lifecycle("Cucumber HTML report → file://${reportDir}/cucumber-html-reports/overview-features.html")
+    }
+}
+
+cucumberRerun2.finalizedBy cucumberReport
