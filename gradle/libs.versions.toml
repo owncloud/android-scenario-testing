@@ -7,7 +7,8 @@ apache-commons-io = "2.22.0"
 appium-java-client = "10.1.1"
 assertj-core = "3.27.7"
 byte-buddy = "1.18.14"
-cucumber = "7.34.7"
+cucumber = "8.0.4"
+jackson = "2.18.3"
 guava = "33.7.2-jre"
 json = "20260814"
 junit = "4.13.2"
@@ -35,6 +36,9 @@ appium-java-client = { module = "io.appium:java-client", version.ref = "appium-j
 
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
+
+jackson-databind = { module = "com.fasterxml.jackson.core:jackson-databind", version.ref = "jackson" }
+jackson-datatype-jdk8 = { module = "com.fasterxml.jackson.datatype:jackson-datatype-jdk8", version.ref = "jackson" }
 
 json = { module = "org.json:json", version.ref = "json" }
 
@@ -67,6 +71,11 @@ appium = [
 http-client = [
     "okhttp",
     "okio"
+]
+
+jackson = [
+    "jackson-databind",
+    "jackson-datatype-jdk8"
 ]
 
 json = [

@@ -20,6 +20,7 @@ dependencies {
     testImplementation libs.bundles.apache.commons
     testImplementation libs.bundles.appium
     testImplementation libs.bundles.http.client
+    testImplementation libs.bundles.jackson
     testImplementation libs.bundles.json
     testImplementation libs.bundles.assertions
     testImplementation libs.bundles.logging
