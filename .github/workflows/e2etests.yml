@@ -70,7 +70,7 @@ jobs:
         if: always()
         with:
           name: report
-          path: target
+          path: target/cucumber-html-report/cucumber-html-reports/
 
       - name: Sanitize log filenames
         if: always()
