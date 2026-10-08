@@ -53,7 +53,7 @@ public class SpaceMembersPage extends CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/expiration_date_switch")
     private WebElement expirationDateSwitch;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/invite_member_button")
+    @AndroidFindBy(id = "com.owncloud.android:id/confirm_action_button")
     private WebElement inviteMemberButton;
 
     @AndroidFindBy(id = "com.owncloud.android:id/create_public_link_button")

@@ -37,7 +37,7 @@ public class ShareNGCreatePage extends CommonPage {
     @AndroidFindBy(id = "android:id/button1")
     private WebElement okButton;
 
-    @AndroidFindBy(id = "com.owncloud.android:id/invite_member_button")
+    @AndroidFindBy(id = "com.owncloud.android:id/confirm_action_button")
     private WebElement inviteButton;
 
     public ShareNGCreatePage(AndroidDriver driver) {
