@@ -7,7 +7,7 @@ buildscript {
         mavenCentral()
     }
     dependencies {
-        classpath 'net.masterthought:cucumber-reporting:5.7.7'
+        classpath 'net.masterthought:cucumber-reporting:5.11.0'
     }
 }
 
