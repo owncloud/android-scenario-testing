@@ -22,7 +22,7 @@ import io.cucumber.junit.CucumberOptions;
 @RunWith(Cucumber.class)
 @CucumberOptions(
         plugin = {"pretty"},
-        glue = "e2e",
+        glue = {"e2e.steps", "e2e.hooks", "e2e.world"},
         features = "src/test/resources/features"
 )
 
