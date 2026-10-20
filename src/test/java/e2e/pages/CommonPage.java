@@ -12,7 +12,7 @@ import org.openqa.selenium.Dimension;
 import org.openqa.selenium.WebElement;
 import org.openqa.selenium.interactions.PointerInput;
 import org.openqa.selenium.interactions.Sequence;
-import org.openqa.selenium.remote.RemoteWebElement;
+import io.appium.java_client.remote.AppiumWebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 import org.openqa.selenium.support.ui.WebDriverWait;
@@ -207,7 +207,7 @@ public class CommonPage {
         Log.log(Level.FINE, "Starting long press on element with text: " + text);
         WebElement element = driver.findElement(AppiumBy.xpath(
                 String.format(textViewXpath, fileNameId, text)));
-        driver.executeScript(longClickGesture, Map.of("elementId", ((RemoteWebElement) element).getId(),
+        driver.executeScript(longClickGesture, Map.of("elementId", ((AppiumWebElement) element).getId(),
                         "duration", durationMs));
     }
 

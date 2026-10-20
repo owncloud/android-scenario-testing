@@ -22,6 +22,7 @@ dependencies {
     testImplementation libs.bundles.cucumber
     testImplementation libs.bundles.apache.commons
     testImplementation libs.bundles.appium
+    testImplementation libs.bundles.selenium
     testImplementation libs.bundles.http.client
     testImplementation libs.bundles.jackson
     testImplementation libs.bundles.json

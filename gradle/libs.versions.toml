@@ -4,7 +4,8 @@ apache-commons-lang = "3.21.0"
 apache-commons-text = "1.15.0"
 apache-commons-codec = "1.23.0"
 apache-commons-io = "2.22.0"
-appium-java-client = "10.1.1"
+appium-java-client = "11.0.0"
+selenium = "4.25.0"
 assertj-core = "3.27.7"
 byte-buddy = "1.18.15"
 cucumber = "8.0.4"
@@ -34,6 +35,9 @@ byte-buddy = { module = "net.bytebuddy:byte-buddy", version.ref = "byte-buddy" }
 guava = { module = "com.google.guava:guava", version.ref = "guava" }
 
 appium-java-client = { module = "io.appium:java-client", version.ref = "appium-java-client" }
+
+selenium-support = { module = "org.seleniumhq.selenium:selenium-support", version.ref = "selenium" }
+selenium-remote-driver = { module = "org.seleniumhq.selenium:selenium-remote-driver", version.ref = "selenium" }
 
 okhttp = { module = "com.squareup.okhttp3:okhttp", version.ref = "okhttp" }
 okio = { module = "com.squareup.okio:okio", version.ref = "okio" }
@@ -67,6 +71,11 @@ apache-commons = [
 
 appium = [
     "appium-java-client"
+]
+
+selenium = [
+    "selenium-support",
+    "selenium-remote-driver"
 ]
 
 http-client = [
