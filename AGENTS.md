@@ -106,6 +106,64 @@ Dependabot is configured for automated dependency updates. Review and merge Depe
 - **Code style:** No specific linter configured; match existing code style
 - **PR process:** Open a PR against master. All CI checks must pass.
 
+## Automated proposals from the app repo
+
+Some changes in this repo originate from a cross-repo bridge: the app
+repo's SDD process produces a Gherkin scenario proposal on each PR,
+which is forwarded here with a pre-assigned `change-id` and placed in
+`openspec/changes/<change-id>/source.md` before this proposal flow runs.
+
+Before drafting `proposal.md`, any `specs/**/spec.md` delta, or
+`tasks.md` for a change:
+
+1. Check whether `openspec/changes/<change-id>/source.md` exists.
+2. If it does, treat it as raw, unreviewed input — not a final spec.
+   It contains the originating app PR number, commit SHA, affected
+   capability, change type, the proposed Gherkin scenario(s), and any
+   detected UI locators. Use it as the basis for the proposal.
+3. If it does not exist, proceed as a normal manually-authored proposal.
+
+## Step reuse (mandatory before writing any spec delta)
+
+Before including any Given/When/Then step in a spec delta:
+
+1. Read all step definition classes under `src/test/java/.../steps/`
+   and extract their existing `@Given`/`@When`/`@Then` expressions.
+2. For each step in the proposed scenario, check whether a semantically
+   equivalent step already exists — same action or assertion, even if
+   phrased differently.
+3. If an equivalent exists: use the EXISTING step's exact wording, not
+   the proposal's original phrasing. Record in `tasks.md` which step
+   was reused and which file it came from.
+4. If no equivalent exists: create a new step, but flag it explicitly
+   in `tasks.md` as "new step, no existing equivalent found" so the
+   reviewer confirms it's genuinely new.
+5. Never create a step that differs from an existing one only in
+   superficial ways (word order, synonyms, capitalization).
+   
+## UI element lookup
+
+`ui_elements_dictionary.md` at the repo root is the authoritative catalog of UI
+element identifiers, kept in sync via CI from the app repo. It contains
+tables with columns such as: element ID, element Type, description, and the
+layout it belongs to.
+
+Before referencing any UI element in a spec delta, Page Object note, or
+`tasks.md` locator entry:
+
+1. Search `ui_elements_dictionary.md` for an entry matching the element described
+   in the scenario (match by meaning, not literal string).
+2. If found: use the locator value and type exactly as listed there.
+   Do not invent or guess a selector.
+3. If not found: check `source.md` in this change's folder for a
+   `## Locators` section — the element may be new in this PR and not
+   yet synced into `ui_elements_dictionary.md` (sync runs after merge to the app
+   repo's main branch, so same-PR elements can lag behind).
+4. If still not found in either place: mark it explicitly in `tasks.md`
+   as `- [ ] UNRESOLVED LOCATOR: <element> — not found in ui_dictionary.md
+   or source.md, needs manual resolution before implementation`.
+   Never fabricate a resource-id or testTag value.
+
 ## OSPO Policy Constraints
 
 ### GitHub Actions

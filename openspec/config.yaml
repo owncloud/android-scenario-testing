@@ -1,32 +1,140 @@
 schema: spec-driven
 
-# Project context (optional)
-# This is shown to AI when creating artifacts.
-# Add your tech stack, conventions, style guides, domain knowledge, etc.
-# Example:
-#   context: |
-#     Tech stack: TypeScript, React, Node.js
-#     We use conventional commits
-#     Domain: e-commerce platform
+context: |
+  ## Project
+  End-to-end test harness for the ownCloud Android app. Runs on a host machine and drives
+  an Android device/emulator via Appium + UIAutomator2. Tests are authored in Gherkin and
+  executed through JUnit 4 + Cucumber.
 
-# Per-artifact rules (optional)
-# Add custom rules for specific artifacts.
-# Example:
-#   rules:
-#     proposal:
-#       - Keep proposals under 500 words
-#       - Always include a "Non-goals" section
-#     tasks:
-#       - Break tasks into chunks of max 2 hours
+  ## Tech stack
+  - Language: Java 17
+  - Build: Gradle (all versions pinned in gradle/libs.versions.toml — never edit build.gradle versions directly)
+  - Test framework: Cucumber 8 / JUnit 4 / AssertJ
+  - Mobile automation: Appium java-client 11, UIAutomator2, Selenium 4
+  - HTTP clients: OkHttp 5 (REST API calls in tests), Jackson (JSON parsing)
+  - DI: PicoContainer (cucumber-picocontainer)
+  - CI: GitHub Actions — compile check on every PR, full nightly suite (Mon–Fri)
 
-# Per-operation guidance (optional)
-# Add advisory guidance for how apply and archive work should be conducted.
-# This is separate from artifact rules above.
-# Example:
-#   operations:
-#     apply:
-#       guidance:
-#         - Keep test summaries concise
-#     archive:
-#       guidance:
-#         - Summarize the archive outcome before finishing
+  ## Architecture
+  All code lives under src/test/java/e2e/:
+
+  - pages/      — Page Object Model; every screen/component has a class here.
+                  Steps never call Appium directly; they always go through a page.
+                  CommonPage is the base class — it owns all finders (findId, findUIAutomatorText,
+                  waitById, waitByTextVisible, swipe, longPress, etc.) and the shared driver.
+                  WAIT_TIME = 7 seconds is the standard explicit-wait constant.
+                  AndroidManager is a singleton that creates and holds the AndroidDriver.
+
+  - steps/      — Cucumber step definitions; thin wrappers that delegate to tasks/ and pages/.
+                  Glue packages: e2e.steps, e2e.hooks, e2e.world (declared in RunCucumberTest).
+
+  - tasks/      — Multi-step UI task abstractions (e.g. FileListTasks, SharesTasks). Steps call
+                  tasks when an action spans multiple pages.
+
+  - assertions/ — AssertJ-based assertions grouped by domain. Steps call assertions, not raw
+                  assertThat().
+
+  - preconditions/ — Test setup via REST API (WebDAV / OCS / Graph). Never sets up state through
+                     the UI.
+
+  - api/        — HTTP clients: FilesAPI (WebDAV), ShareAPI (OCS), GraphAPI (Graph v1.0),
+                  TrashbinAPI. CommonAPI is the base; it builds credentials, resolves endpoints,
+                  and handles the oCIS vs oC10 difference (personal drive IDs vs /remote.php/dav).
+
+  - model/      — Data models: OCFile, OCShare, OCSpace, OCSpaceLink, OCSpaceMember,
+                  OCSpacePermission.
+
+  - world/      — World is the PicoContainer DI root. Injected into every step class and Hooks.
+                  Holds the driver and lazily instantiates all pages, tasks, assertions,
+                  preconditions, and support objects.
+
+  - hooks/      — Hooks.java: @Before activates the app and ensures connection is up;
+                  @After terminates the app, runs ScenarioCleanup, stops screen recording,
+                  and resets app preferences for @hidden / @spaces scenarios.
+
+  - support/    — Utilities: Log (java.util.logging), DeviceClient (ADB shell commands,
+                  push/pull files, connection toggle), AppPreferences (content provider calls),
+                  ScreenRecorder (saves video on failure), ScenarioCleanup (API cleanup after
+                  each scenario), parsers (SAX/JSON), oCHttpClient (unsafe OkHttpClient for
+                  self-signed certs).
+
+  ## Backends
+  Two backends are supported, toggled via -Dbackend=:
+  - oCIS: modern backend; uses Graph API + WebDAV spaces (/dav/spaces/<driveId>)
+  - oC10: classic; uses OCS API + /remote.php/dav/files/<user>
+
+  CommonAPI resolves the correct endpoint at construction time (fetches personal drive IDs
+  for oCIS via GET /graph/v1.0/me/drives).
+
+  ## Test users
+  Standard users in all scenarios: Alice (primary), Bob, Charles.
+  Credentials live in local.properties (not committed). ScenarioCleanup always wipes Alice's
+  and Bob's root folders + trashbin after every scenario.
+
+  ## Feature files
+  Location: src/test/resources/io/cucumber/*.feature
+  Runner: RunCucumberTest points to src/test/resources/features (note: feature files are
+  actually under io/cucumber/ and passed via cucumber.features system property at runtime).
+  Execution order: randomised (cucumber.execution.order=random in cucumber.properties).
+  Default filter: not @ignore.
+
+  ## Tags
+  @ignore     — always skipped
+  @noocis     — skip when backend=oCIS
+  @noci       — skip in CI (manual/local-only)
+  @smoke      — subset for smoke runs
+  @camera     — requires physical camera
+  @hidden     — scenarios that toggle show_hidden_files preference (reset in @After)
+  @spaces     — scenarios that toggle show_disabled_spaces preference (reset in @After)
+
+  ## Rerun mechanism
+  Build chain: test → cucumberRerun1 → cucumberRerun2.
+  test and cucumberRerun1 ignore failures; only cucumberRerun2 fails the build.
+  Rerun files: target/cucumber-reports/rerun/{rerun.txt, rerun-1.txt}.
+  HTML reports: target/cucumber-html-report/overview-features.html.
+
+  ## Conventions
+  - Match existing code style; do not refactor unrelated code in the same PR.
+  - New feature area = new page + task + step + assertion + precondition classes + .feature file.
+  - Don't commit or push. Just make changes.
+  - Actions in GitHub workflows must be pinned to full commit SHAs.
+  - No new copyleft dependencies without discussion.
+
+  ## Known flakiness context
+  - Appium interactions rely on implicit wait (7 s) + explicit WebDriverWait for specific
+    conditions. Timing-sensitive steps are the primary source of flakiness.
+  - Random execution order can expose hidden state dependencies between scenarios.
+  - The 2-rerun chain masks intermittent failures in CI — a scenario that consistently
+    passes on the 2nd or 3rd attempt may still have an underlying race condition.
+  - Connection toggling (setConnectionDown/Up) involves a WebDriverWait for WiFi/data
+    state; device lag can cause timeouts here.
+  - ScenarioCleanup is API-based and runs after @After teardown; if it throws, the
+    try/finally in Hooks still stops the recording and resets preferences.
+
+rules:
+  proposal:
+    - Keep scope focused on the test harness (Java/Gherkin). The ownCloud Android app
+      source code lives in a separate repository and is not modified here.
+    - Always state which backend(s) (oCIS, oC10, or both) the change applies to.
+    - Call out any new Appium interactions that could introduce timing sensitivity.
+  tasks:
+    - Check if new steps match with the existing ones, and adapt them to the existing
+      if posible. Scenarios in source.md file
+    - Break tasks into independently verifiable steps (one page/task/step/assertion
+      class per task where possible).
+    - For each new scenario, include a task to write the .feature file and a separate
+      task to implement the step definitions.
+    - Check if existing binded UI elements could be reused in the scenario. Otherwise
+      set a placeholder and notify it.
+    - Note which backend each task must be verified against.
+
+operations:
+  apply:
+    guidance:
+      - Run ./gradlew clean compileJava compileTestJava after each implementation task
+        to verify compilation before moving on.
+      - New page classes must extend CommonPage and receive the AndroidDriver via constructor.
+      - Preconditions must use the API layer (api/), never the UI, to set up test state.
+  archive:
+    guidance:
+      - Confirm ./gradlew clean compileJava compileTestJava passes before archiving.
