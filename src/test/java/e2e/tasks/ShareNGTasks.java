@@ -73,6 +73,11 @@ public class ShareNGTasks {
         world.shareNGCreatePage().tapOk();
     }
 
+    public void tapPermalinkButton() {
+        Log.log(Level.FINE, "Tap permalink button");
+        world.shareNGPage().tapPermalinkButton();
+    }
+
     public void removeShare(String sharee) {
         Log.log(Level.FINE, "Remove share for: " + sharee);
         world.shareNGPage().removeShare(sharee);

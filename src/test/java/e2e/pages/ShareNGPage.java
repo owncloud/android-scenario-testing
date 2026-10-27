@@ -26,6 +26,9 @@ public class ShareNGPage extends CommonPage {
     @AndroidFindBy(id = "android:id/button1")
     private WebElement confirmButton;
 
+    @AndroidFindBy(id = "com.owncloud.android:id/permanent_link_button")
+    private WebElement permanentLinkButton;
+
     private static final String MEMBER_ITEM_LAYOUT_ID = "com.owncloud.android:id/member_item_layout";
     private static final String SHAREE_NAME_ID = "com.owncloud.android:id/member_name";
     private static final String EXPIRATION_DATE_ID = "com.owncloud.android:id/expiration_date";
@@ -83,6 +86,21 @@ public class ShareNGPage extends CommonPage {
         Log.log(Level.FINE, "Edit share for: " + sharee);
         WebElement item = findShareByNameOrNull(sharee);
         item.findElement(AppiumBy.id(EDIT_MEMBER_BUTTON_ID)).click();
+    }
+
+    public boolean isPermalinkButtonDisplayed() {
+        Log.log(Level.FINE, "Check if permalink button is displayed");
+        return !findListId("com.owncloud.android:id/permanent_link_button").isEmpty();
+    }
+
+    public void tapPermalinkButton() {
+        Log.log(Level.FINE, "Tap permalink button");
+        permanentLinkButton.click();
+    }
+
+    public boolean isPermalinkActionTriggered() {
+        Log.log(Level.FINE, "Check if system share sheet is triggered");
+        return !waitForListById(WAIT_TIME, "com.android.intentresolver:id/chooser_headline_row_container").isEmpty();
     }
 
     private WebElement findShareByNameOrNull(String sharee) {

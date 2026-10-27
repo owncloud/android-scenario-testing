@@ -23,7 +23,7 @@ See `proposal.md - Why` for motivation. Relevant existing code:
 ## Decisions
 
 **Where does the permalink element live?**
-Add it to `ShareNGPage`, since the Share header is part of the ShareNG screen (oCIS-only). Creating a separate page class for a single button adds unnecessary indirection. The button's resource id is `getPrivateLinkButton` (confirmed in `ui_elements_dictionary.md`, layout `share_file_layout.xml`).
+Add it to `ShareNGPage`, since the Share header is part of the ShareNG screen (oCIS-only). Creating a separate page class for a single button adds unnecessary indirection. The button's resource id is `permanent_link_button` (confirmed in `ui_elements_dictionary.md`, layout `members_activity.xml`, description "Get permanent link").
 
 **Which step class gets the new steps?**
 Add to `ShareNGSteps` — keeps share-related steps cohesive. If the steps grow significantly, a dedicated `PermalinkSteps` can be extracted later.

@@ -51,6 +51,12 @@ public class ShareNGSteps {
         world.shareNGTasks().removeShare(sharee);
     }
 
+    @When("Alice taps the permalink button")
+    public void alice_taps_permalink_button() {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.shareNGTasks().tapPermalinkButton();
+    }
+
     @Then("{usertype} {word} should have access via NG to {word}")
     public void user_should_have_access(String userType, String userName, String itemName) throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
@@ -61,6 +67,18 @@ public class ShareNGSteps {
     public void user_should_not_have_access(String userType, String userName, String itemName) throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
         world.shareNGAssertions().assertUserHasNoAccess(userType, userName, itemName);
+    }
+
+    @Then("the permalink button is shown")
+    public void permalink_button_is_shown() {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.shareNGAssertions().assertPermalinkButtonDisplayed();
+    }
+
+    @Then("the private link action is triggered")
+    public void private_link_action_is_triggered() {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.shareNGAssertions().assertPermalinkActionTriggered();
     }
 
     @Then("{word} should be visible in Sharing NG with")

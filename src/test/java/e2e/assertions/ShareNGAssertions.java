@@ -56,6 +56,16 @@ public class ShareNGAssertions {
         assertTrue(world.shareNGPage().isShareeDisplayedWithExpirationDate(sharee, expectedLocalDate));
     }
 
+    public void assertPermalinkButtonDisplayed() {
+        Log.log(Level.FINE, "Assert permalink button is displayed");
+        assertTrue(world.shareNGPage().isPermalinkButtonDisplayed());
+    }
+
+    public void assertPermalinkActionTriggered() {
+        Log.log(Level.FINE, "Assert permalink action (system share sheet) is triggered");
+        assertTrue(world.shareNGPage().isPermalinkActionTriggered());
+    }
+
     public void assertUserHasAccess(String userType, String sharee, String itemName) throws IOException {
         Log.log(Level.FINE, "Assert " + sharee + " has access to item: " + itemName);
         assertTrue(isAccessible(userType, sharee, itemName));
