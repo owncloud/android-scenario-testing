@@ -117,14 +117,27 @@ rules:
       source code lives in a separate repository and is not modified here.
     - Always state which backend(s) (oCIS, oC10, or both) the change applies to.
     - Call out any new Appium interactions that could introduce timing sensitivity.
+    - source.md is the entry point. For cross-repo changes it is generated automatically.
+      For manual changes it must follow the template in openspec/steps_rules.md (one
+      3-line plain-English description per scenario + rough Gherkin below it).
   tasks:
-    - Check if new steps match with the existing ones, and adapt them to the existing
-      if posible. Scenarios in source.md file
+    - Read source.md to understand the intent of each scenario (description + vague Gherkin).
+    - Read openspec/steps_rules.md for vocabulary and structural constraints before
+      attempting any step match. Use it to adapt input phrasing to the project's conventions.
+    - Grep src/test/java/e2e/steps/ directly for the full current list of @Given/@When/@Then
+      expressions. steps_rules.md is a vocabulary guide, not the authoritative step list.
+    - For each input step: adapt phrasing using steps_rules.md, then verify an exact match
+      exists in the step files. Record the result in the step reuse table in tasks.md.
+    - Mark unresolved items explicitly as
+      "UNRESOLVED: <element/step/message> — needs manual resolution before implementation".
+      Never fabricate or guess a step expression, locator, or error message text.
+    - If a new step introduces a vocabulary pattern not covered by steps_rules.md, add
+      an explicit task to update openspec/steps_rules.md with the new pattern.
     - Break tasks into independently verifiable steps (one page/task/step/assertion
       class per task where possible).
     - For each new scenario, include a task to write the .feature file and a separate
       task to implement the step definitions.
-    - Check if existing binded UI elements could be reused in the scenario. Otherwise
+    - Check if existing bound UI elements could be reused in the scenario. Otherwise
       set a placeholder and notify it.
     - Note which backend each task must be verified against.
 

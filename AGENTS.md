@@ -121,25 +121,36 @@ Before drafting `proposal.md`, any `specs/**/spec.md` delta, or
    It contains the originating app PR number, commit SHA, affected
    capability, change type, the proposed Gherkin scenario(s), and any
    detected UI locators. Use it as the basis for the proposal.
-3. If it does not exist, proceed as a normal manually-authored proposal.
+3. If it does not exist, this is a manually-authored proposal. Create
+   `source.md` following the template in `openspec/steps_rules.md`:
+   one 3-line plain-English description per scenario (what it tests,
+   which backend, any known constraints) followed by the rough Gherkin.
+   Vague phrasing is expected — the proposal step adapts it.
 
 ## Step reuse (mandatory before writing any spec delta)
 
 Before including any Given/When/Then step in a spec delta:
 
-1. Read all step definition classes under `src/test/java/.../steps/`
-   and extract their existing `@Given`/`@When`/`@Then` expressions.
-2. For each step in the proposed scenario, check whether a semantically
+1. Read `openspec/steps_rules.md` for vocabulary and structural constraints.
+   Use it to adapt input phrasing to the project's conventions before searching.
+2. Grep all step definition classes under `src/test/java/.../steps/` for
+   `@Given`/`@When`/`@Then` expressions — this is the authoritative list.
+   `steps_rules.md` is a vocabulary guide, not a substitute for reading the source.
+3. For each step in the proposed scenario, check whether a semantically
    equivalent step already exists — same action or assertion, even if
    phrased differently.
-3. If an equivalent exists: use the EXISTING step's exact wording, not
+4. If an equivalent exists: use the EXISTING step's exact wording, not
    the proposal's original phrasing. Record in `tasks.md` which step
    was reused and which file it came from.
-4. If no equivalent exists: create a new step, but flag it explicitly
-   in `tasks.md` as "new step, no existing equivalent found" so the
-   reviewer confirms it's genuinely new.
-5. Never create a step that differs from an existing one only in
+5. If no equivalent exists: create a new step, flag it explicitly in
+   `tasks.md` as "new step, no existing equivalent found", and if it
+   introduces a new pattern (actor, verb, parameter type, structural rule),
+   add a task to update `openspec/steps_rules.md`.
+6. Never create a step that differs from an existing one only in
    superficial ways (word order, synonyms, capitalization).
+7. If a step, locator, or error message text cannot be resolved from
+   the step files or `ui_elements_dictionary.md`, mark it explicitly as
+   "UNRESOLVED" in `tasks.md`. Never fabricate or guess.
    
 ## UI element lookup
 
