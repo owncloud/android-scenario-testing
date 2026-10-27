@@ -284,10 +284,8 @@ public class FileListTasks {
     }
 
     private String buildPrivateLink(String scheme, String privateLink) {
-        final String escapedDollar = "\\$";
         String originalScheme = getScheme(privateLink);
-        return privateLink.replace(originalScheme, scheme)
-                .replace("$", escapedDollar);
+        return privateLink.replace(originalScheme, scheme);
     }
 
     private String getScheme(String url) {
