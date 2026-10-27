@@ -103,6 +103,11 @@ public class ShareNGPage extends CommonPage {
         return !waitForListById(WAIT_TIME, "com.android.intentresolver:id/chooser_headline_row_container").isEmpty();
     }
 
+    public void closeShareSheet() {
+        Log.log(Level.FINE, "Dismiss system share sheet");
+        driver.navigate().back();
+    }
+
     private WebElement findShareByNameOrNull(String sharee) {
         for (WebElement item : waitForListById(WAIT_TIME, MEMBER_ITEM_LAYOUT_ID)) {
             List<WebElement> nameElements = item.findElements(AppiumBy.id(SHAREE_NAME_ID));

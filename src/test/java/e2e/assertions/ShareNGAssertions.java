@@ -64,6 +64,10 @@ public class ShareNGAssertions {
     public void assertPermalinkActionTriggered() {
         Log.log(Level.FINE, "Assert permalink action (system share sheet) is triggered");
         assertTrue(world.shareNGPage().isPermalinkActionTriggered());
+        // The system Intent Chooser stays open between Cucumber scenarios and causes
+        // the next scenario to fail. Dismissed here because close is always paired
+        // with this assertion and is not a user-visible step worth surfacing in Gherkin.
+        world.shareNGPage().closeShareSheet();
     }
 
     public void assertUserHasAccess(String userType, String sharee, String itemName) throws IOException {

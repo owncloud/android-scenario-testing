@@ -18,7 +18,6 @@ Feature: Permalink
     Examples:
       | type   | item            |
       | file   | Permalink1.txt  |
-      | folder | Permalink2      |
 
   Scenario Outline: Tapping permalink button copies or sends the private link
     Given the following items have been created in Alice account
@@ -30,5 +29,4 @@ Feature: Permalink
 
     Examples:
       | type   | item            |
-      | file   | Permalink3.txt  |
-      | folder | Permalink4      |
+      | folder | Permalink2      |

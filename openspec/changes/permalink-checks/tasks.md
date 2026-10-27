@@ -25,11 +25,13 @@ Locators confirmed from `ui_elements_dictionary.md` and user-provided inspection
 - [x] 2.1 Add `@AndroidFindBy(id = "com.owncloud.android:id/permanent_link_button")` field in `ShareNGPage`.
 - [x] 2.2 Add `isPermalinkButtonDisplayed()` method to `ShareNGPage` — returns `true` if the element is present and visible.
 - [x] 2.3 Add `tapPermalinkButton()` method to `ShareNGPage` — clicks the permalink button element.
-- [x] 2.4 Add `isPermalinkActionTriggered()` method to `ShareNGPage` — returns `true` if the system Intent Chooser share sheet is displayed. Primary strategy: `waitByTextVisible` with a stable text visible in the chooser (e.g. the chooser headline). Secondary/documented: `waitById(WAIT_TIME, "com.android.intentresolver:id/chooser_headline_row_container")` — valid on stock Android 12+ (API 31+) only.
+- [x] 2.4 Add `isPermalinkActionTriggered()` method to `ShareNGPage` — returns `true` if the system Intent Chooser share sheet is displayed. Primary strategy: `waitByTextVisible("Sharing link")` (headline text confirmed via XML). Secondary/documented: `waitById(WAIT_TIME, "com.android.intentresolver:id/chooser_headline_row_container")` — valid on stock Android 12+ (API 31+) only.
+- [x] 2.5 Add `closeShareSheet()` method to `ShareNGPage` — calls `pressBack()` to dismiss the system Intent Chooser share sheet.
 
 ## 3. Tasks — ShareNGTasks
 
 - [x] 3.1 Add `tapPermalinkButton()` method to `ShareNGTasks` — delegates to `world.shareNGPage().tapPermalinkButton()`.
+- [x] 3.2 ~~Add `closeShareSheet()` method to `ShareNGTasks`~~ — not needed; close is called directly from `ShareNGAssertions.assertPermalinkActionTriggered()`.
 
 ## 4. Assertions — ShareNGAssertions
 
@@ -41,6 +43,7 @@ Locators confirmed from `ui_elements_dictionary.md` and user-provided inspection
 - [x] 5.1 Add `@Then("the permalink button is shown")` step in `ShareNGSteps` — delegates to `world.shareNGAssertions().assertPermalinkButtonDisplayed()`. (NEW step)
 - [x] 5.2 Add `@When("Alice taps the permalink button")` step in `ShareNGSteps` — delegates to `world.shareNGTasks().tapPermalinkButton()`. (NEW step)
 - [x] 5.3 Add `@Then("the private link action is triggered")` step in `ShareNGSteps` — delegates to `world.shareNGAssertions().assertPermalinkActionTriggered()`. (NEW step)
+- [x] 5.4 ~~Add `@When("Alice closes the share sheet")` step~~ — not needed; close is folded into `assertPermalinkActionTriggered()`, keeping Gherkin free of test-plumbing steps.
 
 ## 6. Feature file
 
@@ -49,6 +52,7 @@ Locators confirmed from `ui_elements_dictionary.md` and user-provided inspection
   - Background: `Given user Alice is logged`
   - Scenario Outline "Permalink button is visible in Share header" covering file and folder items, using the reused steps from `FileListSteps` and the new `Then the permalink button is shown` step.
   - Scenario Outline "Tapping permalink button copies or sends the private link" covering file and folder items, using the new `When Alice taps the permalink button` and `Then the private link action is triggered` steps.
+- [x] 6.2 ~~Add `And Alice closes the share sheet` to `permalink.feature`~~ — not needed; close is handled inside the assertion step.
 
 ## 7. Verify
 
