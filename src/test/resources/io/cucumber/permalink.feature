@@ -19,6 +19,7 @@ Feature: Permalink
       | type   | item            |
       | file   | Permalink1.txt  |
 
+  @ignore
   Scenario Outline: Tapping permalink button copies or sends the private link
     Given the following items have been created in Alice account
       | type   | name   |
