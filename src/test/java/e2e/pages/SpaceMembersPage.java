@@ -74,6 +74,7 @@ public class SpaceMembersPage extends CommonPage {
     private static final String EDIT_MEMBER_BUTTON_ID = "com.owncloud.android:id/edit_member_button";
     private static final String MEMBER_NAME_ID = "com.owncloud.android:id/member_name";
     private static final String REMOVE_MEMBER_BUTTON_ID = "com.owncloud.android:id/remove_member_button";
+    private static final String PUBLIC_LINK_ITEM_LAYOUT_ID = "com.owncloud.android:id/public_link_item_layout";
     private static final String PUBLIC_LINK_DISPLAY_NAME_ID = "com.owncloud.android:id/public_link_display_name";
     private static final String EDIT_PUBLIC_LINK_BUTTON_ID = "com.owncloud.android:id/edit_public_link_button";
     private static final String REMOVE_PUBLIC_LINK_BUTTON_ID = "com.owncloud.android:id/remove_public_link_button";
@@ -266,7 +267,7 @@ public class SpaceMembersPage extends CommonPage {
     }
 
     private WebElement findLinkByNameOrNull(String linkName) {
-        for (WebElement link : linkList) {
+        for (WebElement link : findListId(PUBLIC_LINK_ITEM_LAYOUT_ID)) {
             String linkInList = link.findElement(AppiumBy.id(PUBLIC_LINK_DISPLAY_NAME_ID)).getText();
             Log.log(Level.FINE, "Checking public link in list: " + linkInList);
             if (linkName.equals(linkInList)) {
