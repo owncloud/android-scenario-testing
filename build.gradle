@@ -70,6 +70,7 @@ def configureCommonCucumberSystemProperties = { Test task ->
     task.systemProperty "device", System.getProperty("device")
     task.systemProperty "udid", System.getProperty("udid")
     task.systemProperty "server", System.getProperty("server")
+    task.systemProperty "localServer", System.getProperty("localServer")
     task.systemProperty "host", System.getProperty("host")
     task.systemProperty "backend", System.getProperty("backend")
 }
