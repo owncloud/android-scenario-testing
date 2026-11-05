@@ -40,6 +40,7 @@ fi
 
 BASE_URL="$1"
 OCIS_VERSION="$2"
+OCIS_PWD="${OCIS_PWD:-ownCloud1!}"
 AUTH="-u admin:$OCIS_PWD"
 JSON_HEADER="-H Content-Type:application/json"
 
