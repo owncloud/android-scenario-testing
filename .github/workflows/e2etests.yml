@@ -44,6 +44,13 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
+      - name: Start and provision oCIS
+        run: |
+          chmod +x ./server/create_server.sh
+          cd ./server && ./create_server.sh https://10.0.2.2:9200 "${{ inputs.ocis_version }}"
+        env:
+          OCIS_PWD: ${{ secrets.ocis_pwd }}
+
       - name: Start Appium
         run: |
           mkdir -p logs video

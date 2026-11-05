@@ -45,12 +45,16 @@
 
 ## 4. Update `e2etests.yml`
 
-- [ ] 4.1 Add a step to start the backend: run `docker compose up -d` using the appropriate
+- [x] 4.1 Add a step to start the backend: run `docker compose up -d` using the appropriate
       Compose file(s) based on task 3 results. Set `OCIS_VERSION`, `OCIS_PWD`, and
       `BASE_URL` as env vars. Place this step before `Start Appium`.
-- [ ] 4.2 Add a step to provision the backend: call `./server/create_server.sh` with
+      SUPERSEDED — `create_server.sh` already calls `docker compose up -d` internally;
+      a separate step would start the container twice. Folded into 4.2.
+- [x] 4.2 Add a step to provision the backend: call `./server/create_server.sh` with
       `BASE_URL` and `OCIS_VERSION` as arguments and `OCIS_PWD` as an env var. Place this
-      step after 4.1.
+      step before `Start Appium` (replaces 4.1 — the script handles both start and provision).
+      NOTE: script uses a relative path to docker-compose.yml so it is run from `./server/`
+      (matching how Ansible used it via chdir).
 - [ ] 4.3 If Option B (emulator trust store) was selected in 1.1: add a step to extract
       the oCIS self-signed cert and install it into the emulator trust store before the
       app is launched. Place this step after 4.2 and before `Run Emulator & Tests`.
