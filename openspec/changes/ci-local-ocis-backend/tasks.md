@@ -25,7 +25,7 @@
 
 ## 2. Update `create_server.sh`
 
-- [ ] 2.1 Replace the `sleep 10` wait with a poll loop that checks the oCIS capabilities
+- [x] 2.1 Replace the `sleep 10` wait with a poll loop that checks the oCIS capabilities
       endpoint (`/ocs/v1.php/cloud/capabilities`) until it returns HTTP 200. Set the timeout
       to at least 120 seconds to cover cold image pulls. Exit with a non-zero code and a
       clear error message if the timeout is exceeded.

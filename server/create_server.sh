@@ -53,8 +53,18 @@ OCIS_VERSION="$OCIS_VERSION" BASE_URL="$BASE_URL" OCIS_PWD="$OCIS_PWD" docker-co
 # Wait for server to be ready
 #######################################
 
-echo "Waiting 10 secs for server to be fully ready..."
-sleep 10
+echo "Waiting for oCIS to be ready..."
+TIMEOUT=120
+ELAPSED=0
+until [ "$(curl -sk -o /dev/null -w "%{http_code}" "$BASE_URL/ocs/v1.php/cloud/capabilities")" = "200" ]; do
+  if [ "$ELAPSED" -ge "$TIMEOUT" ]; then
+    echo "ERROR: oCIS did not become ready within ${TIMEOUT}s"
+    exit 1
+  fi
+  sleep 2
+  ELAPSED=$((ELAPSED + 2))
+done
+echo "oCIS is ready (${ELAPSED}s)"
 
 #######################################
 # Retrieve applications once
