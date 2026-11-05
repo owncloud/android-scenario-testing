@@ -32,11 +32,16 @@
 
 ## 3. Update `server/docker-compose.yml` (conditional on investigation results)
 
-- [ ] 3.1 If Option A (HTTP) was confirmed viable in 1.2: add or document the configuration
+- [x] 3.1 If Option A (HTTP) was confirmed viable in 1.2: add or document the configuration
       change needed to make oCIS serve plain HTTP. Update `docker-compose.yml` accordingly.
-- [ ] 3.2 If Tika is not needed (1.3): add a CI-specific Compose override file
+      SKIPPED — Option A not selected (oCIS is HTTPS-only).
+- [x] 3.2 If Tika is not needed (1.3): add a CI-specific Compose override file
       (`docker-compose.ci.yml`) that removes the Tika service, so the default
       `docker-compose.yml` remains unchanged for local use.
+      DONE — Tika confirmed unused across the entire test harness (all "search" references
+      are UI user/group/space name lookups, not full-text content search). Tika removed
+      directly from `server/docker-compose.yml` (tika service + three env vars); no CI
+      overlay needed. `docker-compose.ci.yml` deleted.
 
 ## 4. Update `e2etests.yml`
 

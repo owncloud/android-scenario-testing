@@ -18,9 +18,6 @@ services:
       OCIS_PASSWORD_POLICY_MIN_SPECIAL_CHARACTERS: "1"
       OCIS_SERVICE_ACCOUNT_ID: "b0fbfad7-3dd6-49cb-b468-3f588f2f82be"
       OCIS_SERVICE_ACCOUNT_SECRET: "asaGE4DF"
-      SEARCH_EXTRACTOR_TYPE: tika
-      SEARCH_EXTRACTOR_TIKA_TIKA_URL: "http://tika:9998"
-      FRONTEND_FULL_TEXT_SEARCH_ENABLED: "true"
     restart: "no"
     entrypoint:
       - /bin/sh
@@ -28,12 +25,6 @@ services:
     # it will fail on subsequent runs, because the config file already exists
     # therefore we ignore the error and then start the ocis server
     command: ["-c", "ocis init || true; ocis server"]
-    networks:
-      - ocis-net
-
-  tika:
-    image: apache/tika:2.9.0.0-full
-    restart: "always"
     networks:
       - ocis-net
 
