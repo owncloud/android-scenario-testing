@@ -63,6 +63,7 @@ while getopts "t::h" opt; do
 done
 
 export oc=$OC_SERVER_URL
+export localServer=$LOCAL_SERVER_URL
 export appium=$APPIUM_URL
 export udid=$UDID_DEVICE
 export backend=$BACKEND
@@ -79,6 +80,9 @@ echo "tags: $tags"
 echo "udid: $udid"
 echo "backend: $backend"
 
+localServerArg=""
+[ -n "$localServer" ] && localServerArg="-DlocalServer=$localServer"
+
 if [ -z "$tags" ]
 then
  ./gradlew --no-daemon clean test \
@@ -86,6 +90,7 @@ then
   -Dappium=$appium \
   -Dudid=$udid \
   -Dserver=$oc \
+  $localServerArg \
   -Dbackend=$backend
 else
   ./gradlew --no-daemon clean test \
@@ -94,5 +99,6 @@ else
   -Dappium=$appium \
   -Ddevice=$udid \
   -Dserver=$oc \
+  $localServerArg \
   -Dbackend=$backend
 fi

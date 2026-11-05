@@ -29,6 +29,7 @@ jobs:
     runs-on: ubuntu-latest
     env:
       OC_SERVER_URL: https://10.0.2.2:9200
+      LOCAL_SERVER_URL: https://localhost:9200
       BACKEND: ${{ inputs.backend }}
 
     steps:
