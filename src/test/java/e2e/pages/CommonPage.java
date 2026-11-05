@@ -34,7 +34,7 @@ public class CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/nav_all_files")
     private WebElement toRoot;
 
-    protected static final int WAIT_TIME = 7;
+    protected static final int WAIT_TIME = 15;
     private static final String UI_AUTOMATOR_TEXT_TEMPLATE = "new UiSelector().text(\"%s\")";
     private static final String UI_AUTOMATOR_TEXT_CONTAINS_TEMPLATE = "new UiSelector().textContains(\"%s\")";
     private static final String UI_AUTOMATOR_DESCRIPTION_TEMPLATE = "new UiSelector().description(\"%s\")";

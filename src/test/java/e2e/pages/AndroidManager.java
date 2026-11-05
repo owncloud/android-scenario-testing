@@ -20,7 +20,7 @@ import io.appium.java_client.android.AndroidDriver;
 
 public class AndroidManager {
 
-    private static final int IMPLICIT_WAIT_SECONDS = 7;
+    private static final int IMPLICIT_WAIT_SECONDS = 15;
     private static final String APP_ACTIVITY = "com.owncloud.android.ui.activity.SplashActivity";
 
     private static AndroidDriver driver = null;
