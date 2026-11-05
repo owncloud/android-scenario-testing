@@ -126,11 +126,11 @@ rules:
       attempting any step match. Use it to adapt input phrasing to the project's conventions.
     - Grep src/test/java/e2e/steps/ directly for the full current list of @Given/@When/@Then
       expressions. steps_rules.md is a vocabulary guide, not the authoritative step list.
-    - For each input step: adapt phrasing using steps_rules.md, then verify an exact match
+    - For each input step, adapt phrasing using steps_rules.md, then verify an exact match
       exists in the step files. Record the result in the step reuse table in tasks.md.
-    - Mark unresolved items explicitly as
-      "UNRESOLVED: <element/step/message> — needs manual resolution before implementation".
-      Never fabricate or guess a step expression, locator, or error message text.
+    - Mark unresolved items explicitly with the label UNRESOLVED followed by the element
+      name and the reason it could not be resolved. Never fabricate or guess a step
+      expression, locator, or error message text.
     - If a new step introduces a vocabulary pattern not covered by steps_rules.md, add
       an explicit task to update openspec/steps_rules.md with the new pattern.
     - Break tasks into independently verifiable steps (one page/task/step/assertion
