@@ -72,16 +72,16 @@
 
 ## 5. Update `e2e.yml`
 
-- [ ] 5.1 Remove the `create_ocis` job (call to `ocisbackend.yml`) and all SSH secrets
+- [x] 5.1 Remove the `create_ocis` job (call to `ocisbackend.yml`) and all SSH secrets
       passed to it (`SSH_PRIVATE_KEY`, `SSH_HOST`, `SSH_USER`, `OCIS_URL`).
-- [ ] 5.2 Remove the `cleanup` job (call to `cleanup.yml`) and its SSH secrets.
-- [ ] 5.3 Pass `OCIS_VERSION` and `OCIS_PWD` to `e2etests.yml` via its updated interface.
-- [ ] 5.4 Remove the `needs` dependency on `create_ocis` and `cleanup` from the `tests` job.
+- [x] 5.2 Remove the `cleanup` job (call to `cleanup.yml`) and its SSH secrets.
+- [x] 5.3 Pass `OCIS_VERSION` and `OCIS_PWD` to `e2etests.yml` via its updated interface.
+- [x] 5.4 Remove the `needs` dependency on `create_ocis` and `cleanup` from the `tests` job.
 
 ## 6. Delete obsolete workflows
 
-- [ ] 6.1 Delete `.github/workflows/ocisbackend.yml`.
-- [ ] 6.2 Delete `.github/workflows/cleanup.yml`.
+- [x] 6.1 Delete `.github/workflows/ocisbackend.yml`.
+- [x] 6.2 Delete `.github/workflows/cleanup.yml`.
 
 ## 7. Verification
 
