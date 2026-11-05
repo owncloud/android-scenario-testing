@@ -43,6 +43,10 @@ OCIS_VERSION="$2"
 AUTH="-u admin:$OCIS_PWD"
 JSON_HEADER="-H Content-Type:application/json"
 
+# BASE_URL may use 10.0.2.2 (Android emulator alias for host loopback).
+# curl calls run on the host, so replace it with localhost.
+LOCAL_URL="${BASE_URL//10.0.2.2/localhost}"
+
 #######################################
 # Create oCIS server
 #######################################
@@ -56,7 +60,7 @@ OCIS_VERSION="$OCIS_VERSION" BASE_URL="$BASE_URL" OCIS_PWD="$OCIS_PWD" docker co
 echo "Waiting for oCIS to be ready..."
 TIMEOUT=120
 ELAPSED=0
-until [ "$(curl -sk -o /dev/null -w "%{http_code}" "$BASE_URL/ocs/v1.php/cloud/capabilities")" = "200" ]; do
+until [ "$(curl -sk -o /dev/null -w "%{http_code}" "$LOCAL_URL/ocs/v1.php/cloud/capabilities")" = "200" ]; do
   if [ "$ELAPSED" -ge "$TIMEOUT" ]; then
     echo "ERROR: oCIS did not become ready within ${TIMEOUT}s"
     exit 1
@@ -70,7 +74,7 @@ echo "oCIS is ready (${ELAPSED}s)"
 # Retrieve applications once
 #######################################
 
-apps_response=$(curl -sk $AUTH "$BASE_URL/graph/v1.0/applications")
+apps_response=$(curl -sk $AUTH "$LOCAL_URL/graph/v1.0/applications")
 
 #######################################
 # Get Admin role ID from the target application
@@ -97,7 +101,7 @@ RESOURCE_ID=$(echo "$apps_response" | jq -r '
 # Create users and store their IDs
 #######################################
 
-ALICE_ID=$(curl -sk $AUTH -X POST "$BASE_URL/graph/v1.0/users" \
+ALICE_ID=$(curl -sk $AUTH -X POST "$LOCAL_URL/graph/v1.0/users" \
   $JSON_HEADER \
   -d '{
     "onPremisesSamAccountName": "alice",
@@ -106,7 +110,7 @@ ALICE_ID=$(curl -sk $AUTH -X POST "$BASE_URL/graph/v1.0/users" \
     "passwordProfile": { "password": "a" }
   }' | jq -r '.id')
 
-BOB_ID=$(curl -sk $AUTH -X POST "$BASE_URL/graph/v1.0/users" \
+BOB_ID=$(curl -sk $AUTH -X POST "$LOCAL_URL/graph/v1.0/users" \
   $JSON_HEADER \
   -d '{
     "onPremisesSamAccountName": "bob",
@@ -115,7 +119,7 @@ BOB_ID=$(curl -sk $AUTH -X POST "$BASE_URL/graph/v1.0/users" \
     "passwordProfile": { "password": "a" }
   }' | jq -r '.id')
 
-CHARLES_ID=$(curl -sk $AUTH -X POST "$BASE_URL/graph/v1.0/users" \
+CHARLES_ID=$(curl -sk $AUTH -X POST "$LOCAL_URL/graph/v1.0/users" \
   $JSON_HEADER \
   -d '{
     "onPremisesSamAccountName": "charles",
@@ -128,7 +132,7 @@ CHARLES_ID=$(curl -sk $AUTH -X POST "$BASE_URL/graph/v1.0/users" \
 # Create a group and get its ID
 #######################################
 
-TEST_ID=$(curl -sk $AUTH -X POST "$BASE_URL/graph/v1.0/groups" \
+TEST_ID=$(curl -sk $AUTH -X POST "$LOCAL_URL/graph/v1.0/groups" \
   $JSON_HEADER \
   -d '{
     "displayName": "test"
@@ -139,10 +143,10 @@ TEST_ID=$(curl -sk $AUTH -X POST "$BASE_URL/graph/v1.0/groups" \
 #######################################
 
 curl -sk $AUTH -X POST \
-  "$BASE_URL/graph/v1.0/groups/$TEST_ID/members/\$ref" \
+  "$LOCAL_URL/graph/v1.0/groups/$TEST_ID/members/\$ref" \
   $JSON_HEADER \
   -d "{
-    \"@odata.id\": \"$BASE_URL/graph/v1.0/users/$BOB_ID\"
+    \"@odata.id\": \"$LOCAL_URL/graph/v1.0/users/$BOB_ID\"
   }"
 
 #######################################
@@ -150,7 +154,7 @@ curl -sk $AUTH -X POST \
 #######################################
 
 curl -sk $AUTH -X POST \
-  "$BASE_URL/graph/v1.0/users/$ALICE_ID/appRoleAssignments" \
+  "$LOCAL_URL/graph/v1.0/users/$ALICE_ID/appRoleAssignments" \
   $JSON_HEADER \
   -d "{
     \"appRoleId\": \"$ADMIN_ID\",
