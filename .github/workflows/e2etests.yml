@@ -13,9 +13,14 @@ on:
         description: 'filter tags to execute'
         type: string
         default: 'not @ignore and not @noocis and not @noci'
+      ocis_version:
+        description: 'oCIS Docker image tag to deploy'
+        type: string
+        required: true
     secrets:
-      oc_server_url:
-        description: 'server url'
+      ocis_pwd:
+        description: 'oCIS admin password'
+        required: true
 
 jobs:
 
@@ -23,7 +28,7 @@ jobs:
     name: Run Emulator & Execute Tests & Artifacts
     runs-on: ubuntu-latest
     env:
-      OC_SERVER_URL: ${{ secrets.oc_server_url }}
+      OC_SERVER_URL: https://10.0.2.2:9200
       BACKEND: ${{ inputs.backend }}
 
     steps:

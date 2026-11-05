@@ -65,8 +65,10 @@
 - [x] 4.5 Add an upload step (with `if: always()`) to publish the oCIS log file as a
       separate CI artifact named `ocis-logs`. Pin the action SHA following the project's
       OSPO policy. Used same SHA as existing upload-artifact steps in the workflow.
-- [ ] 4.6 Expose `OCIS_VERSION` and `OCIS_PWD` as inputs/secrets on `e2etests.yml`
+- [x] 4.6 Expose `OCIS_VERSION` and `OCIS_PWD` as inputs/secrets on `e2etests.yml`
       (workflow_call interface) so `e2e.yml` can pass them through.
+      Also removed `oc_server_url` secret — URL is now fixed to `https://10.0.2.2:9200`
+      as a job-level env var (no longer caller-supplied).
 
 ## 5. Update `e2e.yml`
 
