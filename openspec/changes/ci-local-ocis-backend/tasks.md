@@ -55,14 +55,16 @@
       step before `Start Appium` (replaces 4.1 — the script handles both start and provision).
       NOTE: script uses a relative path to docker-compose.yml so it is run from `./server/`
       (matching how Ansible used it via chdir).
-- [ ] 4.3 If Option B (emulator trust store) was selected in 1.1: add a step to extract
+- [x] 4.3 If Option B (emulator trust store) was selected in 1.1: add a step to extract
       the oCIS self-signed cert and install it into the emulator trust store before the
       app is launched. Place this step after 4.2 and before `Run Emulator & Tests`.
-- [ ] 4.4 Add a step (with `if: always()`) to capture oCIS container logs:
+      NO-OP — Option B selected, but the test suite already handles the cert acceptance
+      dialog via automation. No trust store manipulation needed.
+- [x] 4.4 Add a step (with `if: always()`) to capture oCIS container logs:
       run `docker compose logs ocis` and save the output to a file.
-- [ ] 4.5 Add an upload step (with `if: always()`) to publish the oCIS log file as a
+- [x] 4.5 Add an upload step (with `if: always()`) to publish the oCIS log file as a
       separate CI artifact named `ocis-logs`. Pin the action SHA following the project's
-      OSPO policy.
+      OSPO policy. Used same SHA as existing upload-artifact steps in the workflow.
 - [ ] 4.6 Expose `OCIS_VERSION` and `OCIS_PWD` as inputs/secrets on `e2etests.yml`
       (workflow_call interface) so `e2e.yml` can pass them through.
 
