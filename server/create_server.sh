@@ -47,7 +47,7 @@ JSON_HEADER="-H Content-Type:application/json"
 # Create oCIS server
 #######################################
 
-OCIS_VERSION="$OCIS_VERSION" BASE_URL="$BASE_URL" OCIS_PWD="$OCIS_PWD" docker-compose -f ./docker-compose.yml up -d
+OCIS_VERSION="$OCIS_VERSION" BASE_URL="$BASE_URL" OCIS_PWD="$OCIS_PWD" docker compose -f ./docker-compose.yml up -d
 
 #######################################
 # Wait for server to be ready
