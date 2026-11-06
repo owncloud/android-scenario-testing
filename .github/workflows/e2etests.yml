@@ -64,6 +64,9 @@ jobs:
           sudo udevadm control --reload-rules
           sudo udevadm trigger --name-match=kvm
 
+      - name: Add 10.0.2.2 loopback alias
+        run: sudo ip addr add 10.0.2.2/32 dev lo
+
       - name: Start and provision oCIS
         run: |
           chmod +x ./server/create_server.sh

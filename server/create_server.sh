@@ -100,6 +100,19 @@ done
 echo "oCIS is ready (${ELAPSED}s)"
 
 #######################################
+# Verify BASE_URL is reachable (data service connectivity check)
+#######################################
+
+echo "Verifying connectivity via BASE_URL ($BASE_URL)..."
+BASE_HTTP_CODE=$(curl -sk -o /dev/null -w "%{http_code}" "$BASE_URL/ocs/v1.php/cloud/capabilities")
+if [ "$BASE_HTTP_CODE" != "200" ]; then
+  echo "ERROR: oCIS not reachable at $BASE_URL (HTTP $BASE_HTTP_CODE)"
+  echo "Internal data service calls will fail — check network configuration"
+  exit 1
+fi
+echo "BASE_URL connectivity OK"
+
+#######################################
 # Wait for Graph API (auth-basic service needs extra time after capabilities)
 #######################################
 

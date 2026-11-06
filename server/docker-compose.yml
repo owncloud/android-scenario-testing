@@ -23,6 +23,7 @@ services:
         limits:
           cpus: '1.5'
           memory: 1G
+    network_mode: host
     restart: "no"
     entrypoint:
       - /bin/sh
@@ -30,8 +31,3 @@ services:
     # it will fail on subsequent runs, because the config file already exists
     # therefore we ignore the error and then start the ocis server
     command: ["-c", "ocis init || true; ocis server"]
-    networks:
-      - ocis-net
-
-networks:
-  ocis-net:
