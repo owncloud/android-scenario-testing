@@ -74,7 +74,7 @@ jobs:
           avd-name: test-avd
           force-avd-creation: true
           disable-animations: true
-          emulator-options: -no-snapshot -no-window -no-audio -no-boot-anim -accel on -memory 3072
+          emulator-options: -no-snapshot -no-window -no-audio -no-boot-anim -accel on -memory 2048
           # Ignored tests, no oCIS tests and no CI tests will not run
           script: ./executeTests -t "${{ inputs.tag }}"
 

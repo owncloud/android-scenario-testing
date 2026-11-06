@@ -148,6 +148,7 @@ def configureCucumberTask = { Test task, String features, String jsonFileName, S
  * - target/gradle-test-reports/main/index.html
  */
 test {
+    maxHeapSize = "1g"
     doFirst {
         delete cucumberReportsDir
         delete gradleTestReportsDir

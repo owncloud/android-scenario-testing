@@ -18,6 +18,11 @@ services:
       OCIS_PASSWORD_POLICY_MIN_SPECIAL_CHARACTERS: "1"
       OCIS_SERVICE_ACCOUNT_ID: "b0fbfad7-3dd6-49cb-b468-3f588f2f82be"
       OCIS_SERVICE_ACCOUNT_SECRET: "asaGE4DF"
+    deploy:
+      resources:
+        limits:
+          cpus: '1.5'
+          memory: 1G
     restart: "no"
     entrypoint:
       - /bin/sh
