@@ -1,6 +1,20 @@
 name: Execute tests
 
 on:
+  workflow_dispatch:
+    inputs:
+      backend:
+        description: 'type of backend'
+        type: string
+        default: 'oCIS'
+      tag:
+        description: 'filter tags to execute'
+        type: string
+        default: 'not @ignore and not @noocis and not @noci'
+      ocis_version:
+        description: 'oCIS Docker image tag to deploy'
+        type: string
+        required: true
   workflow_call:
     inputs:
       apk:
