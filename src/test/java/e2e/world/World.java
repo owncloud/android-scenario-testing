@@ -15,6 +15,7 @@ import e2e.api.TrashbinAPI;
 import e2e.assertions.DeviceAssertions;
 import e2e.assertions.FileListAssertions;
 import e2e.assertions.LinksAssertions;
+import e2e.assertions.LinksNGAssertions;
 import e2e.assertions.ShareNGAssertions;
 import e2e.assertions.SharesAssertions;
 import e2e.assertions.SidebarAssertions;
@@ -30,6 +31,7 @@ import e2e.pages.FolderPickerPage;
 import e2e.pages.InputNamePage;
 import e2e.pages.LinksPage;
 import e2e.pages.LoginPage;
+import e2e.pages.PublicLinkNGPage;
 import e2e.pages.PrivateSharePage;
 import e2e.pages.RemoveDialogPage;
 import e2e.pages.SearchShareePage;
@@ -54,6 +56,7 @@ import e2e.support.video.ScreenRecorder;
 import e2e.tasks.DocumentProviderTasks;
 import e2e.tasks.FileListTasks;
 import e2e.tasks.LinksTasks;
+import e2e.tasks.LinksNGTasks;
 import e2e.tasks.ShareNGTasks;
 import e2e.tasks.SharesTasks;
 import e2e.tasks.SidebarTasks;
@@ -74,6 +77,7 @@ public class World {
     private ShareNGPage shareNGPage;
     private ShareNGCreatePage shareNGCreatePage;
     private LinksPage linksPage;
+    private PublicLinkNGPage publicLinkNGPage;
     private SearchShareePage searchShareePage;
     private PrivateSharePage privateSharePage;
     private SpacesPage spacesPage;
@@ -92,6 +96,7 @@ public class World {
     private TrashbinAPI trashbinAPI;
 
     private LinksTasks linksTasks;
+    private LinksNGTasks linksNGTasks;
     private ShareNGTasks shareNGTasks;
     private SharesTasks sharesTasks;
     private FileListTasks fileListTasks;
@@ -100,6 +105,7 @@ public class World {
     private SidebarTasks sidebarTasks;
 
     private LinksAssertions linksAssertions;
+    private LinksNGAssertions linksNGAssertions;
     private ShareNGAssertions shareNGAssertions;
     private SharesAssertions sharesAssertions;
     private FileListAssertions fileListAssertions;
@@ -191,6 +197,13 @@ public class World {
             linksPage = new LinksPage(driver);
         }
         return linksPage;
+    }
+
+    public PublicLinkNGPage publicLinkNGPage() {
+        if (publicLinkNGPage == null) {
+            publicLinkNGPage = new PublicLinkNGPage(driver);
+        }
+        return publicLinkNGPage;
     }
 
     public SearchShareePage searchShareePage() {
@@ -305,6 +318,13 @@ public class World {
         return linksTasks;
     }
 
+    public LinksNGTasks linksNGTasks() {
+        if (linksNGTasks == null) {
+            linksNGTasks = new LinksNGTasks(this);
+        }
+        return linksNGTasks;
+    }
+
     public ShareNGTasks shareNGTasks() {
         if (shareNGTasks == null) {
             shareNGTasks = new ShareNGTasks(this);
@@ -352,6 +372,13 @@ public class World {
             linksAssertions = new LinksAssertions(this);
         }
         return linksAssertions;
+    }
+
+    public LinksNGAssertions linksNGAssertions() {
+        if (linksNGAssertions == null) {
+            linksNGAssertions = new LinksNGAssertions(this);
+        }
+        return linksNGAssertions;
     }
 
     public ShareNGAssertions shareNGAssertions() {

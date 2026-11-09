@@ -97,16 +97,18 @@ Scenario: Creation of public link is blocked when mandatory password is not ente
 - [x] 2.11 Add `getPublicLinkPermission(String label)` — returns the permission text shown for the named entry
 - [x] 2.12 Add `getPublicLinkExpirationDays(String label)` — returns the expiration info for the named entry
 
-## 3. Step Definitions
+## 3. Step Definitions, Tasks, and Assertions
 
-Add to `ShareNGSteps.java` or a new `PublicLinksNGSteps.java`; `LinksSteps.java` is untouched.
+Architecture: `LinksNGSteps.java` (thin wrappers) → `LinksNGTasks.java` / `LinksNGAssertions.java` → `PublicLinkNGPage.java`. Mirrors the oC10 pattern: `LinksSteps` → `LinksTasks` / `LinksAssertions` → `LinksPage`. `LinksSteps.java` and `ShareNGSteps.java` are untouched.
 
-- [ ] 3.1 Add `@When("Alice creates public link on {itemtype} {word} via NG with the following fields")` (DataTable fields: `permission`, `name`, `password`, `expiration days`) — for each present field calls the corresponding `PublicLinkNGPage` method; absent fields are skipped; always calls `tapAddPublicLink()` first and `confirmCreation()` last; new step, no existing equivalent found
-- [ ] 3.2 Add `@Then("public link should be created on {word} via NG with the following fields")` (DataTable fields: `permission`, `name`, `expiration days`) — asserts entry visibility and each present field value via `PublicLinkNGPage`; new step, no existing equivalent found
-- [ ] 3.3 Add `@When("Alice taps to add a public link")` — delegates to `PublicLinkNGPage.tapAddPublicLink()`; guard-rail scenario only; new step, no existing equivalent found
-- [ ] 3.4 Add `@When("Alice selects {string} permission for the public link")` — delegates to `PublicLinkNGPage.selectPermission()`; guard-rail scenario only; new step, no existing equivalent found
-- [ ] 3.5 Add `@Then("the public link confirm button is disabled")` — asserts `!isConfirmEnabled()`; new step, no existing equivalent found
-- [ ] 3.6 If `permission` or `expiration days` introduce vocabulary patterns not covered by `openspec/steps_rules.md`, add a task to update that file
+- [x] 3.1 `LinksNGTasks.java` — `createPublicLink(itemName, fields)` orchestrates the full creation flow via `PublicLinkNGPage`; `tapAddPublicLink()` and `selectPermission(permission)` for guard-rail use
+- [x] 3.2 `LinksNGAssertions.java` — `assertPublicLinkCreated(itemName, fields)` asserts listing and field values via `PublicLinkNGPage`; `assertConfirmButtonDisabled()` for guard-rail use
+- [x] 3.3 `LinksNGSteps.java` — `@When("Alice creates public link on {itemtype} {word} via NG with the following fields")` delegates to `linksNGTasks().createPublicLink()`; new step, no existing equivalent found
+- [x] 3.4 `LinksNGSteps.java` — `@Then("public link should be created on {word} via NG with the following fields")` delegates to `linksNGAssertions().assertPublicLinkCreated()`; new step, no existing equivalent found
+- [x] 3.5 `LinksNGSteps.java` — `@When("Alice taps to add a public link")` delegates to `linksNGTasks().tapAddPublicLink()`; guard-rail only; new step, no existing equivalent found
+- [x] 3.6 `LinksNGSteps.java` — `@When("Alice selects {string} permission for the public link")` delegates to `linksNGTasks().selectPermission()`; guard-rail only; new step, no existing equivalent found
+- [x] 3.7 `LinksNGSteps.java` — `@Then("the public link confirm button is disabled")` delegates to `linksNGAssertions().assertConfirmButtonDisabled()`; guard-rail only; new step, no existing equivalent found
+- [x] 3.8 No new vocabulary patterns introduced — `{itemtype}`, `permission`, `expiration days` already covered in `openspec/steps_rules.md`
 
 ## 4. Feature File
 

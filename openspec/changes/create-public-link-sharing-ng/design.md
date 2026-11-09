@@ -32,11 +32,13 @@ The oCIS public-link creation dialog is a different screen from the OC10 bottom 
 
 All creation-path scenarios use two DataTable steps — `Alice creates public link on {itemtype} {word} via NG with the following fields` and `public link should be created on {word} via NG with the following fields` — mirroring the existing `Alice creates link on {itemtype} {word} with the following fields` / `link should be created/edited on {word} with the following fields` pattern in `LinksSteps.java`. This keeps the NG feature file compact (one Scenario Outline) and the step implementation flexible (fields absent from the table are skipped). The guard-rail scenario uses three individual steps because it intentionally does not complete creation.
 
-Whether the new steps live in `ShareNGSteps.java` or a dedicated `PublicLinksNGSteps.java` is an implementation choice; co-location in `ShareNGSteps.java` is preferred for discoverability.
+Steps live in a new `LinksNGSteps.java`, following the project convention: `LinksSteps.java` covers OC10 links and `ShareNGSteps.java` covers NG user sharing — public link NG steps belong in their own file, not in `ShareNGSteps.java`.
 
 **Alternative considered:** Individual step per action (tap "+", select permission, enter password separately). Rejected — produces verbose scenario bodies and a large step count for no additional test value; the DataTable approach is already established in this project.
 
 **Alternative considered:** Put new steps in `LinksSteps.java`. Rejected — that file is tightly coupled to the OC10 flow.
+
+**Alternative considered:** Put new steps in `ShareNGSteps.java`. Rejected — that file covers NG user sharing (collaborators); mixing public link steps there violates the `SharesSteps` ↔ `LinksSteps` separation that already exists for OC10.
 
 ### Decision 3: Feature file is `linksng.feature` (oCIS-only, no `@noocis` tag needed)
 
