@@ -84,18 +84,18 @@ Scenario: Creation of public link is blocked when mandatory password is not ente
 
 **Note:** `SpaceMembersPage.java` already implements the identical public-link creation flow (same locators, same dialog). `PublicLinkNGPage.java` can copy or reuse its implementation directly. Key detail from `SpaceMembersPage`: the password field uses a two-step flow — tap `set_password_button` (opens the password dialog), type into `password_value` (TextInputEditText), then tap `set_password_button` again (confirms). The display-name constant there is `PUBLIC_LINK_DISPLAY_NAME_ID = "com.owncloud.android:id/public_link_display_name"`. Permission is selected via `findUIAutomatorSubText(permission).click()`.
 
-- [ ] 2.1 Create `PublicLinkNGPage.java` under `src/test/java/e2e/pages/` extending `CommonPage`; constructor receives `AndroidDriver`
-- [ ] 2.2 Add `@AndroidFindBy` fields for: add-link button, permission selector, password field, name field, expiration field, confirm button (locators from §1)
-- [ ] 2.3 Add `tapAddPublicLink()` — taps the "+" button in the PUBLIC LINKS section
-- [ ] 2.4 Add `selectPermission(String label)` — selects the named permission option (e.g., "Can view", "Can edit", "Secret file drop")
-- [ ] 2.5 Add `enterPassword(String password)` — two-step: tap `set_password_button`, type into `password_value`, tap `set_password_button` again
-- [ ] 2.6 Add `enterName(String name)` — types into the link name field
-- [ ] 2.7 Add `setExpirationDays(int days)` — opens the expiration picker and sets the date N days from today
-- [ ] 2.8 Add `isConfirmEnabled()` — returns whether the confirm/create button is enabled
-- [ ] 2.9 Add `confirmCreation()` — taps the confirm/create button
-- [ ] 2.10 Add `isPublicLinkListed(String label)` — checks whether an entry with the given label is visible in the PUBLIC LINKS list
-- [ ] 2.11 Add `getPublicLinkPermission(String label)` — returns the permission text shown for the named entry
-- [ ] 2.12 Add `getPublicLinkExpirationDays(String label)` — returns the expiration info for the named entry
+- [x] 2.1 Create `PublicLinkNGPage.java` under `src/test/java/e2e/pages/` extending `CommonPage`; constructor receives `AndroidDriver`
+- [x] 2.2 Add `@AndroidFindBy` fields for: add-link button, permission selector, password field, name field, expiration field, confirm button (locators from §1)
+- [x] 2.3 Add `tapAddPublicLink()` — taps the "+" button in the PUBLIC LINKS section
+- [x] 2.4 Add `selectPermission(String label)` — selects the named permission option (e.g., "Can view", "Can edit", "Secret file drop")
+- [x] 2.5 Add `enterPassword(String password)` — two-step: tap `set_password_button`, type into `password_value`, tap `set_password_button` again
+- [x] 2.6 Add `enterName(String name)` — types into the link name field
+- [x] 2.7 Add `setExpirationDays(int days)` — opens the expiration picker and sets the date N days from today
+- [x] 2.8 Add `isConfirmEnabled()` — returns whether the confirm/create button is enabled
+- [x] 2.9 Add `confirmCreation()` — taps the confirm/create button
+- [x] 2.10 Add `isPublicLinkListed(String label)` — checks whether an entry with the given label is visible in the PUBLIC LINKS list
+- [x] 2.11 Add `getPublicLinkPermission(String label)` — returns the permission text shown for the named entry
+- [x] 2.12 Add `getPublicLinkExpirationDays(String label)` — returns the expiration info for the named entry
 
 ## 3. Step Definitions
 
