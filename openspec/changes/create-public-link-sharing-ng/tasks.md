@@ -118,4 +118,4 @@ Architecture: `LinksNGSteps.java` (thin wrappers) → `LinksNGTasks.java` / `Lin
 
 ## 5. Compile Check
 
-- [ ] 5.1 Run `./gradlew clean compileJava compileTestJava` and confirm zero errors; verify against oCIS backend
+- [x] 5.1 Run `./gradlew clean compileJava compileTestJava` and confirm zero errors; verify against oCIS backend

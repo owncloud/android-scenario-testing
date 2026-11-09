@@ -31,13 +31,13 @@ public class LinksNGAssertions {
                 .isTrue();
         String permission = fields.get("permission");
         if (permission != null && !permission.isEmpty()) {
-            assertThat(world.publicLinkNGPage().getPublicLinkPermission(linkName))
-                    .as("permission of link '%s'", linkName)
-                    .isEqualTo(permission);
+            assertThat(world.publicLinkNGPage().isPublicLinkListedWithPermission(linkName, permission))
+                    .as("link '%s' should display permission '%s'", linkName, permission)
+                    .isTrue();
         }
         String expirationDays = fields.get("expiration days");
         if (expirationDays != null && !expirationDays.isEmpty()) {
-            String expectedDate = DateUtils.formatDate(expirationDays, DateUtils.DateFormatType.TEXT);
+            String expectedDate = DateUtils.formatDate(expirationDays, DateUtils.DateFormatType.NUMERIC);
             assertThat(world.publicLinkNGPage().getPublicLinkExpirationDays(linkName))
                     .as("expiration date of link '%s'", linkName)
                     .contains(expectedDate);

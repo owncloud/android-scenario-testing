@@ -51,7 +51,6 @@ public class PublicLinkNGPage extends CommonPage {
     private static final String PUBLIC_LINK_ITEM_LAYOUT_ID = "com.owncloud.android:id/public_link_item_layout";
     private static final String PUBLIC_LINK_DISPLAY_NAME_ID = "com.owncloud.android:id/public_link_display_name";
     private static final String EXPIRATION_DATE_ID = "com.owncloud.android:id/expiration_date";
-    private static final String PERMISSION_LABEL_ID = "com.owncloud.android:id/permissions_label";
 
     public PublicLinkNGPage(AndroidDriver driver) {
         super(driver);
@@ -108,13 +107,13 @@ public class PublicLinkNGPage extends CommonPage {
         return findLinkByNameOrNull(linkName) != null;
     }
 
-    public String getPublicLinkPermission(String linkName) {
+    public boolean isPublicLinkListedWithPermission(String linkName, String permission) {
         WebElement link = findLinkByNameOrNull(linkName);
         if (link == null) {
-            return null;
+            return false;
         }
-        List<WebElement> elements = link.findElements(AppiumBy.id(PERMISSION_LABEL_ID));
-        return elements.isEmpty() ? null : elements.get(0).getText();
+        return !link.findElements(AppiumBy.androidUIAutomator(
+                "new UiSelector().text(\"" + permission + "\")")).isEmpty();
     }
 
     public String getPublicLinkExpirationDays(String linkName) {
