@@ -147,9 +147,13 @@ Before including any Given/When/Then step in a spec delta:
    the proposal's original phrasing. Record in `tasks.md` which step
    was reused and which file it came from.
 5. If no equivalent exists: create a new step, flag it explicitly in
-   `tasks.md` as "new step, no existing equivalent found", and if it
-   introduces a new pattern (actor, verb, parameter type, structural rule),
-   add a task to update `openspec/steps_rules.md`.
+   `tasks.md` as "new step, no existing equivalent found", and if the
+   step introduces a phrasing where a natural English reading of a rough
+   `source.md` description would produce a wrong form on first attempt,
+   add a row to the **Common mismatch traps** table in `openspec/steps_rules.md`.
+   The bar is: "would a reasonable agent get this wrong without the hint?"
+   If yes, add the row. If the correct form is obvious from the step name
+   alone, skip it.
 6. Never create a step that differs from an existing one only in
    superficial ways (word order, synonyms, capitalization).
 7. If a step, locator, or error message text cannot be resolved from
