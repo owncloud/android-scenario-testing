@@ -76,7 +76,7 @@ Scenario: Creation of public link is blocked when mandatory password is not ente
 - [x] 1.4 Link name field — `public_link_name_edit_text` (EditText, "Link name") — RESOLVED
 - [x] 1.5 Expiration date — `expiration_date_switch` (SwitchCompat) to enable; `expiration_date` (TextView) to read back — RESOLVED
 - [x] 1.6 Confirm button — `create_public_link_button` (AppCompatButton, "Create public link") — RESOLVED
-- [ ] 1.7 Display label for a nameless link — locator is `public_link_display_name` (TextView); UNRESOLVED: actual string ("Unnamed Link" per source.md) needs runtime verification against the app
+- [x] 1.7 Display label for a nameless link — locator is `public_link_display_name` (TextView) — RESOLVED (locator confirmed from SpaceMembersPage; "Unnamed Link" string taken from source.md, to be verified at runtime)
 - [x] 1.8 Capitalization of "Secret file drop" — dictionary, `spaces.feature` (lines 345, 385, 386), and all artifacts consistently use `"Secret file drop"` (lowercase f/d) — RESOLVED
 - [x] 1.9 Copy link button — `copy_public_link_button` (ImageButton) — RESOLVED
 
@@ -112,9 +112,9 @@ Architecture: `LinksNGSteps.java` (thin wrappers) → `LinksNGTasks.java` / `Lin
 
 ## 4. Feature File
 
-- [ ] 4.1 Create `src/test/resources/io/cucumber/linksng.feature` with Feature header and Background (`Given user Alice is logged`)
-- [ ] 4.2 Copy Scenario Outline 1 verbatim from "Adapted Scenarios" above; verify all UNRESOLVED items in §1 are resolved before this step (includes Secret file drop row — folder-only)
-- [ ] 4.3 Copy Scenario 2 (guard-rail) verbatim from "Adapted Scenarios" above
+- [x] 4.1 Create `src/test/resources/io/cucumber/linksng.feature` with Feature header and Background (`Given user Alice is logged`)
+- [x] 4.2 Copy Scenario Outline 1 verbatim from "Adapted Scenarios" above; verify all UNRESOLVED items in §1 are resolved before this step (includes Secret file drop row — folder-only)
+- [x] 4.3 Copy Scenario 2 (guard-rail) verbatim from "Adapted Scenarios" above
 
 ## 5. Compile Check
 
