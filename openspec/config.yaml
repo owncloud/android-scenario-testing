@@ -113,41 +113,56 @@ context: |
 
 rules:
   proposal:
-    - Keep scope focused on the test harness (Java/Gherkin). The ownCloud Android app
-      source code lives in a separate repository and is not modified here.
+    - Keep scope focused on the test harness (Java/Gherkin). The ownCloud Android app source code lives in a separate repository and is not modified here.
     - Always state which backend(s) (oCIS, oC10, or both) the change applies to.
     - Call out any new Appium interactions that could introduce timing sensitivity.
-    - source.md is the entry point. For cross-repo changes it is generated automatically.
+    - |
+      source.md is the entry point. For cross-repo changes it is generated automatically.
       For manual changes it must follow the template in openspec/steps_rules.md (one
       3-line plain-English description per scenario + rough Gherkin below it).
+    - |
+      For changes that add Gherkin scenarios, include a "Scenarios" subsection in
+      "What Changes" naming each scenario or Scenario Outline and what it tests
+      (one line each). State what varies across Examples rows when an outline is used.
+      This is the scope contract for spec and tasks — not full Gherkin, just the
+      structure so the shape is agreed before spec and tasks are drafted.
   tasks:
     - Read source.md to understand the intent of each scenario (description + vague Gherkin).
-    - Read openspec/steps_rules.md for vocabulary and structural constraints before
+    - |
+      Read openspec/steps_rules.md for vocabulary and structural constraints before
       attempting any step match. Use it to adapt input phrasing to the project's conventions.
-    - Grep src/test/java/e2e/steps/ directly for the full current list of @Given/@When/@Then
+    - |
+      Grep src/test/java/e2e/steps/ directly for the full current list of @Given/@When/@Then
       expressions. steps_rules.md is a vocabulary guide, not the authoritative step list.
-    - For each input step: adapt phrasing using steps_rules.md, then verify an exact match
-      exists in the step files. Record the result in the step reuse table in tasks.md.
-    - Mark unresolved items explicitly as
-      "UNRESOLVED: <element/step/message> — needs manual resolution before implementation".
-      Never fabricate or guess a step expression, locator, or error message text.
-    - If a new step introduces a vocabulary pattern not covered by steps_rules.md, add
+    - For each input step, adapt phrasing using steps_rules.md, then verify an exact match exists in the step files. Record the result in the step reuse table in tasks.md.
+    - |
+      Mark unresolved items explicitly as UNRESOLVED: <element/step/message> — needs
+      manual resolution before implementation. Never fabricate or guess a step
+      expression, locator, or error message text.
+    - |
+      If a new step introduces a vocabulary pattern not covered by steps_rules.md, add
       an explicit task to update openspec/steps_rules.md with the new pattern.
-    - Break tasks into independently verifiable steps (one page/task/step/assertion
-      class per task where possible).
-    - For each new scenario, include a task to write the .feature file and a separate
-      task to implement the step definitions.
-    - Check if existing bound UI elements could be reused in the scenario. Otherwise
-      set a placeholder and notify it.
+    - Break tasks into independently verifiable steps (one page/task/step/assertion class per task where possible).
+    - For each new scenario, include a task to write the .feature file and a separate task to implement the step definitions.
+    - Check if existing bound UI elements could be reused in the scenario. Otherwise set a placeholder and notify it.
     - Note which backend each task must be verified against.
+    - |
+      Draft the complete final Gherkin for every new scenario or Scenario Outline in
+      proper project format (correct actor, exact step wording verified against step
+      files, DataTable structure, tags, Examples table with all varying columns) and
+      place it in a dedicated "Adapted Scenarios" section at the top of tasks.md,
+      before the numbered implementation tasks. This Gherkin is the agreed contract:
+      the apply phase copies it verbatim into the feature file without rewriting.
+      All UNRESOLVED step expressions or locators must be flagged in this section;
+      the apply phase must not proceed until every item is resolved.
 
 operations:
   apply:
     guidance:
-      - Run ./gradlew clean compileJava compileTestJava after each implementation task
-        to verify compilation before moving on.
+      - Run ./gradlew clean compileJava compileTestJava after each implementation task to verify compilation before moving on.
       - New page classes must extend CommonPage and receive the AndroidDriver via constructor.
       - Preconditions must use the API layer (api/), never the UI, to set up test state.
+      - The "Adapted Scenarios" section of tasks.md is the agreed Gherkin contract. Copy it verbatim into the feature file; do not rewrite or adapt steps during apply.
   archive:
     guidance:
       - Confirm ./gradlew clean compileJava compileTestJava passes before archiving.

@@ -83,6 +83,10 @@ runAppium.sh                      # Appium server launcher
 
 **Key design patterns:**
 - **Page Object Model** — every screen/component has a class in `pages/`; steps never call Appium directly.
+- **Step definitions conventions**:
+  - Steps must **never** call page objects directly; they always delegate to `tasks/` (for actions) or `assertions/` (for checks). Full call path: `steps/ → tasks/ or assertions/ → pages/`.
+  - Within a step class, keep `@Given` definitions first, then `@When`, then `@Then` — no interleaving.
+  - Each feature domain gets its own step file (e.g., `LinksNGSteps.java` for public links NG, `ShareNGSteps.java` for user shares NG) — mirrors the oC10 pattern of `LinksSteps` vs `SharesSteps`.
 - **PicoContainer DI** — `World` is injected into every step class and hooks; it holds the Appium driver and all shared state for a scenario.
 - **API-first preconditions** — test setup (creating files, users, shares) uses the REST API via `preconditions/` rather than the UI, to keep scenarios fast and isolated.
 - **Cucumber tags** control which scenarios run. Standard tags: `@ignore` (skip always), `@noocis` (incompatible with oCIS), `@noci` (skip in CI).
