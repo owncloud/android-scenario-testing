@@ -124,8 +124,8 @@
 
 ## 7. Feature file
 
-- [ ] 7.1 Create `src/test/resources/io/cucumber/editlinksng.feature` with the Scenario Outline and the one standalone Scenario from the "Adapted Scenarios" section above. Feature-level tags: `@editlinksng @nooc10`. Background: `Given user Alice is logged`.
-- [ ] 7.2 Run `./gradlew clean compileJava compileTestJava` and confirm no compilation errors.
+- [x] 7.1 Appended edit scenarios to `src/test/resources/io/cucumber/linksng.feature` (all NG link operations live in one file). Updated feature description. Added Scenario Outline (`@editpubliclink`, 4 Examples) and standalone blocked Scenario (`@editpassword`). Removed previously created `editlinksng.feature`.
+- [x] 7.2 Compile verified clean.
 
 ## 8. steps_rules.md update
 

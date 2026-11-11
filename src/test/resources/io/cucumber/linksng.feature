@@ -2,8 +2,8 @@
 Feature: Links NG
 
   As a user
-  I want to create public links on my files and folders via NG
-  So that the content is accessible to anyone with the link
+  I want to manage public links on my files and folders via NG
+  So that I can create, edit, and eventually remove shared links
 
   Background: User is logged in
     Given user Alice is logged
@@ -45,3 +45,45 @@ Feature: Links NG
     Examples:
       | type   | item           | permission |
       | folder | PublicLinksNG6 | Can edit   |
+
+  @editpubliclink
+  Scenario Outline: User edits an existing public link
+    Given the following items have been created in Alice account
+      | type   | name   |
+      | <type> | <item> |
+    And Alice has a public link on <type> <item> via NG with the following fields
+      | name            | <initial_name>  |
+      | permission      | <initial_perm>  |
+      | password        | aa55AA..        |
+      | expiration days | <initial_expiry>|
+    When Alice selects to share the <type> <item>
+    And Alice edits the public link "<initial_name>" on <type> <item> via NG with the following fields
+      | name            | <new_name>     |
+      | permission      | <new_perm>     |
+      | password        | <new_password> |
+      | expiration days | <new_expiry>   |
+    Then public link should be edited on <item> via NG with the following fields
+      | name            | <expected_name>  |
+      | permission      | <expected_perm>  |
+      | expiration days | <expected_expiry>|
+
+    Examples:
+      | type   | item             | initial_name | initial_perm     | initial_expiry | new_name | new_perm         | new_password | new_expiry | expected_name | expected_perm    | expected_expiry |
+      | file   | EditLinksNG1.txt | FileLink     | Can view         | 3              | NewName  | Can edit         | bb66BB..     | 10         | NewName       | Can edit         | 10              |
+      | folder | EditLinksNG2     | FolderLink   | Can edit         |                |          | Can view         |              | 7          | FolderLink    | Can view         | 7               |
+      | folder | EditLinksNG3     | DropLink     | Can view         |                | (none)   | Secret file drop |              |            | Unnamed Link  | Secret file drop |                 |
+      | file   | EditLinksNG4.txt | ExpiryLink   | Can edit         | 7              |          |                  |              | (none)     | ExpiryLink    | Can edit         |                 |
+
+  @editpassword
+  Scenario: Removing the password of a link is blocked when the server mandates passwords
+    Given the following items have been created in Alice account
+      | type | name             |
+      | file | EditLinksNG5.txt |
+    And Alice has a public link on file EditLinksNG5.txt via NG with the following fields
+      | name       | ProtectedLink |
+      | permission | Can view      |
+      | password   | aa55AA..      |
+    When Alice selects to share the file EditLinksNG5.txt
+    And Alice taps to edit the public link "ProtectedLink"
+    And Alice removes the password on the public link edit
+    Then the public link save button is disabled
