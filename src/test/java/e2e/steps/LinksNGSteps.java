@@ -11,6 +11,7 @@ import java.util.logging.Level;
 import e2e.support.log.StepLogger;
 import e2e.world.World;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
 import io.cucumber.java.en.When;
 
@@ -20,6 +21,13 @@ public class LinksNGSteps {
 
     public LinksNGSteps(World world) {
         this.world = world;
+    }
+
+    @Given("Alice has a public link on {itemtype} {word} via NG with the following fields")
+    public void alice_has_public_link_ng(String itemType, String itemName, DataTable table) throws Throwable {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.linksNGPreconditions().publicLinkExists("Alice", itemType, itemName,
+                table.asMap(String.class, String.class));
     }
 
     @When("Alice creates public link on {itemtype} {word} via NG with the following fields")

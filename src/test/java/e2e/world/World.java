@@ -45,6 +45,7 @@ import e2e.pages.SpacesPage;
 import e2e.pages.UploadsPage;
 import e2e.preconditions.DevicePreconditions;
 import e2e.preconditions.FileListPreconditions;
+import e2e.preconditions.LinksNGPreconditions;
 import e2e.preconditions.LinksPreconditions;
 import e2e.preconditions.LoginPreconditions;
 import e2e.preconditions.SharesPreconditions;
@@ -117,6 +118,7 @@ public class World {
     private FileListPreconditions fileListPreconditions;
     private DevicePreconditions devicePreconditions;
     private LinksPreconditions linksPreconditions;
+    private LinksNGPreconditions linksNGPreconditions;
     private LoginPreconditions loginPreconditions;
     private SharesPreconditions sharesPreconditions;
     private SpacesPreconditions spacesPreconditions;
@@ -449,6 +451,13 @@ public class World {
             linksPreconditions = new LinksPreconditions(this);
         }
         return linksPreconditions;
+    }
+
+    public LinksNGPreconditions linksNGPreconditions() {
+        if (linksNGPreconditions == null) {
+            linksNGPreconditions = new LinksNGPreconditions(this);
+        }
+        return linksNGPreconditions;
     }
 
     public LoginPreconditions loginPreconditions() {

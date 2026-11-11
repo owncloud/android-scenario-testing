@@ -330,6 +330,41 @@ public class GraphAPI extends CommonAPI {
         response.close();
     }
 
+    public void createPublicLinkForItem(String sharingUser, String itemName, String linkName,
+            String permission, String password, String expirationDays)
+            throws IOException, SAXException, ParserConfigurationException {
+        Log.log(Level.FINE, "Create public link for item: " + itemName + " Name: " + linkName
+                + " Permission: " + permission + " Expiration: " + expirationDays);
+        String driveId = personalSpaces.get(sharingUser);
+        String itemId = getItemId(driveId, itemName);
+        String permissionName = getPermissionName(permission);
+        boolean hasExpiration = expirationDays != null && !expirationDays.trim().isEmpty();
+        String url = urlServer + members + driveId + "/items/" + itemId + "/createLink";
+        Log.log(Level.FINE, "URL: " + url);
+        StringBuilder jsonBuilder = new StringBuilder("{");
+        if (hasExpiration) {
+            String expirationFormatted = DateUtils.daysToUTCForExpiration(expirationDays);
+            Log.log(Level.FINE, "Formatted date: " + expirationFormatted);
+            jsonBuilder.append("\"expirationDateTime\": \"")
+                    .append(expirationFormatted)
+                    .append("\",");
+        }
+        if (linkName != null && !linkName.trim().isEmpty()) {
+            jsonBuilder.append("\"displayName\":\"").append(linkName).append("\",");
+        }
+        jsonBuilder.append("\"type\":\"").append(permissionName).append("\",")
+                .append("\"password\":\"").append(password).append("\"")
+                .append("}");
+        String json = jsonBuilder.toString();
+        Log.log(Level.FINE, "Body: " + json);
+        RequestBody body = RequestBody.create(JSON, json);
+        Request request = postRequest(url, body, sharingUser);
+        Response response = httpClient.newCall(request).execute();
+        Log.log(Level.FINE, "Response Code: " + response.code());
+        Log.log(Level.FINE, "Response Body: " + response.body().string());
+        response.close();
+    }
+
     private String getPermissionName(String permission) {
         return switch (permission) {
             case "Can view" -> "view";

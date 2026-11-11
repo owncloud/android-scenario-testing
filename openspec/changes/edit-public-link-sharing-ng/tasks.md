@@ -81,8 +81,8 @@
 
 ## 1. Precondition: API method for NG public links on personal drive items
 
-- [ ] 1.1 UNRESOLVED API: Verify whether `ShareAPI.createShare()` (OCS endpoint) creates NG-compatible public links on oCIS. If yes, `LinksPreconditions` can be extended with `name`, `permission`, `password`, and `expiration days` parameters. If no, add a new Graph API method to `GraphAPI.java` for `POST /drives/{driveId}/items/{itemId}/createLink` and implement `linksNGPreconditionExists(String itemName, Map<String,String> fields)` in a new or extended `LinksNGPreconditions` class.
-- [ ] 1.2 Add `@Given("Alice has a public link on {itemtype} {word} via NG with the following fields")` to `LinksNGSteps.java`. DataTable keys: `name`, `permission`, `password`, `expiration days` (all optional except the item lookup).
+- [x] 1.1 UNRESOLVED API resolved: OCS `ShareAPI.createShare()` does not support expiration dates. Using Graph API instead. Added `createPublicLinkForItem()` to `GraphAPI.java` (`POST /graph/v1beta1/drives/{driveId}/items/{itemId}/createLink`). Created `LinksNGPreconditions.java` with `publicLinkExists(sharingUser, itemType, itemName, fields)` delegating to the new Graph API method.
+- [x] 1.2 Added `@Given("Alice has a public link on {itemtype} {word} via NG with the following fields")` to `LinksNGSteps.java`; added `Given` import.
 
 ## 2. Page object: edit dialog interactions
 
@@ -120,7 +120,7 @@
 
 ## 6. World wiring
 
-- [ ] 6.1 If a new `LinksNGPreconditions` class is created in task 1.1, add a lazy accessor `linksNGPreconditions()` to `World.java` following the existing pattern for other precondition objects.
+- [x] 6.1 Added `linksNGPreconditions` field, import, and lazy accessor to `World.java`.
 
 ## 7. Feature file
 
