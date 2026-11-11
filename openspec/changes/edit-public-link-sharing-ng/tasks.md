@@ -99,15 +99,15 @@
 
 ## 3. Tasks layer
 
-- [ ] 3.1 Add `editPublicLink(String linkName, Map<String,String> fields)` to `LinksNGTasks.java`. Calls `tapEditPublicLink`, then iterates over fields (skipping empty values; handling `(none)` sentinel by calling the remove method), then calls `confirmEdit()`. Follow the `applyField` switch pattern from `createPublicLink`.
-- [ ] 3.2 Add `tapEditPublicLink(String linkName)` to `LinksNGTasks.java` → `world.publicLinkNGPage().tapEditPublicLink(linkName)`.
-- [ ] 3.3 Add `enterPasswordOnEdit(String password)` to `LinksNGTasks.java` → `world.publicLinkNGPage().enterPasswordOnEdit(password)`.
-- [ ] 3.4 Add `removePasswordOnEdit()` to `LinksNGTasks.java` → `world.publicLinkNGPage().removePasswordOnEdit()`.
+- [x] 3.1 Added `editPublicLink(String linkName, Map<String,String> fields)` to `LinksNGTasks.java` with `applyEditField` switch (skips empty, `(none)` → remove for expiration, delegates to edit page methods).
+- [x] 3.2 Added `tapEditPublicLink(String linkName)` to `LinksNGTasks.java`.
+- [x] 3.3 Added `enterPasswordOnEdit(String password)` to `LinksNGTasks.java`.
+- [x] 3.4 Added `removePasswordOnEdit()` to `LinksNGTasks.java`.
 
 ## 4. Assertions layer
 
-- [ ] 4.1 Add `assertPublicLinkEdited(String itemName, Map<String,String> fields)` to `LinksNGAssertions.java`. Reuse `isPublicLinkListed(linkName)`, `isPublicLinkListedWithPermission(linkName, permission)`, and `getPublicLinkExpirationDays(linkName)` page methods. For `expiration days = (none)` assert no expiration date is visible. For `expiration days` = empty string, skip the check. UNRESOLVED: determine whether a server-state check (GET item permissions endpoint) is required; add if confirmed.
-- [ ] 4.2 Add `assertSaveButtonDisabled()` to `LinksNGAssertions.java` → `assertThat(world.publicLinkNGPage().isSaveEnabled()).isFalse()`.
+- [x] 4.1 Added `assertPublicLinkEdited(String itemName, Map<String,String> fields)` to `LinksNGAssertions.java` (UI-only: name listed, permission listed, expiration `(none)` = null, number = formatted date check). Server-state check deferred — not confirmed as required.
+- [x] 4.2 Added `assertSaveButtonDisabled()` to `LinksNGAssertions.java`.
 
 ## 5. Step definitions
 

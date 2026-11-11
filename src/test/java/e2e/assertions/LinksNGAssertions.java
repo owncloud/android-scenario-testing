@@ -44,6 +44,38 @@ public class LinksNGAssertions {
         }
     }
 
+    public void assertPublicLinkEdited(String itemName, Map<String, String> fields) {
+        Log.log(Level.FINE, "Assert public link edited via NG on item: " + itemName);
+        String linkName = fields.get("name");
+        assertThat(world.publicLinkNGPage().isPublicLinkListed(linkName))
+                .as("public link '%s' should be listed after edit", linkName)
+                .isTrue();
+        String permission = fields.get("permission");
+        if (permission != null && !permission.isEmpty()) {
+            assertThat(world.publicLinkNGPage().isPublicLinkListedWithPermission(linkName, permission))
+                    .as("link '%s' should display permission '%s'", linkName, permission)
+                    .isTrue();
+        }
+        String expirationDays = fields.get("expiration days");
+        if ("(none)".equals(expirationDays)) {
+            assertThat(world.publicLinkNGPage().getPublicLinkExpirationDays(linkName))
+                    .as("link '%s' should have no expiration date", linkName)
+                    .isNull();
+        } else if (expirationDays != null && !expirationDays.isEmpty()) {
+            String expectedDate = DateUtils.formatDate(expirationDays, DateUtils.DateFormatType.NUMERIC);
+            assertThat(world.publicLinkNGPage().getPublicLinkExpirationDays(linkName))
+                    .as("expiration date of link '%s'", linkName)
+                    .contains(expectedDate);
+        }
+    }
+
+    public void assertSaveButtonDisabled() {
+        Log.log(Level.FINE, "Assert public link save button is disabled");
+        assertThat(world.publicLinkNGPage().isSaveEnabled())
+                .as("public link save button should be disabled")
+                .isFalse();
+    }
+
     public void assertConfirmButtonDisabled() {
         Log.log(Level.FINE, "Assert public link confirm button is disabled");
         assertThat(world.publicLinkNGPage().isConfirmEnabled())

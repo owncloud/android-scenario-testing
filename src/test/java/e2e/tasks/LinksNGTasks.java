@@ -29,12 +29,52 @@ public class LinksNGTasks {
         world.publicLinkNGPage().confirmCreation();
     }
 
+    public void editPublicLink(String linkName, Map<String, String> fields) {
+        Log.log(Level.FINE, "Edit public link via NG: " + linkName);
+        tapEditPublicLink(linkName);
+        for (Map.Entry<String, String> entry : fields.entrySet()) {
+            applyEditField(entry.getKey(), entry.getValue());
+        }
+        world.publicLinkNGPage().confirmEdit();
+    }
+
+    public void tapEditPublicLink(String linkName) {
+        world.publicLinkNGPage().tapEditPublicLink(linkName);
+    }
+
+    public void enterPasswordOnEdit(String password) {
+        world.publicLinkNGPage().enterPasswordOnEdit(password);
+    }
+
+    public void removePasswordOnEdit() {
+        world.publicLinkNGPage().removePasswordOnEdit();
+    }
+
     public void tapAddPublicLink() {
         world.publicLinkNGPage().tapAddPublicLink();
     }
 
     public void selectPermission(String permission) {
         world.publicLinkNGPage().selectPermission(permission);
+    }
+
+    private void applyEditField(String key, String value) {
+        if (value == null || value.isEmpty()) {
+            return;
+        }
+        switch (key) {
+            case "permission" -> world.publicLinkNGPage().selectPermission(value);
+            case "name" -> world.publicLinkNGPage().setNameOnEdit(value);
+            case "password" -> enterPasswordOnEdit(value);
+            case "expiration days" -> {
+                if ("(none)".equals(value)) {
+                    world.publicLinkNGPage().removeExpirationDateOnEdit();
+                } else {
+                    world.publicLinkNGPage().setExpirationDaysOnEdit(Integer.parseInt(value));
+                }
+            }
+            default -> Log.log(Level.FINE, "Ignoring unsupported public link NG field: " + key);
+        }
     }
 
     private void applyField(String key, String value) {
