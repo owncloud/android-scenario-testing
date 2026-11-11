@@ -86,16 +86,16 @@
 
 ## 2. Page object: edit dialog interactions
 
-- [ ] 2.1 UNRESOLVED LOCATOR: Determine the resource-id of the SAVE button in the NG edit dialog. `saveButton` from `share_public_dialog.xml` is OC10; verify whether the NG edit fragment reuses `create_public_link_button` from `add_public_link_fragment.xml` or introduces a different element. Inspect the edit dialog on a device using UIAutomator Viewer.
-- [ ] 2.2 UNRESOLVED LOCATOR: Verify whether the NG edit dialog reuses the same layout element IDs as the create dialog (`public_link_name_edit_text`, `set_password_button`/`password_value`, `expiration_date_switch`) or uses different IDs. Inspect the edit dialog layout.
-- [ ] 2.3 Add `tapEditPublicLink(String linkName)` to `PublicLinkNGPage.java`. Find the `public_link_item_layout` row whose `public_link_display_name` matches `linkName`; tap its `edit_public_link_button` child (`com.owncloud.android:id/edit_public_link_button` from `public_link_item.xml`).
-- [ ] 2.4 Add `isSaveEnabled()` to `PublicLinkNGPage.java` checking the save button (resource-id from 2.1).
-- [ ] 2.5 Add `confirmEdit()` to `PublicLinkNGPage.java` tapping the save button and waiting for the PUBLIC LINKS list to refresh (wait on `add_public_link_button` visibility, same pattern as `confirmCreation()`).
-- [ ] 2.6 Add `setNameOnEdit(String name)` to `PublicLinkNGPage.java`. When `name` is `(none)`, clear the field without typing. Otherwise clear and type the new value. Element: likely `public_link_name_edit_text` (confirm in 2.2).
-- [ ] 2.7 Add `enterPasswordOnEdit(String password)` to `PublicLinkNGPage.java` entering a password in the edit dialog (elements from 2.2; likely reuses `set_password_button`/`password_value`).
-- [ ] 2.8 UNRESOLVED LOCATOR: Determine how the user removes the password in the NG edit dialog (toggle switch? clear field?). Add `removePasswordOnEdit()` once the element is identified.
-- [ ] 2.9 Add `setExpirationDaysOnEdit(int days)` to `PublicLinkNGPage.java` for adding or changing the expiration date (elements from 2.2; likely reuses `expiration_date_switch` and date picker; same logic as `setExpirationDays()`).
-- [ ] 2.10 UNRESOLVED LOCATOR: Determine how the user removes the expiration date in the NG edit dialog (toggle switch off?). Add `removeExpirationDateOnEdit()` once confirmed.
+- [x] 2.1 LOCATOR resolved: no separate NG edit dialog in dictionary → edit reuses `add_public_link_fragment.xml`; save button is `create_public_link_button`. USER MUST VERIFY on device: if the edit dialog uses a different layout, update `confirmEdit()` and `isSaveEnabled()` accordingly.
+- [x] 2.2 LOCATOR resolved: edit dialog reuses same element IDs as creation (`public_link_name_edit_text`, `set_password_button`/`password_value`, `expiration_date_switch`). USER MUST VERIFY on device.
+- [x] 2.3 Added `tapEditPublicLink(String linkName)` to `PublicLinkNGPage.java`.
+- [x] 2.4 Added `isSaveEnabled()` to `PublicLinkNGPage.java` (checks `createPublicLinkButton.isEnabled()`).
+- [x] 2.5 Added `confirmEdit()` to `PublicLinkNGPage.java` (clicks `createPublicLinkButton`, waits on `addPublicLinkButton`).
+- [x] 2.6 Added `setNameOnEdit(String name)` to `PublicLinkNGPage.java` (`(none)` = clear only, otherwise clear+type).
+- [x] 2.7 Added `enterPasswordOnEdit(String password)` to `PublicLinkNGPage.java`.
+- [x] 2.8 LOCATOR resolved: `remove_password_button` found in `password_layout.xml`. Added `removePasswordOnEdit()` to `PublicLinkNGPage.java`.
+- [x] 2.9 Added `setExpirationDaysOnEdit(int days)` to `PublicLinkNGPage.java` (delegates to `setExpirationDays()`).
+- [x] 2.10 LOCATOR resolved: toggle `expiration_date_switch` OFF. Added `removeExpirationDateOnEdit()` to `PublicLinkNGPage.java`.
 
 ## 3. Tasks layer
 

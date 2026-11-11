@@ -42,6 +42,9 @@ public class PublicLinkNGPage extends CommonPage {
     @AndroidFindBy(id = "com.owncloud.android:id/create_public_link_button")
     private WebElement createPublicLinkButton;
 
+    @AndroidFindBy(id = "com.owncloud.android:id/remove_password_button")
+    private WebElement removePasswordButton;
+
     @AndroidFindBy(id = "android:id/next")
     private WebElement nextButton;
 
@@ -51,6 +54,7 @@ public class PublicLinkNGPage extends CommonPage {
     private static final String PUBLIC_LINK_ITEM_LAYOUT_ID = "com.owncloud.android:id/public_link_item_layout";
     private static final String PUBLIC_LINK_DISPLAY_NAME_ID = "com.owncloud.android:id/public_link_display_name";
     private static final String EXPIRATION_DATE_ID = "com.owncloud.android:id/expiration_date";
+    private static final String EDIT_PUBLIC_LINK_BUTTON_ID = "com.owncloud.android:id/edit_public_link_button";
 
     public PublicLinkNGPage(AndroidDriver driver) {
         super(driver);
@@ -101,6 +105,52 @@ public class PublicLinkNGPage extends CommonPage {
         Log.log(Level.FINE, "Confirm public link creation");
         createPublicLinkButton.click();
         waitById(WAIT_TIME, addPublicLinkButton);
+    }
+
+    public void tapEditPublicLink(String linkName) {
+        Log.log(Level.FINE, "Tap edit public link: " + linkName);
+        WebElement link = findLinkByNameOrNull(linkName);
+        link.findElement(AppiumBy.id(EDIT_PUBLIC_LINK_BUTTON_ID)).click();
+        waitById(WAIT_TIME, permissionsTitle);
+    }
+
+    public boolean isSaveEnabled() {
+        return createPublicLinkButton.isEnabled();
+    }
+
+    public void confirmEdit() {
+        Log.log(Level.FINE, "Confirm public link edit");
+        createPublicLinkButton.click();
+        waitById(WAIT_TIME, addPublicLinkButton);
+    }
+
+    public void setNameOnEdit(String name) {
+        Log.log(Level.FINE, "Set link name on edit: " + name);
+        linkNameInput.clear();
+        if (!name.equals("(none)")) {
+            linkNameInput.sendKeys(name);
+        }
+    }
+
+    public void enterPasswordOnEdit(String password) {
+        Log.log(Level.FINE, "Enter password on edit");
+        setPasswordButton.click();
+        passwordValue.sendKeys(password);
+        setPasswordButton.click();
+    }
+
+    public void removePasswordOnEdit() {
+        Log.log(Level.FINE, "Remove password on edit");
+        removePasswordButton.click();
+    }
+
+    public void setExpirationDaysOnEdit(int days) {
+        setExpirationDays(days);
+    }
+
+    public void removeExpirationDateOnEdit() {
+        Log.log(Level.FINE, "Remove expiration date on edit");
+        expirationDateSwitch.click();
     }
 
     public boolean isPublicLinkListed(String linkName) {
