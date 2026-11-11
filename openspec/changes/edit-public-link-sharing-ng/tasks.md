@@ -111,12 +111,12 @@
 
 ## 5. Step definitions
 
-- [ ] 5.1 Add `@Given("Alice has a public link on {itemtype} {word} via NG with the following fields")` to `LinksNGSteps.java`.
-- [ ] 5.2 Add `@When("Alice edits the public link {string} on {itemtype} {word} via NG with the following fields")` to `LinksNGSteps.java` → `world.linksNGTasks().editPublicLink(linkName, table)`.
-- [ ] 5.3 Add `@When("Alice taps to edit the public link {string}")` to `LinksNGSteps.java` → `world.linksNGTasks().tapEditPublicLink(linkName)`.
-- [ ] 5.4 Add `@When("Alice removes the password on the public link edit")` to `LinksNGSteps.java` → `world.linksNGTasks().removePasswordOnEdit()`.
-- [ ] 5.5 Add `@Then("public link should be edited on {word} via NG with the following fields")` to `LinksNGSteps.java` → `world.linksNGAssertions().assertPublicLinkEdited(itemName, table)`.
-- [ ] 5.6 Add `@Then("the public link save button is disabled")` to `LinksNGSteps.java` → `world.linksNGAssertions().assertSaveButtonDisabled()`.
+- [x] 5.1 Done (implemented as part of task 1.2).
+- [x] 5.2 Added `@When("Alice edits the public link {string} on {itemtype} {word} via NG with the following fields")` to `LinksNGSteps.java`.
+- [x] 5.3 Added `@When("Alice taps to edit the public link {string}")` to `LinksNGSteps.java`.
+- [x] 5.4 Added `@When("Alice removes the password on the public link edit")` to `LinksNGSteps.java`.
+- [x] 5.5 Added `@Then("public link should be edited on {word} via NG with the following fields")` to `LinksNGSteps.java`.
+- [x] 5.6 Added `@Then("the public link save button is disabled")` to `LinksNGSteps.java`.
 
 ## 6. World wiring
 
