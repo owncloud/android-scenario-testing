@@ -75,15 +75,19 @@ Feature: Links NG
       | file   | EditLinksNG4.txt | ExpiryLink   | Can edit         | 7              |          |                  |              | (none)     | ExpiryLink    | Can edit         |                 |
 
   @editpassword
-  Scenario: Removing the password of a link is blocked when the server mandates passwords
+  Scenario Outline: Removing the password of a link is blocked when the server mandates passwords
     Given the following items have been created in Alice account
-      | type | name             |
-      | file | EditLinksNG5.txt |
-    And Alice has a public link on file EditLinksNG5.txt via NG with the following fields
-      | name       | ProtectedLink |
-      | permission | Can view      |
-      | password   | aa55AA..      |
-    When Alice selects to share the file EditLinksNG5.txt
-    And Alice taps to edit the public link "ProtectedLink"
+      | type   | name   |
+      | <type> | <item> |
+    And Alice has a public link on <type> <item> via NG with the following fields
+      | name       | <link_name>  |
+      | permission | <permission> |
+      | password   | <password>   |
+    When Alice selects to share the <type> <item>
+    And Alice taps to edit the public link "<link_name>"
     And Alice removes the password on the public link edit
     Then the public link save button is disabled
+
+    Examples:
+      | type | item             | link_name     | permission | password |
+      | file | EditLinksNG5.txt | ProtectedLink | Can view   | aa55AA.. |
