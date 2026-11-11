@@ -134,6 +134,9 @@ public class PublicLinkNGPage extends CommonPage {
 
     public void enterPasswordOnEdit(String password) {
         Log.log(Level.FINE, "Enter password on edit");
+        // when a password is already set, only remove_password_button is visible;
+        // clicking it clears the password and reveals set_password_button
+        removePasswordButton.click();
         setPasswordButton.click();
         passwordValue.sendKeys(password);
         setPasswordButton.click();
@@ -145,6 +148,12 @@ public class PublicLinkNGPage extends CommonPage {
     }
 
     public void setExpirationDaysOnEdit(int days) {
+        Log.log(Level.FINE, "Set expiration days on edit: " + days);
+        // switch is ON when a date already exists; turn it OFF so setExpirationDays's
+        // click arrives at an OFF switch and correctly opens the date picker
+        if ("true".equals(expirationDateSwitch.getAttribute("checked"))) {
+            expirationDateSwitch.click();
+        }
         setExpirationDays(days);
     }
 
