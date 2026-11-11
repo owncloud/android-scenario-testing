@@ -171,3 +171,6 @@ Alice removes {word} from the space {word}
 | `share created for X` | `share should be created/edited on X with the following fields` — server-state, no Alice |
 | `link created for X` | `link should be created/edited on X with the following fields` — server-state, no Alice |
 | `the {fileType} is downloaded` | `the {fileType} {word} should be marked as downloaded` |
+| `Alice opens the edit dialog for link X` / `Alice edits link X via NG` | `Alice edits the public link "X" on {itemtype} {word} via NG with the following fields` — atomic DataTable step; empty cell = no change, `(none)` = clear field |
+| `Alice taps to edit the public link "X"` (happy path) | use `Alice edits the public link "X" on {itemtype} {word} via NG with the following fields` for happy paths — `taps to edit` is disaggregated form for blocked-state scenarios only |
+| `Alice deletes the password` / `Alice clears the password on the edit` | `Alice removes the password on the public link edit` |

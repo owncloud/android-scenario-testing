@@ -129,7 +129,4 @@
 
 ## 8. steps_rules.md update
 
-- [ ] 8.1 Add rows to the **Common mismatch traps** table in `openspec/steps_rules.md` for:
-  - `Alice edits the public link {string} on {itemtype} {word} via NG with the following fields` — natural phrasing ("Alice opens the edit dialog for link X") does not match; also note the `(none)` sentinel convention for clearing fields.
-  - `Alice taps to edit the public link {string}` — used only in disaggregated (blocked-state) scenarios; the atomic edit step is the default for happy paths.
-  - `Alice removes the password on the public link edit` — natural phrasing ("Alice deletes/clears the password") does not match.
+- [x] 8.1 Added 3 rows to **Common mismatch traps** in `openspec/steps_rules.md`: atomic edit step (with `(none)` sentinel note), disaggregated `taps to edit` scope, and `removes the password` phrasing.
