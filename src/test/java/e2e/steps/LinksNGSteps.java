@@ -6,7 +6,12 @@
 
 package e2e.steps;
 
+import org.xml.sax.SAXException;
+
+import java.io.IOException;
 import java.util.logging.Level;
+
+import javax.xml.parsers.ParserConfigurationException;
 
 import e2e.support.log.StepLogger;
 import e2e.world.World;
@@ -67,13 +72,15 @@ public class LinksNGSteps {
     }
 
     @Then("public link should be created on {word} via NG with the following fields")
-    public void public_link_should_be_created_ng(String itemName, DataTable table) {
+    public void public_link_should_be_created_ng(String itemName, DataTable table)
+            throws IOException, ParserConfigurationException, SAXException {
         StepLogger.logCurrentStep(Level.FINE);
         world.linksNGAssertions().assertPublicLinkCreated(itemName, table.asMap(String.class, String.class));
     }
 
     @Then("public link should be edited on {word} via NG with the following fields")
-    public void public_link_should_be_edited_ng(String itemName, DataTable table) {
+    public void public_link_should_be_edited_ng(String itemName, DataTable table)
+            throws IOException, ParserConfigurationException, SAXException {
         StepLogger.logCurrentStep(Level.FINE);
         world.linksNGAssertions().assertPublicLinkEdited(itemName, table.asMap(String.class, String.class));
     }

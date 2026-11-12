@@ -230,6 +230,30 @@ public class GraphAPI extends CommonAPI {
         return null;
     }
 
+    public OCSpaceLink getLinkForItem(String itemName, String linkName)
+            throws IOException, SAXException, ParserConfigurationException {
+        Log.log(Level.FINE, "Get link: " + linkName + " for item: " + itemName);
+        String driveId = personalSpaces.get("Alice");
+        String itemId = getItemId(driveId, itemName);
+        String url = urlServer + members + driveId + "/items/" + itemId + "/permissions";
+        Log.log(Level.FINE, "URL: " + url);
+        Request request = getRequest(url);
+        Response response = httpClient.newCall(request).execute();
+        List<OCSpaceLink> links = OCMemberJSONHandler.parseLinks(response.body().string());
+        Log.log(Level.FINE, "Links found: " + links.size());
+        for (OCSpaceLink link : links) {
+            Log.log(Level.FINE, "Checking " + link.getLinkName());
+            if (link.getLinkName().equals(linkName)) {
+                Log.log(Level.FINE, "Link found!!: " + link.getLinkName() + " " + link.getPermission());
+                response.close();
+                return link;
+            }
+        }
+        Log.log(Level.FINE, "Link not found!!");
+        response.close();
+        return null;
+    }
+
     private OCSpaceMember getUserIdFromName(String userName) throws IOException {
         Log.log(Level.FINE, "Get OCMember from name: " + userName);
         String url = urlServer + graphPath + "users?%24search=%22" + userName + "%22&%24orderby=displayName";
