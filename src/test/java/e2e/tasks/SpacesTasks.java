@@ -31,6 +31,11 @@ public class SpacesTasks {
         world.fileListPage().openSpaces();
     }
 
+    public void openSpace(String spaceName) {
+        Log.log(Level.FINE, "Open space: " + spaceName);
+        world.spacesPage().openSpace(spaceName);
+    }
+
     public void disableSpacesInServer(List<Map<String, String>> rows) throws IOException {
         for (Map<String, String> row : rows) {
             String name = row.get("name");

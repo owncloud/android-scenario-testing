@@ -292,12 +292,15 @@ public class FileListSteps {
     public void user_should_see_item_inside_folder_string(String itemName, String targetFolder)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
+        world.fileListTasks().browseInto(targetFolder);
         world.fileListAssertions().assertItemIsVisibleInsideFolder(itemName, targetFolder);
     }
 
     @Then("Alice should see {word} inside the space {word}")
     public void user_should_see_item_inside_space(String itemName, String spaceName) {
         StepLogger.logCurrentStep(Level.FINE);
+        world.spacesTasks().openSpacesView();
+        world.spacesTasks().openSpace(spaceName);
         world.fileListAssertions().assertItemIsVisibleInsideSpace(itemName, spaceName);
     }
 
@@ -342,6 +345,7 @@ public class FileListSteps {
     public void list_of_files_in_folder_should_match_server(String path)
             throws Throwable {
         StepLogger.logCurrentStep(Level.FINE);
+        world.fileListTasks().browseInto(path);
         world.fileListAssertions().assertFolderFileListMatchesServer(path);
     }
 

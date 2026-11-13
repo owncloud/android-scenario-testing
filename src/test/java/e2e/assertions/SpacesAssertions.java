@@ -84,12 +84,10 @@ public class SpacesAssertions {
     }
 
     public void assertQuotaIsCorrectlyDisplayed(Map<String, String> values) {
-        String spaceName = getRequiredValue(values, "name");
         String expectedQuota = getRequiredValue(values, "quota");
         String expectedUnit = getRequiredValue(values, "unit");
-        Log.log(Level.FINE, "Assert quota is correctly displayed. Space: " + spaceName
+        Log.log(Level.FINE, "Assert quota is correctly displayed."
                 + " - Expected quota: " + expectedQuota + " - Expected unit: " + expectedUnit);
-        world.spacesPage().openEditSpace(spaceName);
         assertQuotaDisplayed(expectedQuota, expectedUnit);
     }
 

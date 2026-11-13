@@ -68,7 +68,6 @@ public class FileListAssertions {
 
     public void assertItemIsVisibleInsideFolder(String itemName, String targetFolder)
             throws IOException {
-        world.fileListPage().browseInto(targetFolder);
         assertThat(world.fileListPage().isItemInList(itemName))
                 .as("'%s' should be visible inside folder '%s'", itemName, targetFolder)
                 .isTrue();
@@ -78,8 +77,6 @@ public class FileListAssertions {
     }
 
     public void assertItemIsVisibleInsideSpace(String itemName, String spaceName) {
-        world.fileListPage().openSpaces();
-        world.spacesPage().openSpace(spaceName);
         assertThat(world.fileListPage().isItemInList(itemName))
                 .as("'%s' should be visible inside space '%s'", itemName, spaceName)
                 .isTrue();
@@ -261,7 +258,6 @@ public class FileListAssertions {
 
     public void assertDisplayedListMatchesServer(String path, ArrayList<OCFile> serverFiles) {
         Log.log(Level.FINE, "Assert displayed list matches server. Path: " + path);
-        world.fileListPage().browseToFolder(path);
         String userName1 = LocProperties.getProperties().getProperty("userName1");
         boolean allVisibleItemsFound = serverFiles.stream()
             .filter(ocfile -> !ocfile.getName().equalsIgnoreCase(userName1)

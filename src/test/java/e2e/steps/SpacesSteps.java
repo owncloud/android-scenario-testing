@@ -7,6 +7,7 @@
 package e2e.steps;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.logging.Level;
 
 import e2e.support.log.StepLogger;
@@ -171,7 +172,9 @@ public class SpacesSteps {
     @Then("the quota is correctly displayed")
     public void quota_displayed(DataTable table) {
         StepLogger.logCurrentStep(Level.FINE);
-        world.spacesAssertions().assertQuotaIsCorrectlyDisplayed(table.asMap(String.class, String.class));
+        Map<String, String> fields = table.asMap(String.class, String.class);
+        world.spacesTasks().openEditSpace(fields.get("name"));
+        world.spacesAssertions().assertQuotaIsCorrectlyDisplayed(fields);
     }
 
     @Then("{word} should be member of the space {word} with")
