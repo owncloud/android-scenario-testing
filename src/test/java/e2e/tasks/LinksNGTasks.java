@@ -42,6 +42,24 @@ public class LinksNGTasks {
         world.publicLinkNGPage().tapEditPublicLink(linkName);
     }
 
+    public void removePublicLink(String linkName) {
+        Log.log(Level.FINE, "Remove public link: " + linkName);
+        tapRemovePublicLink(linkName);
+        confirmPublicLinkRemoval();
+    }
+
+    public void tapRemovePublicLink(String linkName) {
+        world.publicLinkNGPage().tapRemoveButton(linkName);
+    }
+
+    public void confirmPublicLinkRemoval() {
+        world.publicLinkNGPage().confirmRemoval();
+    }
+
+    public void dismissPublicLinkRemovalDialog() {
+        world.publicLinkNGPage().dismissRemovalDialog();
+    }
+
     public void enterPasswordOnEdit(String password) {
         world.publicLinkNGPage().enterPasswordOnEdit(password);
     }

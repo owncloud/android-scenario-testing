@@ -68,9 +68,10 @@ Rule: Remove a public link
 
 ## 2. Tasks layer
 
-- [ ] 2.1 Add `removePublicLink(String linkName)` to `src/test/java/e2e/tasks/LinksNGTasks.java` — composite: calls `world.publicLinkNGPage().tapRemoveButton(linkName)` then `world.publicLinkNGPage().confirmRemoval()`; mirrors `removeLinkOverSpace` in SpacesTasks
-- [ ] 2.2 Add `tapRemovePublicLink(String linkName)` — isolated tap only: `world.publicLinkNGPage().tapRemoveButton(linkName)`; mirrors `tapEditPublicLink` in LinksNGTasks
-- [ ] 2.3 Add `dismissPublicLinkRemovalDialog()` → `world.publicLinkNGPage().dismissRemovalDialog()`
+- [x] 2.1 Add `removePublicLink(String linkName)` to `src/test/java/e2e/tasks/LinksNGTasks.java` — composite: calls `tapRemovePublicLink(linkName)` then `confirmPublicLinkRemoval()`; mirrors `removeLinkOverSpace` in SpacesTasks
+- [x] 2.2 Add `tapRemovePublicLink(String linkName)` — isolated tap only: `world.publicLinkNGPage().tapRemoveButton(linkName)`; mirrors `tapEditPublicLink` in LinksNGTasks
+- [x] 2.3 Add `confirmPublicLinkRemoval()` → `world.publicLinkNGPage().confirmRemoval()` (symmetric with dismissPublicLinkRemovalDialog)
+- [x] 2.4 Add `dismissPublicLinkRemovalDialog()` → `world.publicLinkNGPage().dismissRemovalDialog()`
 
 ## 3. Assertions layer
 
