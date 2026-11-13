@@ -61,6 +61,7 @@ public class LinksTasks {
             case "password" -> world.linksPage().typePassword(value);
             case "expiration days" -> setExpiration(value);
             case "permission", "permissions" -> selectPermissions(value);
+            default -> Log.log(Level.FINE, "Ignoring unsupported public link edition field: " + key);
         }
     }
 
