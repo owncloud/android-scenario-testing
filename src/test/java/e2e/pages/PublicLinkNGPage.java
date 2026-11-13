@@ -51,10 +51,14 @@ public class PublicLinkNGPage extends CommonPage {
     @AndroidFindBy(id = "android:id/button1")
     private WebElement okButton;
 
+    @AndroidFindBy(id = "android:id/button2")
+    private WebElement cancelButton;
+
     private static final String PUBLIC_LINK_ITEM_LAYOUT_ID = "com.owncloud.android:id/public_link_item_layout";
     private static final String PUBLIC_LINK_DISPLAY_NAME_ID = "com.owncloud.android:id/public_link_display_name";
     private static final String EXPIRATION_DATE_ID = "com.owncloud.android:id/expiration_date";
     private static final String EDIT_PUBLIC_LINK_BUTTON_ID = "com.owncloud.android:id/edit_public_link_button";
+    private static final String REMOVE_PUBLIC_LINK_BUTTON_ID = "com.owncloud.android:id/remove_public_link_button";
 
     public PublicLinkNGPage(AndroidDriver driver) {
         super(driver);
@@ -112,6 +116,26 @@ public class PublicLinkNGPage extends CommonPage {
         WebElement link = findLinkByNameOrNull(linkName);
         link.findElement(AppiumBy.id(EDIT_PUBLIC_LINK_BUTTON_ID)).click();
         waitById(WAIT_TIME, permissionsTitle);
+    }
+
+    public void tapRemoveButton(String linkName) {
+        Log.log(Level.FINE, "Tap remove public link: " + linkName);
+        WebElement link = findLinkByNameOrNull(linkName);
+        link.findElement(AppiumBy.id(REMOVE_PUBLIC_LINK_BUTTON_ID)).click();
+    }
+
+    public void confirmRemoval() {
+        Log.log(Level.FINE, "Confirm public link removal");
+        okButton.click();
+    }
+
+    public void dismissRemovalDialog() {
+        Log.log(Level.FINE, "Dismiss public link removal dialog");
+        cancelButton.click();
+    }
+
+    public boolean isPublicLinkNotListed(String linkName) {
+        return findLinkByNameOrNull(linkName) == null;
     }
 
     public boolean isSaveEnabled() {

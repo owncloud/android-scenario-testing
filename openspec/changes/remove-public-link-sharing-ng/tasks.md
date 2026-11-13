@@ -60,11 +60,11 @@ Rule: Remove a public link
 
 ## 1. Page object — Removal interaction
 
-- [ ] 1.1 Add `@AndroidFindBy(id = "android:id/button2") private WebElement cancelButton` field to `src/test/java/e2e/pages/PublicLinkNGPage.java`
-- [ ] 1.2 Add `tapRemoveButton(String linkName)` method — resolves the row via `findLinkByNameOrNull(linkName)`, finds the child with `AppiumBy.id("com.owncloud.android:id/remove_public_link_button")`, and taps it
-- [ ] 1.3 Add `confirmRemoval()` method — calls `okButton.click()` (already declared)
-- [ ] 1.4 Add `dismissRemovalDialog()` method — calls `cancelButton.click()`
-- [ ] 1.5 Add `isPublicLinkNotListed(String linkName)` method — waits for the list to reload via `waitForListById(WAIT_TIME, PUBLIC_LINK_ITEM_LAYOUT_ID)`, then returns `findLinkByNameOrNull(linkName) == null` (avoids the stale-element race fixed in SpaceMembersPage commit 75b2bfe)
+- [x] 1.1 Add `@AndroidFindBy(id = "android:id/button2") private WebElement cancelButton` field to `src/test/java/e2e/pages/PublicLinkNGPage.java`
+- [x] 1.2 Add `tapRemoveButton(String linkName)` method — resolves the row via `findLinkByNameOrNull(linkName)`, finds the child with `AppiumBy.id("com.owncloud.android:id/remove_public_link_button")`, and taps it
+- [x] 1.3 Add `confirmRemoval()` method — calls `okButton.click()` (already declared)
+- [x] 1.4 Add `dismissRemovalDialog()` method — calls `cancelButton.click()`
+- [x] 1.5 Add `isPublicLinkNotListed(String linkName)` method — waits for the list to reload via `waitForListById(WAIT_TIME, PUBLIC_LINK_ITEM_LAYOUT_ID)`, then returns `findLinkByNameOrNull(linkName) == null` (avoids the stale-element race fixed in SpaceMembersPage commit 75b2bfe)
 
 ## 2. Tasks layer
 
