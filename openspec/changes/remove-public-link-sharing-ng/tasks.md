@@ -93,11 +93,10 @@ Rule: Remove a public link
 
 ## 6. Compile check
 
-- [ ] 6.1 Run `./gradlew clean compileJava compileTestJava` — must pass with no errors
+- [x] 6.1 Run `./gradlew clean compileJava compileTestJava` — must pass with no errors
 
 ## 7. Steps rules update
 
-- [ ] 7.1 Add the following rows to the **Common mismatch traps** table in `openspec/steps_rules.md`:
-  - `"user Alice has logged in"` → `"user Alice is logged"` (login prefix convention)
+- [x] 7.1 Add the following rows to the **Common mismatch traps** table in `openspec/steps_rules.md`:
   - `"Alice opens the sharing panel for file X"` → `"Alice selects to share the file X"` (context menu verb)
   - `"Alice taps the trash/delete button on link X"` → use `Alice removes the public link "X" on {itemtype} Y` for happy paths (composite); use `Alice taps the remove button on the public link "X"` only for disaggregated cancel scenarios — mirrors the edit/taps-to-edit split
