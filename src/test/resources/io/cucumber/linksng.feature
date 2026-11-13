@@ -94,3 +94,33 @@ Feature: Links NG
       Examples:
         | type | item             | link_name     | permission | password |
         | file | EditLinksNG5.txt | ProtectedLink | Can view   | aa55AA.. |
+
+  @removelinkng
+  Rule: Remove a public link
+
+    @removelinkng
+    Scenario: User removes a public link from a file
+      Given the following items have been created in Alice account
+        | type | name               |
+        | file | RemoveLinksNG1.txt |
+      And Alice has a public link on file RemoveLinksNG1.txt via NG with the following fields
+        | name       | Quarterly report |
+        | permission | Can view         |
+        | password   | aa55AA..         |
+      When Alice selects to share the file RemoveLinksNG1.txt
+      And Alice removes the public link "Quarterly report" on file RemoveLinksNG1.txt
+      Then the public link "Quarterly report" should not be listed in the PUBLIC LINKS section
+
+    @removelinkng
+    Scenario: User cancels the removal of a public link
+      Given the following items have been created in Alice account
+        | type | name               |
+        | file | RemoveLinksNG2.txt |
+      And Alice has a public link on file RemoveLinksNG2.txt via NG with the following fields
+        | name       | Quarterly report |
+        | permission | Can view         |
+        | password   | aa55AA..         |
+      When Alice selects to share the file RemoveLinksNG2.txt
+      And Alice taps the remove button on the public link "Quarterly report"
+      And Alice dismisses the public link removal dialog
+      Then the public link "Quarterly report" should be listed in the PUBLIC LINKS section

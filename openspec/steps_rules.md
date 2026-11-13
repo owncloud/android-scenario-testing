@@ -174,3 +174,5 @@ Alice removes {word} from the space {word}
 | `Alice opens the edit dialog for link X` / `Alice edits link X via NG` | `Alice edits the public link "X" on {itemtype} {word} via NG with the following fields` — atomic DataTable step; empty cell = no change, `(none)` = clear field |
 | `Alice taps to edit the public link "X"` (happy path) | use `Alice edits the public link "X" on {itemtype} {word} via NG with the following fields` for happy paths — `taps to edit` is disaggregated form for blocked-state scenarios only |
 | `Alice deletes the password` / `Alice clears the password on the edit` | `Alice removes the password on the public link edit` |
+| `Alice opens the sharing panel for file X` | `Alice selects to share the file X` — context menu verb |
+| `Alice taps the trash/delete button on link "X"` (happy path) | use `Alice removes the public link "X" on {itemtype} {word}` for happy paths (composite); use `Alice taps the remove button on the public link "X"` only for disaggregated cancel scenarios — mirrors the edit/taps-to-edit split |

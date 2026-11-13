@@ -130,4 +130,18 @@ public class LinksNGAssertions {
                 .as("public link confirm button should be disabled")
                 .isFalse();
     }
+
+    public void assertPublicLinkListed(String linkName) {
+        Log.log(Level.FINE, "Assert public link listed: " + linkName);
+        assertThat(world.publicLinkNGPage().isPublicLinkListed(linkName))
+                .as("public link '%s' should be listed in PUBLIC LINKS section", linkName)
+                .isTrue();
+    }
+
+    public void assertPublicLinkNotListed(String linkName) {
+        Log.log(Level.FINE, "Assert public link not listed: " + linkName);
+        assertThat(world.publicLinkNGPage().isPublicLinkNotListed(linkName))
+                .as("public link '%s' should not be listed in PUBLIC LINKS section", linkName)
+                .isTrue();
+    }
 }

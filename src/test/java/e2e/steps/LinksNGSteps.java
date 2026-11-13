@@ -71,6 +71,24 @@ public class LinksNGSteps {
         world.linksNGTasks().removePasswordOnEdit();
     }
 
+    @When("Alice removes the public link {string} on {itemtype} {word}")
+    public void alice_removes_public_link_ng(String linkName, String type, String itemName) {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.linksNGTasks().removePublicLink(linkName);
+    }
+
+    @When("Alice taps the remove button on the public link {string}")
+    public void alice_taps_remove_button_on_public_link(String linkName) {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.linksNGTasks().tapRemovePublicLink(linkName);
+    }
+
+    @When("Alice dismisses the public link removal dialog")
+    public void alice_dismisses_public_link_removal_dialog() {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.linksNGTasks().dismissPublicLinkRemovalDialog();
+    }
+
     @Then("public link should be created on {word} via NG with the following fields")
     public void public_link_should_be_created_ng(String itemName, DataTable table)
             throws IOException, ParserConfigurationException, SAXException {
@@ -95,5 +113,17 @@ public class LinksNGSteps {
     public void public_link_confirm_button_is_disabled() {
         StepLogger.logCurrentStep(Level.FINE);
         world.linksNGAssertions().assertConfirmButtonDisabled();
+    }
+
+    @Then("the public link {string} should be listed in the PUBLIC LINKS section")
+    public void public_link_should_be_listed(String linkName) {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.linksNGAssertions().assertPublicLinkListed(linkName);
+    }
+
+    @Then("the public link {string} should not be listed in the PUBLIC LINKS section")
+    public void public_link_should_not_be_listed(String linkName) {
+        StepLogger.logCurrentStep(Level.FINE);
+        world.linksNGAssertions().assertPublicLinkNotListed(linkName);
     }
 }
