@@ -75,8 +75,8 @@ Rule: Remove a public link
 
 ## 3. Assertions layer
 
-- [ ] 3.1 Add `assertPublicLinkListed(String linkName)` to `src/test/java/e2e/assertions/LinksNGAssertions.java` → asserts `world.publicLinkNGPage().isPublicLinkListed(linkName)` is true (used by scenario 2)
-- [ ] 3.2 Add `assertPublicLinkNotListed(String linkName)` → asserts `world.publicLinkNGPage().isPublicLinkNotListed(linkName)` is true (used by scenario 1)
+- [x] 3.1 Add `assertPublicLinkListed(String linkName)` to `src/test/java/e2e/assertions/LinksNGAssertions.java` → asserts `world.publicLinkNGPage().isPublicLinkListed(linkName)` is true (used by scenario 2)
+- [x] 3.2 Add `assertPublicLinkNotListed(String linkName)` → asserts `world.publicLinkNGPage().isPublicLinkNotListed(linkName)` is true (used by scenario 1)
 
 ## 4. Step definitions
 
