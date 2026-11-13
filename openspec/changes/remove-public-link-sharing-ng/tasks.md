@@ -80,7 +80,7 @@ Rule: Remove a public link
 
 ## 4. Step definitions
 
-- [ ] 4.1 Add the following to `src/test/java/e2e/steps/LinksNGSteps.java` (keep @When before @Then, in order after existing entries):
+- [x] 4.1 Add the following to `src/test/java/e2e/steps/LinksNGSteps.java` (keep @When before @Then, in order after existing entries):
   - `@When("Alice removes the public link {string} on {itemtype} {word}")` → `world.linksNGTasks().removePublicLink(linkName)` — composite happy-path step
   - `@When("Alice taps the remove button on the public link {string}")` → `world.linksNGTasks().tapRemovePublicLink(linkName)` — isolated tap for disaggregated scenarios
   - `@When("Alice dismisses the public link removal dialog")` → `world.linksNGTasks().dismissPublicLinkRemovalDialog()`
