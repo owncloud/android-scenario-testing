@@ -89,7 +89,7 @@ Rule: Remove a public link
 
 ## 5. Feature file
 
-- [ ] 5.1 Add the adapted scenarios (from the **Adapted Scenarios** section above) to `src/test/resources/io/cucumber/linksng.feature` under a new `@removelinkng` Rule block
+- [x] 5.1 Add the adapted scenarios (from the **Adapted Scenarios** section above) to `src/test/resources/io/cucumber/linksng.feature` under a new `@removelinkng` Rule block
 
 ## 6. Compile check
 
