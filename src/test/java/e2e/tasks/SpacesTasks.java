@@ -131,7 +131,15 @@ public class SpacesTasks {
     public void removeLinkOverSpace(String linkName, String spaceName) {
         Log.log(Level.FINE, "Remove link " + linkName + " over space " + spaceName);
         openMembersView(spaceName);
+        tapRemoveLinkOverSpace(linkName);
+        confirmLinkRemovalOverSpace();
+    }
+
+    public void tapRemoveLinkOverSpace(String linkName) {
         world.spacesMembersPage().tapRemoveLink(linkName);
+    }
+
+    public void confirmLinkRemovalOverSpace() {
         world.spacesMembersPage().tapOk();
     }
 
