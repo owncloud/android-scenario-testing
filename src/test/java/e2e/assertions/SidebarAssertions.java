@@ -6,7 +6,7 @@
 
 package e2e.assertions;
 
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.logging.Level;
 
@@ -23,11 +23,15 @@ public class SidebarAssertions {
 
     public void assertHelpWebIsDisplayed() {
         Log.log(Level.FINE, "Starts: Assert Help web is displayed");
-        assertTrue(world.sidebarPage().isHelpWebDisplayed());
+        assertThat(world.sidebarPage().isHelpWebDisplayed())
+                .as("help web should be displayed")
+                .isTrue();
     }
 
     public void assertPrivacyPolicyWebIsDisplayed() {
         Log.log(Level.FINE, "Starts: Assert Help web is displayed");
-        assertTrue(world.sidebarPage().isPrivacyPolicyWebDisplayed());
+        assertThat(world.sidebarPage().isPrivacyPolicyWebDisplayed())
+                .as("privacy policy web should be displayed")
+                .isTrue();
     }
 }

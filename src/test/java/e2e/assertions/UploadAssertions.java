@@ -6,7 +6,7 @@
 
 package e2e.assertions;
 
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.util.logging.Level;
 
@@ -34,7 +34,9 @@ public class UploadAssertions {
     private void assertUploadStatus(String fileName, String status) {
         switch (status) {
             case "uploaded" ->
-                    assertTrue(world.uploadsPage().isFileUploaded(fileName));
+                    assertThat(world.uploadsPage().isFileUploaded(fileName))
+                            .as("'%s' should be uploaded", fileName)
+                            .isTrue();
         }
     }
 }

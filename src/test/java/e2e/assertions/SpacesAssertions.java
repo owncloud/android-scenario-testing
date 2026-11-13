@@ -6,11 +6,7 @@
 
 package e2e.assertions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.openqa.selenium.WebElement;
 
@@ -70,7 +66,9 @@ public class SpacesAssertions {
                 break;
             }
         }
-        assertTrue(found);
+        assertThat(found)
+                .as("space '%s' should exist on server with correct name, subtitle, and quota", expectedName)
+                .isTrue();
     }
 
     public void assertSpaceImageUpdatedInServer(String fileName, List<Map<String, String>> rows)
@@ -79,7 +77,9 @@ public class SpacesAssertions {
             String name = getRequiredValue(row, "name");
             String subtitle = getOptionalValue(row, "subtitle", "");
             String spaceId = world.graphAPI().getSpaceIdFromNameAndDescription(name, subtitle);
-            assertTrue(world.filesAPI().itemExist(spaceId, "/.space/" + fileName));
+            assertThat(world.filesAPI().itemExist(spaceId, "/.space/" + fileName))
+                    .as("space image '%s' should exist on server", fileName)
+                    .isTrue();
         }
     }
 
@@ -104,11 +104,15 @@ public class SpacesAssertions {
     }
 
     private void assertSpaceIsVisibleLocally(String name, String subtitle, String status) {
-        assertTrue(isSpaceDisplayed(name, subtitle, status));
+        assertThat(isSpaceDisplayed(name, subtitle, status))
+                .as("space '%s' should be visible with status '%s'", name, status)
+                .isTrue();
     }
 
     private void assertSpaceIsNotVisibleLocally(String name, String subtitle) {
-        assertFalse(isSpaceDisplayed(name, subtitle, ""));
+        assertThat(isSpaceDisplayed(name, subtitle, ""))
+                .as("space '%s' should not be visible", name)
+                .isFalse();
     }
 
     private void assertSpaceExistsInServer(String expectedName, String expectedSubtitle, List<OCSpace> spaces) {
@@ -124,16 +128,22 @@ public class SpacesAssertions {
                 break;
             }
         }
-        assertTrue(found);
+        assertThat(found)
+                .as("space '%s' should exist on server", expectedName)
+                .isTrue();
     }
 
     private void assertLinkExpirationDateMatches(OCSpaceLink backendLink, String expectedExpirationDays) {
         if (expectedExpirationDays == null || expectedExpirationDays.isEmpty()) {
-            assertNull(backendLink.getExpirationDate());
+            assertThat(backendLink.getExpirationDate())
+                    .as("link expiration date should be null")
+                    .isNull();
             return;
         }
         String expectedDatePrefix = DateUtils.dateInDaysWithServerFormat(expectedExpirationDays).substring(0, 10);
-        assertTrue(backendLink.getExpirationDate().startsWith(expectedDatePrefix));
+        assertThat(backendLink.getExpirationDate().startsWith(expectedDatePrefix))
+                .as("link expiration date should start with '%s'", expectedDatePrefix)
+                .isTrue();
     }
 
     private String getLinkPermissionDisplayName(String permission) {
@@ -179,18 +189,26 @@ public class SpacesAssertions {
     }
 
     public void assertUserIsNotMemberOfSpace(String userName) {
-        assertFalse(world.spacesMembersPage().isMemberDisplayed(userName));
+        assertThat(world.spacesMembersPage().isMemberDisplayed(userName))
+                .as("'%s' should not be a member of the space", userName)
+                .isFalse();
     }
 
     private void assertMemberPermission(String userName, OCSpaceMember member, String expectedPermission) {
-        assertTrue(world.spacesMembersPage().isMemberDisplayedWithPermission(userName, expectedPermission));
-        assertTrue(member.getPermission().contains(expectedPermission));
+        assertThat(world.spacesMembersPage().isMemberDisplayedWithPermission(userName, expectedPermission))
+                .as("'%s' should be displayed with permission '%s'", userName, expectedPermission)
+                .isTrue();
+        assertThat(member.getPermission().contains(expectedPermission))
+                .as("member '%s' should have permission '%s' on backend", userName, expectedPermission)
+                .isTrue();
     }
 
     private void assertMemberExpirationDate(OCSpaceMember member, String expectedExpirationDays) {
         String expectedLocalDate = expectedExpirationDays == null ? null
                 : DateUtils.formatDate(expectedExpirationDays, DateUtils.DateFormatType.NUMERIC);
-        assertTrue(world.spacesMembersPage().isExpirationDateDisplayed(expectedLocalDate));
+        assertThat(world.spacesMembersPage().isExpirationDateDisplayed(expectedLocalDate))
+                .as("expiration date '%s' should be displayed for member", expectedLocalDate)
+                .isTrue();
         Log.log(Level.FINE, "Remote date: " + member.getExpirationDate());
         if (expectedExpirationDays != null) {
             String remoteDate = member.getExpirationDate().substring(0, 10) + " 23:59:59";
@@ -198,16 +216,22 @@ public class SpacesAssertions {
             Log.log(Level.FINE, "Days: " + expectedExpirationDays);
             Log.log(Level.FINE, "Date in server: " + remoteDate);
             Log.log(Level.FINE, "Date in local: " + expectedDate);
-            assertEquals(expectedDate, remoteDate);
+            assertThat(remoteDate)
+                    .as("member expiration date on server should be '%s'", expectedDate)
+                    .isEqualTo(expectedDate);
         } else {
-            assertNull(member.getExpirationDate());
+            assertThat(member.getExpirationDate())
+                    .as("member expiration date should be null on server")
+                    .isNull();
         }
     }
 
     public void assertLinkIsVisibleOnSpace(String linkName, String spaceName, Map<String, String> fields)
             throws IOException {
         OCSpaceLink backendLink = world.graphAPI().getLinkOfSpace(spaceName, linkName);
-        assertNotNull(backendLink);
+        assertThat(backendLink)
+                .as("link '%s' should exist on server for space '%s'", linkName, spaceName)
+                .isNotNull();
         Log.log(Level.FINE, "Link in backend: name: " + backendLink.getLinkName() + " permission: " + backendLink.getPermission()
                 + " expirationDate: " + backendLink.getExpirationDate());
         String expectedPermission = getOptionalValue(fields, "permission", "");
@@ -215,25 +239,39 @@ public class SpacesAssertions {
         Log.log(Level.FINE, "Link from scenario: name: " + linkName + " permission: " + expectedPermission
                 + " expirationDate: " + expectedExpirationDate);
         assertPublicLinkIsDisplayedLocally(linkName, expectedPermission, expectedExpirationDate);
-        assertEquals(linkName, backendLink.getLinkName());
-        assertEquals(getLinkPermissionDisplayName(expectedPermission), backendLink.getPermission());
+        assertThat(backendLink.getLinkName())
+                .as("link name should be '%s'", linkName)
+                .isEqualTo(linkName);
+        assertThat(backendLink.getPermission())
+                .as("link permission should match '%s'", expectedPermission)
+                .isEqualTo(getLinkPermissionDisplayName(expectedPermission));
         assertLinkExpirationDateMatches(backendLink, expectedExpirationDate);
     }
 
     public void assertLinkIsNotVisibleOnSpace(String linkName, String spaceName) throws IOException {
-        assertFalse(world.spacesMembersPage().isLinkDisplayed(linkName));
+        assertThat(world.spacesMembersPage().isLinkDisplayed(linkName))
+                .as("link '%s' should not be visible on space", linkName)
+                .isFalse();
         OCSpaceLink backendLink = world.graphAPI().getLinkOfSpace(spaceName, linkName);
-        assertNull(backendLink);
+        assertThat(backendLink)
+                .as("link '%s' should not exist on server", linkName)
+                .isNull();
     }
 
     private void assertPublicLinkIsDisplayedLocally(String linkName, String expectedPermission, String expectedExpirationDays) {
-        assertTrue(world.spacesMembersPage().isLinkDisplayed(linkName));
+        assertThat(world.spacesMembersPage().isLinkDisplayed(linkName))
+                .as("link '%s' should be visible on space", linkName)
+                .isTrue();
         if (expectedPermission != null && !expectedPermission.isEmpty()) {
-            assertTrue(world.spacesMembersPage().isLinkDisplayedWithPermission(linkName, expectedPermission));
+            assertThat(world.spacesMembersPage().isLinkDisplayedWithPermission(linkName, expectedPermission))
+                    .as("link '%s' should be displayed with permission '%s'", linkName, expectedPermission)
+                    .isTrue();
         }
         if(expectedExpirationDays != null && !expectedExpirationDays.isEmpty()) {
             String expectedLocalExpirationDate = DateUtils.formatDate(expectedExpirationDays, DateUtils.DateFormatType.NUMERIC);
-            assertTrue(world.spacesMembersPage().isLinkDisplayedWithExpirationDate(linkName, expectedLocalExpirationDate));
+            assertThat(world.spacesMembersPage().isLinkDisplayedWithExpirationDate(linkName, expectedLocalExpirationDate))
+                    .as("link '%s' should be displayed with expiration date '%s'", linkName, expectedLocalExpirationDate)
+                    .isTrue();
         }
     }
 
@@ -267,7 +305,11 @@ public class SpacesAssertions {
         String displayedQuota = world.spacesPage().getDisplayedQuotaValue();
         String displayedUnit = world.spacesPage().getDisplayedQuotaUnit();
         Log.log(Level.FINE, "Displayed quota: " + displayedQuota + " " + displayedUnit);
-        assertEquals(expectedQuota, displayedQuota);
-        assertEquals(expectedUnit, displayedUnit);
+        assertThat(displayedQuota)
+                .as("displayed quota should be '%s'", expectedQuota)
+                .isEqualTo(expectedQuota);
+        assertThat(displayedUnit)
+                .as("displayed unit should be '%s'", expectedUnit)
+                .isEqualTo(expectedUnit);
     }
 }

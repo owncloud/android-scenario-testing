@@ -6,9 +6,7 @@
 
 package e2e.assertions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.xml.sax.SAXException;
 
@@ -39,34 +37,52 @@ public class FileListAssertions {
     public void assertItemIsVisibleInFileList(String itemName) throws IOException {
         world.fileListPage().refreshList();
         String visibleItemName = getLastPathToken(itemName);
-        assertTrue(world.fileListPage().isItemInList(visibleItemName));
-        assertTrue(world.filesAPI().itemExist(itemName));
+        assertThat(world.fileListPage().isItemInList(visibleItemName))
+                .as("'%s' should be visible in file list", visibleItemName)
+                .isTrue();
+        assertThat(world.filesAPI().itemExist(itemName))
+                .as("'%s' should exist on server", itemName)
+                .isTrue();
     }
 
     public void assertItemIsNotVisibleInFileListAnymore(String itemName) throws IOException {
-        assertFalse(world.fileListPage().isItemInList(itemName));
-        assertFalse(world.filesAPI().itemExist(itemName));
+        assertThat(world.fileListPage().isItemInList(itemName))
+                .as("'%s' should not be visible in file list", itemName)
+                .isFalse();
+        assertThat(world.filesAPI().itemExist(itemName))
+                .as("'%s' should not exist on server", itemName)
+                .isFalse();
     }
 
     public void assertItemVisibilityInLinksOfflineOrSharesList(String sense, String itemName) {
         if (isPositiveSense(sense)) {
-            assertTrue(world.fileListPage().isItemInList(itemName));
+            assertThat(world.fileListPage().isItemInList(itemName))
+                    .as("'%s' should be visible in list", itemName)
+                    .isTrue();
         } else if (isNegativeSense(sense)) {
-            assertFalse(world.fileListPage().isItemInList(itemName));
+            assertThat(world.fileListPage().isItemInList(itemName))
+                    .as("'%s' should not be visible in list", itemName)
+                    .isFalse();
         }
     }
 
     public void assertItemIsVisibleInsideFolder(String itemName, String targetFolder)
             throws IOException {
         world.fileListPage().browseInto(targetFolder);
-        assertTrue(world.fileListPage().isItemInList(itemName));
-        assertTrue(world.filesAPI().itemExist(targetFolder + "/" + itemName));
+        assertThat(world.fileListPage().isItemInList(itemName))
+                .as("'%s' should be visible inside folder '%s'", itemName, targetFolder)
+                .isTrue();
+        assertThat(world.filesAPI().itemExist(targetFolder + "/" + itemName))
+                .as("'%s/%s' should exist on server", targetFolder, itemName)
+                .isTrue();
     }
 
     public void assertItemIsVisibleInsideSpace(String itemName, String spaceName) {
         world.fileListPage().openSpaces();
         world.spacesPage().openSpace(spaceName);
-        assertTrue(world.fileListPage().isItemInList(itemName));
+        assertThat(world.fileListPage().isItemInList(itemName))
+                .as("'%s' should be visible inside space '%s'", itemName, spaceName)
+                .isTrue();
     }
 
     public void assertItemIsVisibleInFileListAsOriginal(String itemName) throws IOException {
@@ -75,9 +91,15 @@ public class FileListAssertions {
 
     public void assertDetailedInformation(String itemName, String type, String size) {
         world.detailsPage().closeShareSheet();
-        assertEquals(itemName, world.detailsPage().getName());
-        assertEquals(size, world.detailsPage().getSize());
-        assertEquals(type, world.detailsPage().getType());
+        assertThat(world.detailsPage().getName())
+                .as("file name should be '%s'", itemName)
+                .isEqualTo(itemName);
+        assertThat(world.detailsPage().getSize())
+                .as("file size should be '%s'", size)
+                .isEqualTo(size);
+        assertThat(world.detailsPage().getType())
+                .as("file type should be '%s'", type)
+                .isEqualTo(type);
         world.detailsPage().backListFiles();
     }
 
@@ -95,21 +117,33 @@ public class FileListAssertions {
     }
 
     public void assertItemIsOpenedAndPreviewed() {
-        assertTrue(world.detailsPage().isItemPreviewed());
+        assertThat(world.detailsPage().isItemPreviewed())
+                .as("item should be previewed")
+                .isTrue();
         world.detailsPage().backListFiles();
     }
 
     public void assertFileTypeIsOpenedAndPreviewed(String type) {
         switch (type) {
-            case "file" -> assertTrue(world.detailsPage().isItemPreviewed());
-            case "audio" -> assertTrue(world.detailsPage().isAudioPreviewed());
+            case "file" -> assertThat(world.detailsPage().isItemPreviewed())
+                    .as("file should be previewed")
+                    .isTrue();
+            case "audio" -> assertThat(world.detailsPage().isAudioPreviewed())
+                    .as("audio should be previewed")
+                    .isTrue();
             case "image" -> {
                 world.detailsPage().acceptImagePreviewDialogIfDisplayed();
-                assertTrue(world.detailsPage().isImagePreviewed());
+                assertThat(world.detailsPage().isImagePreviewed())
+                        .as("image should be previewed")
+                        .isTrue();
                 world.detailsPage().displayControls();
             }
-            case "video" -> assertTrue(world.detailsPage().isVideoPreviewed());
-            case "damaged" -> assertTrue(world.detailsPage().isDamagedPreviewed());
+            case "video" -> assertThat(world.detailsPage().isVideoPreviewed())
+                    .as("video should be previewed")
+                    .isTrue();
+            case "damaged" -> assertThat(world.detailsPage().isDamagedPreviewed())
+                    .as("damaged file preview should be shown")
+                    .isTrue();
         }
     }
 
@@ -123,27 +157,39 @@ public class FileListAssertions {
     public void assertErrorMessageDisplayed(List<List<String>> listItems) {
         String error = listItems.get(0).get(0);
         Log.log(Level.FINE, "Error/Message to check: " + error);
-        assertTrue(world.fileListPage().errorDisplayed(error));
+        assertThat(world.fileListPage().errorDisplayed(error))
+                .as("error message '%s' should be displayed", error)
+                .isTrue();
     }
 
     public void assertFileContainsText(String text) {
-        assertTrue(world.detailsPage().isTextDisplayedInPreview(text));
+        assertThat(world.detailsPage().isTextDisplayedInPreview(text))
+                .as("text '%s' should be displayed in preview", text)
+                .isTrue();
     }
 
     public void assertShareSheetIsDisplayed(String itemName) {
-        assertTrue(world.detailsPage().isShareSheetDisplayed(itemName));
+        assertThat(world.detailsPage().isShareSheetDisplayed(itemName))
+                .as("share sheet should be displayed for '%s'", itemName)
+                .isTrue();
     }
 
     public void assertCannotUnsetAsAvailableOffline(String itemName) {
         world.fileListPage().selectItemList(itemName);
-        assertFalse(world.fileListPage().isOperationAvailable("Unset as available offline"));
+        assertThat(world.fileListPage().isOperationAvailable("Unset as available offline"))
+                .as("'Unset as available offline' should not be available")
+                .isFalse();
     }
 
     public void assertConflictDialogWithMessageIsDisplayed(List<List<String>> listItems) {
         String message = listItems.get(0).get(0);
         Log.log(Level.FINE, "Conflict message to check: " + message);
-        assertTrue(world.fileListPage().isConflictDisplayed());
-        assertTrue(world.fileListPage().errorDisplayed(message));
+        assertThat(world.fileListPage().isConflictDisplayed())
+                .as("conflict dialog should be displayed")
+                .isTrue();
+        assertThat(world.fileListPage().errorDisplayed(message))
+                .as("conflict message '%s' should be displayed", message)
+                .isTrue();
     }
 
     public void assertItemIsOpenedInApp(String itemType, String itemName) {
@@ -151,32 +197,46 @@ public class FileListAssertions {
     }
 
     public void assertBrowserIsDisplayed() {
-        assertTrue(world.shortcutDialogPage().isBrowserOpen());
+        assertThat(world.shortcutDialogPage().isBrowserOpen())
+                .as("browser should be open")
+                .isTrue();
     }
 
     public void assertErrorPreviewingIsDisplayed() {
-        assertTrue(world.detailsPage().isDamagedPreviewed());
+        assertThat(world.detailsPage().isDamagedPreviewed())
+                .as("damaged file preview should be shown")
+                .isTrue();
     }
 
     public void assertConflictDialogIsDisplayed() {
-        assertTrue(world.conflictPage().isConflictPageDisplayed());
+        assertThat(world.conflictPage().isConflictPageDisplayed())
+                .as("conflict page should be displayed")
+                .isTrue();
     }
 
     public void assertFileIsStoredInAccount(String fileName) throws IOException {
         Log.log(Level.FINE, "Checking if file is stored in the account: " + fileName);
-        assertTrue(world.filesAPI().itemExist(fileName));
+        assertThat(world.filesAPI().itemExist(fileName))
+                .as("'%s' should exist on server", fileName)
+                .isTrue();
         byte[] localFile = Files.readAllBytes(Paths.get(EXAMPLE_FILES_PATH + fileName));
         byte[] serverFile = world.filesAPI().getFile(fileName, "Alice");
         Log.log(Level.FINE, "Comparing local and server files: "
                 + localFile.length + " vs " + serverFile.length);
-        assertTrue(Arrays.equals(localFile, serverFile));
+        assertThat(Arrays.equals(localFile, serverFile))
+                .as("local and server files should be identical for '%s'", fileName)
+                .isTrue();
     }
 
     public void assertFileIsMarkedAsDownloaded(String path) {
         Log.log(Level.FINE, "Assert file is marked as downloaded: " + path);
         world.fileListPage().selectItemList(path);
-        assertFalse(world.fileListPage().isDownloadActionVisible());
-        assertTrue(world.fileListPage().isSyncActionVisible());
+        assertThat(world.fileListPage().isDownloadActionVisible())
+                .as("download action should not be visible for a downloaded file")
+                .isFalse();
+        assertThat(world.fileListPage().isSyncActionVisible())
+                .as("sync action should be visible for a downloaded file")
+                .isTrue();
     }
 
     public void assertItemIsMarkedAsAvailableOffline(String path) {
@@ -184,7 +244,9 @@ public class FileListAssertions {
         world.fileListPage().refreshList();
         world.fileListPage().selectItemList(path);
         world.fileListPage().openMenuActions();
-        assertFalse(world.fileListPage().isAvailableOfflineActionVisible());
+        assertThat(world.fileListPage().isAvailableOfflineActionVisible())
+                .as("'available offline' action should not be visible for item already marked offline")
+                .isFalse();
     }
 
     public void assertItemIsMarkedAsUnavailableOffline(String path) {
@@ -192,7 +254,9 @@ public class FileListAssertions {
         world.fileListPage().refreshList();
         world.fileListPage().selectItemList(path);
         world.fileListPage().openMenuActions();
-        assertFalse(world.fileListPage().isUnavailableOfflineActionVisible());
+        assertThat(world.fileListPage().isUnavailableOfflineActionVisible())
+                .as("'unavailable offline' action should not be visible")
+                .isFalse();
     }
 
     public void assertDisplayedListMatchesServer(String path, ArrayList<OCFile> serverFiles) {
@@ -206,7 +270,9 @@ public class FileListAssertions {
                     ocfile.getName(),
                     serverFiles.size()
             ));
-        assertTrue(allVisibleItemsFound);
+        assertThat(allVisibleItemsFound)
+                .as("all server items should be visible in file list for path '%s'", path)
+                .isTrue();
     }
 
     public void assertItemIsOpened(String itemType, String itemName) {
@@ -228,11 +294,15 @@ public class FileListAssertions {
 
     private void assertFileIsOpened(String itemName) {
         world.fileListPage().dismissChooserIfDisplayed();
-        assertTrue(world.fileListPage().isFilePreviewOpened(itemName));
+        assertThat(world.fileListPage().isFilePreviewOpened(itemName))
+                .as("file preview should be open for '%s'", itemName)
+                .isTrue();
     }
 
     private void assertFolderIsOpened(String itemName) {
-        assertTrue(world.fileListPage().isFolderOpened(itemName));
+        assertThat(world.fileListPage().isFolderOpened(itemName))
+                .as("folder '%s' should be open", itemName)
+                .isTrue();
     }
 
     private String getLastPathToken(String itemName) {

@@ -1,7 +1,6 @@
 package e2e.assertions;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.util.logging.Level;
@@ -39,9 +38,13 @@ public class DeviceAssertions {
         Log.log(Level.FINE, "List of files before assertion: " + listFiles
                 + ". ItemName: " + expectedItemName);
         if (isPositiveSense(sense)) {
-            assertTrue(listFiles.contains(expectedItemName));
+            assertThat(listFiles.contains(expectedItemName))
+                    .as("'%s' should be present in device storage", expectedItemName)
+                    .isTrue();
         } else if (isNegativeSense(sense)) {
-            assertFalse(listFiles.contains(expectedItemName));
+            assertThat(listFiles.contains(expectedItemName))
+                    .as("'%s' should not be present in device storage", expectedItemName)
+                    .isFalse();
         }
     }
 

@@ -6,8 +6,7 @@
 
 package e2e.assertions;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import java.io.IOException;
 import java.util.Map;
@@ -27,7 +26,9 @@ public class ShareNGAssertions {
 
     public void assertShareeIsNotVisible(String sharee) {
         Log.log(Level.FINE, "Assert sharee is not visible: " + sharee);
-        assertFalse(world.shareNGPage().isShareeDisplayed(sharee));
+        assertThat(world.shareNGPage().isShareeDisplayed(sharee))
+                .as("sharee '%s' should not be visible", sharee)
+                .isFalse();
     }
 
     public void assertShareeIsVisible(String sharee, Map<String, String> fields) {
@@ -46,24 +47,32 @@ public class ShareNGAssertions {
 
     private void assertPermission(String sharee, String expectedPermission) {
         Log.log(Level.FINE, "Assert " + sharee + " has permission: " + expectedPermission);
-        assertTrue(world.shareNGPage().isShareeDisplayedWithPermission(sharee, expectedPermission));
+        assertThat(world.shareNGPage().isShareeDisplayedWithPermission(sharee, expectedPermission))
+                .as("sharee '%s' should be displayed with permission '%s'", sharee, expectedPermission)
+                .isTrue();
     }
 
     private void assertExpirationDate(String sharee, String expectedExpirationDays) {
         String expectedLocalDate = (expectedExpirationDays == null || expectedExpirationDays.trim().isEmpty()) ? null
                 : DateUtils.formatDate(expectedExpirationDays.trim(), DateUtils.DateFormatType.NUMERIC);
         Log.log(Level.FINE, "Assert " + sharee + " has expiration date: " + expectedLocalDate);
-        assertTrue(world.shareNGPage().isShareeDisplayedWithExpirationDate(sharee, expectedLocalDate));
+        assertThat(world.shareNGPage().isShareeDisplayedWithExpirationDate(sharee, expectedLocalDate))
+                .as("sharee '%s' should have expiration date '%s'", sharee, expectedLocalDate)
+                .isTrue();
     }
 
     public void assertPermalinkButtonDisplayed() {
         Log.log(Level.FINE, "Assert permalink button is displayed");
-        assertTrue(world.shareNGPage().isPermalinkButtonDisplayed());
+        assertThat(world.shareNGPage().isPermalinkButtonDisplayed())
+                .as("permalink button should be displayed")
+                .isTrue();
     }
 
     public void assertPermalinkActionTriggered() {
         Log.log(Level.FINE, "Assert permalink action (system share sheet) is triggered");
-        assertTrue(world.shareNGPage().isPermalinkActionTriggered());
+        assertThat(world.shareNGPage().isPermalinkActionTriggered())
+                .as("permalink action should be triggered")
+                .isTrue();
         // The system Intent Chooser stays open between Cucumber scenarios and causes
         // the next scenario to fail. Dismissed here because close is always paired
         // with this assertion and is not a user-visible step worth surfacing in Gherkin.
@@ -72,12 +81,16 @@ public class ShareNGAssertions {
 
     public void assertUserHasAccess(String userType, String sharee, String itemName) throws IOException {
         Log.log(Level.FINE, "Assert " + sharee + " has access to item: " + itemName);
-        assertTrue(isAccessible(userType, sharee, itemName));
+        assertThat(isAccessible(userType, sharee, itemName))
+                .as("'%s' should have access to '%s'", sharee, itemName)
+                .isTrue();
     }
 
     public void assertUserHasNoAccess(String userType, String sharee, String itemName) throws IOException {
         Log.log(Level.FINE, "Assert " + sharee + " has no access to item: " + itemName);
-        assertFalse(isAccessible(userType, sharee, itemName));
+        assertThat(isAccessible(userType, sharee, itemName))
+                .as("'%s' should not have access to '%s'", sharee, itemName)
+                .isFalse();
     }
 
     private boolean isAccessible(String userType, String sharee, String itemName) throws IOException {

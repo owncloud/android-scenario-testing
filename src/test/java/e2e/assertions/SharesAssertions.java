@@ -6,10 +6,7 @@
 
 package e2e.assertions;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.xml.sax.SAXException;
 
@@ -43,24 +40,34 @@ public class SharesAssertions {
 
     public void assertUserDoesNotHaveAccessToItem(String userName, String itemName)
             throws IOException, ParserConfigurationException, SAXException {
-        assertFalse(world.shareAPI().isSharedWithMe(itemName, userName, false));
+        assertThat(world.shareAPI().isSharedWithMe(itemName, userName, false))
+                .as("'%s' should not have access to '%s'", userName, itemName)
+                .isFalse();
     }
 
     public void assertShareeHasAccessToItem(String type, String shareeName, String itemName)
             throws IOException, ParserConfigurationException, SAXException {
         if ("user".equalsIgnoreCase(type)) {
-            assertTrue(world.shareAPI().isSharedWithMe(itemName, shareeName, false));
+            assertThat(world.shareAPI().isSharedWithMe(itemName, shareeName, false))
+                    .as("'%s' should have access to '%s'", shareeName, itemName)
+                    .isTrue();
         } else if ("group".equalsIgnoreCase(type)) {
-            assertTrue(world.shareAPI().isSharedWithMe(itemName, shareeName, true));
+            assertThat(world.shareAPI().isSharedWithMe(itemName, shareeName, true))
+                    .as("group '%s' should have access to '%s'", shareeName, itemName)
+                    .isTrue();
         }
     }
 
     public void assertItemIsNotSharedAnymoreWith(String itemName, String sharee) {
-        assertFalse(world.sharePage().isItemInListPrivateShares(sharee));
+        assertThat(world.sharePage().isItemInListPrivateShares(sharee))
+                .as("'%s' should not be listed in private shares", sharee)
+                .isFalse();
     }
 
     public void assertRecipientIsVisible(String sharee) {
-        assertTrue(world.privateSharePage().isSharee(sharee));
+        assertThat(world.privateSharePage().isSharee(sharee))
+                .as("'%s' should be visible as sharee", sharee)
+                .isTrue();
     }
 
     private void assertPrivateShareUiFields(String itemName, Map<String, String> fields) {
@@ -81,13 +88,17 @@ public class SharesAssertions {
 
     private void assertPrivateShareeIsVisible(String sharee) {
         Log.log(Level.FINE, "Checking sharee: " + sharee);
-        assertTrue(world.sharePage().isItemInListPrivateShares(sharee));
+        assertThat(world.sharePage().isItemInListPrivateShares(sharee))
+                .as("'%s' should be listed in private shares", sharee)
+                .isTrue();
     }
 
     private void assertPrivateGroupIsVisible(String groupName) {
         String expectedGroupText = groupName + " (group)";
         Log.log(Level.FINE, "Checking group: " + expectedGroupText);
-        assertTrue(world.sharePage().isItemInListPrivateShares(expectedGroupText));
+        assertThat(world.sharePage().isItemInListPrivateShares(expectedGroupText))
+                .as("group '%s' should be listed in private shares", expectedGroupText)
+                .isTrue();
     }
 
     private void assertPrivateSharePermissionsAreCorrect(String itemName, String expectedPermissions) {
@@ -110,30 +121,48 @@ public class SharesAssertions {
 
     private void assertOnlyReadPermission() {
         Log.log(Level.FINE, "Only read");
-        assertFalse(world.privateSharePage().isEditEnabled());
+        assertThat(world.privateSharePage().isEditEnabled())
+                .as("edit permission should not be enabled for read-only share")
+                .isFalse();
     }
 
     private void assertEditPermission() {
         Log.log(Level.FINE, "Edit");
-        assertTrue(world.privateSharePage().isEditEnabled());
+        assertThat(world.privateSharePage().isEditEnabled())
+                .as("edit permission should be enabled")
+                .isTrue();
     }
 
     private void assertDeletePermission() {
         Log.log(Level.FINE, "Delete");
-        assertFalse(world.privateSharePage().isCreateSelected());
-        assertFalse(world.privateSharePage().isChangeSelected());
-        assertTrue(world.privateSharePage().isDeleteSelected());
+        assertThat(world.privateSharePage().isCreateSelected())
+                .as("create permission should not be selected")
+                .isFalse();
+        assertThat(world.privateSharePage().isChangeSelected())
+                .as("change permission should not be selected")
+                .isFalse();
+        assertThat(world.privateSharePage().isDeleteSelected())
+                .as("delete permission should be selected")
+                .isTrue();
     }
 
     private void assertDeleteAndCreatePermission() {
         Log.log(Level.FINE, "Delete and Create");
-        assertTrue(world.privateSharePage().isCreateSelected());
-        assertFalse(world.privateSharePage().isChangeSelected());
-        assertTrue(world.privateSharePage().isDeleteSelected());
+        assertThat(world.privateSharePage().isCreateSelected())
+                .as("create permission should be selected")
+                .isTrue();
+        assertThat(world.privateSharePage().isChangeSelected())
+                .as("change permission should not be selected")
+                .isFalse();
+        assertThat(world.privateSharePage().isDeleteSelected())
+                .as("delete permission should be selected")
+                .isTrue();
     }
 
     public static void assertShareMatches(OCShare remoteShare, Map<String, String> expectedFields) {
-        assertNotNull("Remote share should exist", remoteShare);
+        assertThat(remoteShare)
+                .as("remote share should exist")
+                .isNotNull();
         for (Map.Entry<String, String> entry : expectedFields.entrySet()) {
             assertShareFieldMatches(remoteShare, entry.getKey(), entry.getValue());
         }
@@ -142,30 +171,48 @@ public class SharesAssertions {
     private static void assertShareFieldMatches(OCShare remoteShare, String key, String expectedValue) {
         Log.log(Level.FINE, "Checking share field: " + key + " with expected value: " + expectedValue);
         switch (key) {
-            case "id" -> assertEquals(expectedValue, remoteShare.getId());
+            case "id" -> assertThat(remoteShare.getId())
+                    .as("share id should be '%s'", expectedValue)
+                    .isEqualTo(expectedValue);
             case "sharee", "user" -> {
                 if ("0".equals(remoteShare.getType())) {
-                    assertEquals(expectedValue.toLowerCase(), remoteShare.getShareeName().toLowerCase());
+                    assertThat(remoteShare.getShareeName().toLowerCase())
+                            .as("sharee name should be '%s'", expectedValue)
+                            .isEqualTo(expectedValue.toLowerCase());
                 }
             }
             case "group" -> {
                 if ("1".equals(remoteShare.getType())) {
-                    assertEquals(expectedValue.toLowerCase(), remoteShare.getShareeName().toLowerCase());
+                    assertThat(remoteShare.getShareeName().toLowerCase())
+                            .as("group name should be '%s'", expectedValue)
+                            .isEqualTo(expectedValue.toLowerCase());
                 }
             }
             case "password", "password-auto" ->
-                    assertTrue("3".equals(remoteShare.getType()) && remoteShare.hasPassword());
-            case "name" -> assertEquals(expectedValue, remoteShare.getLinkName());
-            case "path" -> assertEquals(expectedValue, remoteShare.getItemName());
+                    assertThat("3".equals(remoteShare.getType()) && remoteShare.hasPassword())
+                            .as("share should be a public link with password")
+                            .isTrue();
+            case "name" -> assertThat(remoteShare.getLinkName())
+                    .as("link name should be '%s'", expectedValue)
+                    .isEqualTo(expectedValue);
+            case "path" -> assertThat(remoteShare.getItemName())
+                    .as("item path should be '%s'", expectedValue)
+                    .isEqualTo(expectedValue);
             case "uid_owner" ->
-                    assertEquals(expectedValue.toLowerCase(), remoteShare.getOwner().toLowerCase());
+                    assertThat(remoteShare.getOwner().toLowerCase())
+                            .as("share owner should be '%s'", expectedValue)
+                            .isEqualTo(expectedValue.toLowerCase());
             case "permission", "permissions" -> {
                     Log.log(Level.FINE, "Checking share permissions: " + expectedValue + " against remote share permissions: " + remoteShare.getPermissions());
-                    assertEquals(expectedValue, remoteShare.getPermissions());
+                    assertThat(remoteShare.getPermissions())
+                            .as("share permissions should be '%s'", expectedValue)
+                            .isEqualTo(expectedValue);
             }
             case "expiration days" -> {
                 String expectedDate = DateUtils.dateInDaysWithServerFormat(expectedValue);
-                assertEquals(expectedDate, remoteShare.getExpiration());
+                assertThat(remoteShare.getExpiration())
+                        .as("share expiration should be '%s'", expectedDate)
+                        .isEqualTo(expectedDate);
             }
         }
     }

@@ -6,8 +6,7 @@
 
 package e2e.assertions;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import org.xml.sax.SAXException;
 
@@ -42,9 +41,15 @@ public class LinksAssertions {
     public void assertPublicLinkDoesNotExistAnymore(String itemName)
             throws IOException, ParserConfigurationException, SAXException {
         Log.log(Level.FINE, "Checking public link does not exist anymore: " + itemName);
-        assertTrue(world.sharePage().isListLinksEmpty());
-        assertTrue(world.shareAPI().getLinksByDefault().isEmpty());
-        assertFalse(world.sharePage().isItemInListLinks(itemName + " link"));
+        assertThat(world.sharePage().isListLinksEmpty())
+                .as("links list should be empty")
+                .isTrue();
+        assertThat(world.shareAPI().getLinksByDefault().isEmpty())
+                .as("server links should be empty")
+                .isTrue();
+        assertThat(world.sharePage().isItemInListLinks(itemName + " link"))
+                .as("link for '%s' should not be listed", itemName)
+                .isFalse();
     }
 
     private void assertPublicLinkUiFields(String itemName, Map<String, String> fields) {
@@ -66,14 +71,18 @@ public class LinksAssertions {
 
     private void assertPublicLinkNameIsVisible(String linkName) {
         Log.log(Level.FINE, "Checking link name: " + linkName);
-        assertTrue(world.sharePage().isItemInListLinks(linkName));
+        assertThat(world.sharePage().isItemInListLinks(linkName))
+                .as("link '%s' should be visible in links list", linkName)
+                .isTrue();
     }
 
     private void assertPublicLinkPasswordIsEnabled(String itemName) {
         Log.log(Level.FINE, "Checking public link password is enabled");
         world.sharePage().editLink(itemName);
         try {
-            assertTrue(world.linksPage().isPasswordEnabled());
+            assertThat(world.linksPage().isPasswordEnabled())
+                    .as("password should be enabled on the link")
+                    .isTrue();
         } finally {
             world.linksPage().close();
         }
@@ -81,7 +90,9 @@ public class LinksAssertions {
 
     private void assertPublicLinkUserIsVisible(String itemName) {
         Log.log(Level.FINE, "Checking public link user/item: " + itemName);
-        assertTrue(world.sharePage().isItemInListLinks(itemName));
+        assertThat(world.sharePage().isItemInListLinks(itemName))
+                .as("'%s' should be visible in links list", itemName)
+                .isTrue();
     }
 
     private boolean areLinksPermissionsCorrect(String permissions) {
@@ -104,7 +115,9 @@ public class LinksAssertions {
         Log.log(Level.FINE, "Checking public link expiration days: " + expectedExpirationDays);
         world.sharePage().editLink(itemName);
         try {
-            assertTrue(assertExpirationCorrect(expectedExpirationDays));
+            assertThat(assertExpirationCorrect(expectedExpirationDays))
+                    .as("expiration date should be correct for %s days", expectedExpirationDays)
+                    .isTrue();
         } finally {
             world.linksPage().close();
         }
@@ -114,7 +127,9 @@ public class LinksAssertions {
         Log.log(Level.FINE, "Checking public link permissions: " + expectedPermissions);
         world.sharePage().editLink(itemName);
         try {
-            assertTrue(areLinksPermissionsCorrect(expectedPermissions));
+            assertThat(areLinksPermissionsCorrect(expectedPermissions))
+                    .as("link permissions should match '%s'", expectedPermissions)
+                    .isTrue();
         } finally {
             world.linksPage().close();
         }
