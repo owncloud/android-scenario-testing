@@ -96,7 +96,7 @@ public class LinksAssertions {
     }
 
     private boolean areLinksPermissionsCorrect(String permissions) {
-        Log.Log.log(Level.FINE, "Starts: Check permissions: " + permissions);
+        Log.log(Level.FINE, "Starts: Check permissions: " + permissions);
         switch (permissions) {
             case ("1") -> {
                 return world.linksPage().isDownloadViewSelected();
@@ -136,18 +136,18 @@ public class LinksAssertions {
     }
 
     private boolean assertExpirationCorrect(String days) {
-        Log.Log.log(Level.FINE, "Starts: Check expiration in days: " + days);
+        Log.log(Level.FINE, "Starts: Check expiration in days: " + days);
         boolean switchEnabled;
         boolean dateCorrect = false;
         int expiration = Integer.parseInt(days);
         String shortDate = DateUtils.formatDate(Integer.toString(expiration), DateUtils.DateFormatType.TEXT);
-        Log.Log.log(Level.FINE, "Date to check: " + shortDate + " Expiration: " + expiration);
+        Log.log(Level.FINE, "Date to check: " + shortDate + " Expiration: " + expiration);
         switchEnabled = world.linksPage().isExpirationSwitchEnabled();
-        Log.Log.log(Level.FINE, "SwitchEnabled -> " + switchEnabled);
+        Log.log(Level.FINE, "SwitchEnabled -> " + switchEnabled);
         if (switchEnabled) {
             dateCorrect = world.linksPage().isExpirationDateCorrect(shortDate);
         }
-        Log.Log.log(Level.FINE, "Date Correct -> " + dateCorrect);
+        Log.log(Level.FINE, "Date Correct -> " + dateCorrect);
         return switchEnabled && dateCorrect;
     }
 }
