@@ -104,8 +104,9 @@ public class DetailsPage extends CommonPage {
     }
 
     public boolean isTextDisplayedInPreview(String text) {
-        // Giving additional time since it could take a bit longer to load the text preview
-        waitUntilTextIsNotEmpty(WAIT_TIME + 10, TEXT_PREVIEW_ID);
+        // Wait for the specific text to appear — polling handles both the case where
+        // old cached content loads first (av.offline sync) and slow preview rendering.
+        waitUntilTextContains(WAIT_TIME + 10, TEXT_PREVIEW_ID, text);
         return findUIAutomatorText(text).isDisplayed();
     }
 

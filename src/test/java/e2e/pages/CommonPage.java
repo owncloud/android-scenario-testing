@@ -153,11 +153,26 @@ public class CommonPage {
     public void waitUntilTextIsNotEmpty(int timeToWait, String resourceId) {
         WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeToWait));
         ExpectedCondition<Boolean> textNotEmpty = driver -> {
-            WebElement element = driver.findElement(AppiumBy.id(resourceId));
-            String text = element.getText();
+            List<WebElement> elements = driver.findElements(AppiumBy.id(resourceId));
+            if (elements.isEmpty()) {
+                return false;
+            }
+            String text = elements.get(0).getText();
             return text != null && !text.trim().isEmpty();
         };
         wait.until(textNotEmpty);
+    }
+
+    public void waitUntilTextContains(int timeToWait, String resourceId, String expectedText) {
+        WebDriverWait wait = new WebDriverWait(driver, Duration.ofSeconds(timeToWait));
+        wait.until(driver -> {
+            List<WebElement> elements = driver.findElements(AppiumBy.id(resourceId));
+            if (elements.isEmpty()) {
+                return false;
+            }
+            String text = elements.get(0).getText();
+            return text != null && text.contains(expectedText);
+        });
     }
 
     protected HashMap turnListToHashmap(List<List<String>> dataList) {
