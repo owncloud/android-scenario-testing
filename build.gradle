@@ -299,7 +299,7 @@ tasks.register('cucumberReport') {
         config.addClassifications('Platform', 'Android')
         // Merge features with the same ID across rerun JSON files so that a
         // scenario that passed on retry is not counted as failed from the first run.
-        config.setMergeFeaturesById(true)
+        config.addReducingMethod(net.masterthought.cucumber.reducers.ReducingMethod.MERGE_FEATURES_BY_ID)
         new net.masterthought.cucumber.ReportBuilder(jsonFiles, config).generateReports()
 
         logger.lifecycle("Cucumber HTML report → file://${reportDir}/cucumber-html-reports/overview-features.html")
