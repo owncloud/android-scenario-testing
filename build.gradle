@@ -297,9 +297,9 @@ tasks.register('cucumberReport') {
 
         def config = new net.masterthought.cucumber.Configuration(reportDir, 'ownCloud Android E2E')
         config.addClassifications('Platform', 'Android')
-        // Merge features with the same ID across rerun JSON files so that a
-        // scenario that passed on retry is not counted as failed from the first run.
-        config.addReducingMethod(net.masterthought.cucumber.reducers.ReducingMethod.MERGE_FEATURES_BY_ID)
+        // Replace failed scenarios with their rerun results so a scenario that
+        // passed on retry is shown as passed, not failed from the first run.
+        config.addReducingMethod(net.masterthought.cucumber.reducers.ReducingMethod.MERGE_FEATURES_WITH_RETEST)
         new net.masterthought.cucumber.ReportBuilder(jsonFiles, config).generateReports()
 
         logger.lifecycle("Cucumber HTML report → file://${reportDir}/cucumber-html-reports/overview-features.html")
