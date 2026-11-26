@@ -74,6 +74,17 @@ ADMIN_ID=$(echo "$apps_response" | jq -r '
 ')
 
 #######################################
+# Get Space Admin role ID
+#######################################
+
+SPACE_ADMIN_ID=$(echo "$apps_response" | jq -r '
+  .value[]
+  | .appRoles[]
+  | select(.displayName=="Space Admin")
+  | .id
+')
+
+#######################################
 # Get resource ID
 #######################################
 
@@ -114,6 +125,42 @@ CHARLES_ID=$(curl -sk $AUTH -X POST "$BASE_URL/graph/v1.0/users" \
     "passwordProfile": { "password": "a" }
   }' | jq -r '.id')
 
+USER1_ID=$(curl -sk $AUTH -X POST "$BASE_URL/graph/v1.0/users" \
+  $JSON_HEADER \
+  -d '{
+    "onPremisesSamAccountName": "user1",
+    "displayName": "John Smith",
+    "mail": "user1@own.com",
+    "passwordProfile": { "password": "a" }
+  }' | jq -r '.id')
+
+USER2_ID=$(curl -sk $AUTH -X POST "$BASE_URL/graph/v1.0/users" \
+  $JSON_HEADER \
+  -d '{
+    "onPremisesSamAccountName": "user2",
+    "displayName": "Mark Philips",
+    "mail": "user2@own.com",
+    "passwordProfile": { "password": "a" }
+  }' | jq -r '.id')
+
+USER3_ID=$(curl -sk $AUTH -X POST "$BASE_URL/graph/v1.0/users" \
+  $JSON_HEADER \
+  -d '{
+    "onPremisesSamAccountName": "user3",
+    "displayName": "user3",
+    "mail": "user3@own.com",
+    "passwordProfile": { "password": "a" }
+  }' | jq -r '.id')
+
+USER4_ID=$(curl -sk $AUTH -X POST "$BASE_URL/graph/v1.0/users" \
+  $JSON_HEADER \
+  -d '{
+    "onPremisesSamAccountName": "user4",
+    "displayName": "user4",
+    "mail": "user4@own.com",
+    "passwordProfile": { "password": "a" }
+  }' | jq -r '.id')
+
 #######################################
 # Create a group and get its ID
 #######################################
@@ -145,5 +192,31 @@ curl -sk $AUTH -X POST \
   -d "{
     \"appRoleId\": \"$ADMIN_ID\",
     \"principalId\": \"$ALICE_ID\",
+    \"resourceId\": \"$RESOURCE_ID\"
+  }" >/dev/null
+
+#######################################
+# Assign Admin role to USER1
+#######################################
+
+curl -sk $AUTH -X POST \
+  "$BASE_URL/graph/v1.0/users/$USER1_ID/appRoleAssignments" \
+  $JSON_HEADER \
+  -d "{
+    \"appRoleId\": \"$ADMIN_ID\",
+    \"principalId\": \"$USER1_ID\",
+    \"resourceId\": \"$RESOURCE_ID\"
+  }" >/dev/null
+
+#######################################
+# Assign Space Admin role to USER2
+#######################################
+
+curl -sk $AUTH -X POST \
+  "$BASE_URL/graph/v1.0/users/$USER2_ID/appRoleAssignments" \
+  $JSON_HEADER \
+  -d "{
+    \"appRoleId\": \"$SPACE_ADMIN_ID\",
+    \"principalId\": \"$USER2_ID\",
     \"resourceId\": \"$RESOURCE_ID\"
   }" >/dev/null
